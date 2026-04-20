@@ -11,7 +11,7 @@ import type { PropertyQuery } from "@/services/propertyService";
 import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
 import { useLocale } from "@/i18n/use-locale";
 
-const PRICE_MAX = 100_000_000;
+const PRICE_MAX = 100_000_000_000;
 
 const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -65,14 +65,14 @@ export default function PropertyFilters({
   const priceMin = value.priceRange[0];
   const priceMax = value.priceRange[1];
 
-  const setPriceMin = (raw: string) => {
-    const nextMin = clamp(Number(raw || 0), 0, PRICE_MAX);
+  const setPriceMin = (nextMinRaw: number) => {
+    const nextMin = clamp(nextMinRaw, 0, PRICE_MAX);
     const nextMax = clamp(Math.max(priceMax, nextMin), 0, PRICE_MAX);
     onChange({ ...value, priceRange: [nextMin, nextMax] });
   };
 
-  const setPriceMax = (raw: string) => {
-    const nextMax = clamp(Number(raw || 0), 0, PRICE_MAX);
+  const setPriceMax = (nextMaxRaw: number) => {
+    const nextMax = clamp(nextMaxRaw, 0, PRICE_MAX);
     const nextMin = clamp(Math.min(priceMin, nextMax), 0, PRICE_MAX);
     onChange({ ...value, priceRange: [nextMin, nextMax] });
   };
@@ -167,38 +167,40 @@ export default function PropertyFilters({
         <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.price.label")}</Label>
 
         <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-4">
-          <div className="flex items-baseline justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
-              <div className="mt-1 font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMin)}</div>
+          <div className="grid gap-5">
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMin)}</div>
+              </div>
+              <Slider
+                className="mt-3"
+                value={[priceMin]}
+                max={PRICE_MAX}
+                step={5_000_000}
+                onValueChange={(v) => setPriceMin(v[0] ?? 0)}
+              />
             </div>
-            <div className="text-xs text-[hsl(var(--brand-ink)/0.35)]">—</div>
-            <div className="min-w-0 text-right">
-              <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
-              <div className="mt-1 font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMax)}</div>
+
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMax)}</div>
+              </div>
+              <Slider
+                className="mt-3"
+                value={[priceMax]}
+                max={PRICE_MAX}
+                step={5_000_000}
+                onValueChange={(v) => setPriceMax(v[0] ?? PRICE_MAX)}
+              />
             </div>
-          </div>
-
-          <Slider
-            className="mt-4"
-            value={[priceMin, priceMax]}
-            max={PRICE_MAX}
-            step={1_000_000}
-            onValueChange={(v) => {
-              const nextMin = clamp(v[0] ?? 0, 0, PRICE_MAX);
-              const nextMax = clamp(v[1] ?? PRICE_MAX, 0, PRICE_MAX);
-              onChange({ ...value, priceRange: [Math.min(nextMin, nextMax), Math.max(nextMin, nextMax)] });
-            }}
-          />
-
-          <div className="mt-3 text-[11px] text-[hsl(var(--brand-ink)/0.60)]">
-            {t("filters.price.helper").replace("{max}", formatIdrCompact(PRICE_MAX))}
           </div>
 
           {/* Keep hidden numeric inputs for accessibility / power users (not visible) */}
           <div className="sr-only">
-            <input value={String(priceMin)} onChange={(e) => setPriceMin(e.target.value)} />
-            <input value={String(priceMax)} onChange={(e) => setPriceMax(e.target.value)} />
+            <input value={String(priceMin)} onChange={(e) => setPriceMin(Number(e.target.value || 0))} />
+            <input value={String(priceMax)} onChange={(e) => setPriceMax(Number(e.target.value || 0))} />
           </div>
         </div>
       </div>
