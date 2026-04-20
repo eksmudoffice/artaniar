@@ -6,11 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { X, SlidersHorizontal } from "lucide-react";
-import type { PropertyQuery } from "@/services/propertyService";
-import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { SlidersHorizontal, X } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
-import { cn } from "@/lib/utils";
+import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import type { PropertyQuery } from "@/services/propertyService";
 
 const PRICE_MAX = 100_000_000_000;
 
@@ -30,22 +29,19 @@ export type PropertyFiltersValue = {
   sort: NonNullable<PropertyQuery["sort"]>;
 };
 
-export default function PropertyFilters({
-  value,
-  onChange,
-  onReset,
-  compact = false,
-}: {
+type Props = {
   value: PropertyFiltersValue;
   onChange: (next: PropertyFiltersValue) => void;
   onReset: () => void;
   compact?: boolean;
-}) {
+};
+
+export default function PropertyFilters({ value, onChange, onReset, compact = false }: Props) {
   const { t } = useLocale();
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const activeChips = useMemo(() => {
-    const chips: { key: string; label: string; onClear: () => void }[] = [];
+    const chips: Array<{ key: string; label: string; onClear: () => void }> = [];
 
     if (value.type !== "All") chips.push({ key: "type", label: value.type, onClear: () => onChange({ ...value, type: "All" }) });
     if (value.purpose !== "All")
@@ -90,14 +86,13 @@ export default function PropertyFilters({
 
   return (
     <div className="grid gap-5">
-      {!compact && (
+      {!compact ? (
         <div>
           <div className="font-serif text-xl text-[hsl(var(--brand-ink))]">{t("filters.title")}</div>
           <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("filters.subtitle")}</p>
         </div>
-      )}
+      ) : null}
 
-      {/* QUICK FILTERS */}
       <div className="grid gap-2">
         <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.search.label")}</Label>
         <Input
@@ -144,7 +139,10 @@ export default function PropertyFilters({
         <div className="grid grid-cols-2 gap-3">
           <div className="grid gap-2">
             <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.purpose.label")}</Label>
-            <Select value={value.purpose} onValueChange={(v) => onChange({ ...value, purpose: v as PropertyFiltersValue["purpose"] })}>
+            <Select
+              value={value.purpose}
+              onValueChange={(v) => onChange({ ...value, purpose: v as PropertyFiltersValue["purpose"] })}
+            >
               <SelectTrigger className="rounded-2xl bg-white/70">
                 <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
@@ -185,13 +183,7 @@ export default function PropertyFilters({
                 <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMin)}</div>
               </div>
-              <Slider
-                className="mt-3"
-                value={[priceMin]}
-                max={PRICE_MAX}
-                step={5_000_000}
-                onValueChange={(v) => setPriceMin(v[0] ?? 0)}
-              />
+              <Slider className="mt-3" value={[priceMin]} max={PRICE_MAX} step={5_000_000} onValueChange={(v) => setPriceMin(v[0] ?? 0)} />
             </div>
 
             <div>
@@ -199,13 +191,7 @@ export default function PropertyFilters({
                 <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMax)}</div>
               </div>
-              <Slider
-                className="mt-3"
-                value={[priceMax]}
-                max={PRICE_MAX}
-                step={5_000_000}
-                onValueChange={(v) => setPriceMax(v[0] ?? PRICE_MAX)}
-              />
+              <Slider className="mt-3" value={[priceMax]} max={PRICE_MAX} step={5_000_000} onValueChange={(v) => setPriceMax(v[0] ?? PRICE_MAX)} />
             </div>
           </div>
 
@@ -231,8 +217,7 @@ export default function PropertyFilters({
         </Select>
       </div>
 
-      {/* ADVANCED (FREE TEXT) */}
-      <div className={cn("rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/55")}>
+      <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/55">
         <button
           type="button"
           onClick={() => setAdvancedOpen((s) => !s)}
@@ -250,17 +235,12 @@ export default function PropertyFilters({
               </div>
             </div>
           </div>
-          <div
-            className={cn(
-              "text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform",
-              advancedOpen ? "rotate-180" : "",
-            )}
-          >
+          <div className={"text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform " + (advancedOpen ? "rotate-180" : "")}>
             ▾
           </div>
         </button>
 
-        {advancedOpen && (
+        {advancedOpen ? (
           <div className="px-4 pb-4 grid gap-2">
             <Label className="text-sm text-[hsl(var(--brand-ink))]">Advanced query</Label>
             <Input
@@ -270,18 +250,15 @@ export default function PropertyFilters({
               className="rounded-2xl bg-white/70"
             />
             <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)] leading-relaxed">
-              Tokens yang didukung: <span className="font-semibold">land</span>, <span className="font-semibold">building</span>,{" "}
+              Tokens: <span className="font-semibold">land</span>, <span className="font-semibold">building</span>,{" "}
               <span className="font-semibold">beds</span>, <span className="font-semibold">baths</span>,{" "}
-              <span className="font-semibold">pool</span> / <span className="font-semibold">nopool</span>. Operator:{" "}
-              <span className="font-semibold">></span>, <span className="font-semibold">>=</span>,{" "}
-              <span className="font-semibold"><</span>, <span className="font-semibold"><=</span>,{" "}
-              <span className="font-semibold">=</span>.
+              <span className="font-semibold">pool</span> / <span className="font-semibold">nopool</span>.
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
-      {activeChips.length > 0 && (
+      {activeChips.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {activeChips.map((c) => (
             <Badge
@@ -300,7 +277,7 @@ export default function PropertyFilters({
             </Badge>
           ))}
         </div>
-      )}
+      ) : null}
 
       <Separator className="bg-[hsl(var(--brand-ink)/0.10)]" />
 
