@@ -22,6 +22,15 @@ export type Property = {
   landSize?: number; // m2
   buildingSize?: number; // m2
   pool?: boolean;
+
+  // Added: key practical attributes for filtering
+  carport?: number; // count
+  roadWidth?: number; // meters
+  powerVa?: number; // VA
+  water?: "PDAM" | "Well" | "Other";
+  furnished?: boolean;
+  view?: "Ocean" | "Ricefield" | "Jungle" | "Garden" | "City";
+
   ownership: "Freehold" | "Leasehold";
   yearBuilt?: number;
   zoning?: string;
@@ -42,14 +51,7 @@ export type Property = {
   createdAt: string; // ISO
 };
 
-export const AREAS = [
-  "Canggu",
-  "Uluwatu",
-  "Pererenan",
-  "Ubud",
-  "Seminyak",
-  "Sanur",
-] as const;
+export const AREAS = ["Canggu", "Uluwatu", "Pererenan", "Ubud", "Seminyak", "Sanur"] as const;
 
 export const properties: Property[] = [
   {
@@ -69,6 +71,14 @@ export const properties: Property[] = [
     landSize: 320,
     buildingSize: 280,
     pool: true,
+
+    carport: 2,
+    roadWidth: 5,
+    powerVa: 7700,
+    water: "PDAM",
+    furnished: true,
+    view: "Ocean",
+
     ownership: "Freehold",
     yearBuilt: 2022,
     images: [
@@ -77,11 +87,7 @@ export const properties: Property[] = [
       "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1600573472550-8090b17e3b94?auto=format&fit=crop&w=1800&q=80",
     ],
-    highlights: [
-      "Ocean-facing living area dengan sunset view",
-      "Layout siap short-stay (high ADR)",
-      "Akses 8 menit ke beach clubs & surf spots",
-    ],
+    highlights: ["Ocean-facing living area dengan sunset view", "Layout siap short-stay (high ADR)", "Akses 8 menit ke beach clubs & surf spots"],
     description:
       "Vila modern dengan garis arsitektur hangat dan pencahayaan natural. Cocok untuk investor yang mengejar yield sewa harian di Uluwatu dengan permintaan stabil sepanjang tahun.",
     tags: ["Ocean view", "Turn-key", "Prime"],
@@ -99,8 +105,7 @@ export const properties: Property[] = [
     roiProjection: {
       nightlyRateIdr: 4_500_000,
       occupancy: 0.62,
-      disclaimer:
-        "Proyeksi ROI bersifat indikatif berdasarkan data pasar dan dapat berubah mengikuti seasonality & strategi pricing.",
+      disclaimer: "Proyeksi ROI bersifat indikatif berdasarkan data pasar dan dapat berubah mengikuti seasonality & strategi pricing.",
     },
     createdAt: "2026-04-10T10:00:00.000Z",
   },
@@ -121,6 +126,14 @@ export const properties: Property[] = [
     landSize: 180,
     buildingSize: 160,
     pool: true,
+
+    carport: 1,
+    roadWidth: 4,
+    powerVa: 5500,
+    water: "PDAM",
+    furnished: false,
+    view: "Garden",
+
     ownership: "Leasehold",
     yearBuilt: 2021,
     images: [
@@ -128,11 +141,7 @@ export const properties: Property[] = [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=80",
     ],
-    highlights: [
-      "Walking distance ke cafe & coworking",
-      "Ruang terbuka dengan pool kecil",
-      "Cocok untuk tinggal + disewakan saat peak season",
-    ],
+    highlights: ["Walking distance ke cafe & coworking", "Ruang terbuka dengan pool kecil", "Cocok untuk tinggal + disewakan saat peak season"],
     description:
       "Rumah minimalis dengan material natural tones. Lokasi strategis untuk lifestyle Canggu, ideal untuk end-user maupun investor dengan strategi hybrid.",
     tags: ["Walkable", "Lifestyle"],
@@ -150,8 +159,7 @@ export const properties: Property[] = [
     roiProjection: {
       nightlyRateIdr: 2_800_000,
       occupancy: 0.58,
-      disclaimer:
-        "Angka proyeksi bukan jaminan. Kami sarankan cek performa listing pembanding dan biaya operasional.",
+      disclaimer: "Angka proyeksi bukan jaminan. Kami sarankan cek performa listing pembanding dan biaya operasional.",
     },
     createdAt: "2026-03-21T10:00:00.000Z",
   },
@@ -172,6 +180,14 @@ export const properties: Property[] = [
     landSize: 260,
     buildingSize: 240,
     pool: true,
+
+    carport: 1,
+    roadWidth: 4,
+    powerVa: 6600,
+    water: "Well",
+    furnished: false,
+    view: "Garden",
+
     ownership: "Leasehold",
     yearBuilt: 2026,
     images: [
@@ -179,11 +195,7 @@ export const properties: Property[] = [
       "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1600047509782-20f0d30f41f7?auto=format&fit=crop&w=1800&q=80",
     ],
-    highlights: [
-      "Konsep eco-chic: cross ventilation & material lokal",
-      "Payment milestone jelas (developer track record)",
-      "Target ADR kompetitif untuk area Pererenan",
-    ],
+    highlights: ["Konsep eco-chic: cross ventilation & material lokal", "Payment milestone jelas (developer track record)", "Target ADR kompetitif untuk area Pererenan"],
     description:
       "Unit off-plan dengan desain resorty yang hangat. Cocok untuk investor yang ingin masuk lebih awal dengan potensi capital gain saat handover.",
     tags: ["Off-plan", "Eco"],
@@ -213,6 +225,14 @@ export const properties: Property[] = [
     status: "Ready",
     landSize: 520,
     pool: false,
+
+    carport: 0,
+    roadWidth: 4,
+    powerVa: 2200,
+    water: "Well",
+    furnished: false,
+    view: "Ricefield",
+
     ownership: "Freehold",
     zoning: "Pariwisata (cek RDTR)",
     images: [
@@ -220,13 +240,8 @@ export const properties: Property[] = [
       "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1528150177508-7cc0c36cda5e?auto=format&fit=crop&w=1800&q=80",
     ],
-    highlights: [
-      "View sawah dan akses jalan lebar",
-      "Cocok untuk build 1–2 unit vila",
-      "Area dengan demand wellness & retreat",
-    ],
-    description:
-      "Lahan strategis Ubud dengan suasana tenang dan view sawah. Ideal untuk pengembangan vila boutique atau retreat kecil.",
+    highlights: ["View sawah dan akses jalan lebar", "Cocok untuk build 1–2 unit vila", "Area dengan demand wellness & retreat"],
+    description: "Lahan strategis Ubud dengan suasana tenang dan view sawah. Ideal untuk pengembangan vila boutique atau retreat kecil.",
     tags: ["Ricefield", "Development"],
     legal: {
       checklist: [
@@ -257,26 +272,26 @@ export const properties: Property[] = [
     landSize: 410,
     buildingSize: 360,
     pool: true,
+
+    carport: 2,
+    roadWidth: 6,
+    powerVa: 11000,
+    water: "PDAM",
+    furnished: true,
+    view: "City",
+
     ownership: "Freehold",
     yearBuilt: 2020,
     images: [
       "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1800&q=80",
     ],
-    highlights: [
-      "High-demand area untuk premium villas",
-      "Turn-key furnishing",
-      "Reputasi sewa kuat",
-    ],
-    description:
-      "Listing ini sudah terjual. Jika Anda cari unit serupa di Seminyak, kami bisa bantu carikan opsi sesuai budget dan preferensi.",
+    highlights: ["High-demand area untuk premium villas", "Turn-key furnishing", "Reputasi sewa kuat"],
+    description: "Listing ini sudah terjual. Jika Anda cari unit serupa di Seminyak, kami bisa bantu carikan opsi sesuai budget dan preferensi.",
 
     tags: ["Sold"],
     legal: {
-      checklist: [
-        "Unit ini sudah SOLD",
-        "Kami bisa carikan opsi serupa di area yang sama",
-      ],
+      checklist: ["Unit ini sudah SOLD", "Kami bisa carikan opsi serupa di area yang sama"],
       notes: "Klik WhatsApp untuk minta unit serupa (budget & preferensi Anda akan kami catat).",
     },
 

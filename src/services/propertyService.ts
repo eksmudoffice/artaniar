@@ -8,7 +8,7 @@ export type PropertyQuery = {
   area?: string | "All";
   priceMin?: number;
   priceMax?: number;
-  advanced?: string; // free text tokens: land/building/beds/baths/pool
+  advanced?: string; // free text tokens
   sort?: "newest" | "price_asc" | "price_desc" | "roi_desc";
   page?: number;
   pageSize?: number;
@@ -16,13 +16,19 @@ export type PropertyQuery = {
 
 type Op = ">" | ">=" | "<" | "<=" | "=";
 
-type NumericRule = { key: "land" | "building" | "beds" | "baths"; op: Op; value: number };
+type NumericKey = "land" | "building" | "beds" | "baths" | "carport" | "road" | "power";
+type NumericRule = { key: NumericKey; op: Op; value: number };
+
 type PoolRule = { key: "pool"; value: boolean };
+type FurnishedRule = { key: "furnished"; value: boolean };
+type WaterRule = { key: "water"; value: NonNullable<Property["water"]> };
+type ViewRule = { key: "view"; value: NonNullable<Property["view"]> };
 
-const includesLoose = (value: string, query: string) =>
-  value.toLowerCase().includes(query.trim().toLowerCase());
+const includesLoose = (value: string, query: string) => value.toLowerCase().includes(query.trim().toLowerCase());
 
-const parseAdvanced = (raw?: string): { numeric: NumericRule[]; pool?: PoolRule } => {
+const parseAdvanced = (
+  raw?: string,
+): { numeric: NumericRule[]; pool?: PoolRule; furnished?: FurnishedRule; water?: WaterRule; view?: ViewRule } => {
   if (!raw) return { numeric: [] };
   const tokens = raw
     .split(/[\s,;]+/g)
@@ -31,6 +37,9 @@ const parseAdvanced = (raw?: string): { numeric: NumericRule[]; pool?: PoolRule 
 
   const numeric: NumericRule[] = [];
   let pool: PoolRule | undefined;
+  let furnished: FurnishedRule | undefined;
+  let water: WaterRule | undefined;
+  let view: ViewRule | undefined;
 
   for (const token of tokens) {
     const lower = token.toLowerCase();
@@ -44,7 +53,37 @@ const parseAdvanced = (raw?: string): { numeric: NumericRule[]; pool?: PoolRule 
       continue;
     }
 
-    const m = lower.match(/^(land|building|beds|baths)\s*(>=|<=|=|>|<)\s*(\d+)$/);
+    if (lower === "furnished") {
+      furnished = { key: "furnished", value: true };
+      continue;
+    }
+    if (lower === "unfurnished") {
+      furnished = { key: "furnished", value: false };
+      continue;
+    }
+
+    const waterMatch = lower.match(/^water\s*=\s*(pdam|well|other)$/);
+    if (waterMatch) {
+      const v = waterMatch[1];
+      water = { key: "water", value: v === "pdam" ? "PDAM" : v === "well" ? "Well" : "Other" };
+      continue;
+    }
+
+    const viewMatch = lower.match(/^view\s*=\s*(ocean|ricefield|jungle|garden|city)$/);
+    if (viewMatch) {
+      const v = viewMatch[1];
+      const map: Record<string, NonNullable<Property["view"]>> = {
+        ocean: "Ocean",
+        ricefield: "Ricefield",
+        jungle: "Jungle",
+        garden: "Garden",
+        city: "City",
+      };
+      view = { key: "view", value: map[v] };
+      continue;
+    }
+
+    const m = lower.match(/^(land|building|beds|baths|carport|road|power)\s*(>=|<=|=|>|<)\s*(\d+)$/);
     if (!m) continue;
 
     const key = m[1] as NumericRule["key"];
@@ -55,7 +94,7 @@ const parseAdvanced = (raw?: string): { numeric: NumericRule[]; pool?: PoolRule 
     numeric.push({ key, op, value });
   }
 
-  return { numeric, pool };
+  return { numeric, pool, furnished, water, view };
 };
 
 const compareOp = (left: number, op: Op, right: number) => {
@@ -86,10 +125,7 @@ export const PropertyService = {
 
     if (search && search.trim()) {
       data = data.filter(
-        (p) =>
-          includesLoose(p.title, search) ||
-          includesLoose(p.location.area, search) ||
-          includesLoose(p.code, search),
+        (p) => includesLoose(p.title, search) || includesLoose(p.location.area, search) || includesLoose(p.code, search),
       );
     }
 
@@ -108,6 +144,18 @@ export const PropertyService = {
         data = data.filter((p) => (p.pool ?? false) === rules.pool!.value);
       }
 
+      if (rules.furnished) {
+        data = data.filter((p) => (p.furnished ?? false) === rules.furnished!.value);
+      }
+
+      if (rules.water) {
+        data = data.filter((p) => (p.water ?? "Other") === rules.water!.value);
+      }
+
+      if (rules.view) {
+        data = data.filter((p) => (p.view ?? "Garden") === rules.view!.value);
+      }
+
       if (rules.numeric.length) {
         data = data.filter((p) => {
           for (const r of rules.numeric) {
@@ -118,7 +166,13 @@ export const PropertyService = {
                   ? p.buildingSize ?? 0
                   : r.key === "beds"
                     ? p.bedrooms ?? 0
-                    : p.bathrooms ?? 0;
+                    : r.key === "baths"
+                      ? p.bathrooms ?? 0
+                      : r.key === "carport"
+                        ? p.carport ?? 0
+                        : r.key === "road"
+                          ? p.roadWidth ?? 0
+                          : p.powerVa ?? 0;
 
             if (!compareOp(left, r.op, r.value)) return false;
           }
