@@ -27,7 +27,9 @@ export default function WhatsAppFloatingCTA({ className }: { className?: string 
         <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.12)] bg-[hsl(var(--brand-surface))]/92 backdrop-blur-md shadow-[0_18px_50px_-30px_rgba(0,0,0,0.45)] p-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]">Butuh rekomendasi cepat?</div>
-            <div className="text-[11px] text-[hsl(var(--brand-ink)/0.70)] truncate">Kirim preferensi budget & area, kami kurasi opsi.</div>
+            <div className="text-[11px] text-[hsl(var(--brand-ink)/0.70)] truncate">
+              Kirim preferensi budget dan area—kami bantu carikan opsi yang sesuai.
+            </div>
           </div>
           <WhatsAppCTA className="shrink-0" context={{ intent: "Konsultasi" }} label="WhatsApp" />
         </div>

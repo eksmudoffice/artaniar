@@ -52,11 +52,7 @@ export default function Properties() {
         <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
           <div className="hidden lg:block">
             <div className="sticky top-24 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-5 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
-              <PropertyFilters
-                value={filters}
-                onChange={setFilters}
-                onReset={() => setFilters(DEFAULT_FILTERS)}
-              />
+              <PropertyFilters value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
             </div>
           </div>
 
@@ -64,7 +60,9 @@ export default function Properties() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="font-serif text-3xl">Browse listings</h1>
-                <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">Filter, bandingkan, lalu klik WhatsApp untuk tanya availability.</p>
+                <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">
+                  Gunakan filter untuk mempersempit pilihan, lalu klik WhatsApp untuk menanyakan ketersediaan.
+                </p>
               </div>
 
               <div className="flex gap-2 lg:hidden">
@@ -82,12 +80,7 @@ export default function Properties() {
                       <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">Filter listings</SheetTitle>
                     </SheetHeader>
                     <div className="mt-4 pb-3">
-                      <PropertyFilters
-                        compact
-                        value={filters}
-                        onChange={setFilters}
-                        onReset={() => setFilters(DEFAULT_FILTERS)}
-                      />
+                      <PropertyFilters compact value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
                     </div>
                   </SheetContent>
                 </Sheet>
@@ -99,7 +92,10 @@ export default function Properties() {
             {loading ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 9 }).map((_, idx) => (
-                  <div key={idx} className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden">
+                  <div
+                    key={idx}
+                    className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden"
+                  >
                     <Skeleton className="aspect-[16/11] w-full" />
                     <div className="p-4 grid gap-3">
                       <Skeleton className="h-4 w-2/3" />
@@ -119,7 +115,7 @@ export default function Properties() {
                 </div>
                 <h2 className="mt-4 font-serif text-2xl">Tidak ada hasil</h2>
                 <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                  Coba longgarkan filter (harga/area), atau konsultasi agar kami carikan unit yang cocok.
+                  Silakan sesuaikan filter (harga/area), atau konsultasikan preferensi Anda agar kami bantu mencarikan opsi yang tepat.
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Button
@@ -129,7 +125,13 @@ export default function Properties() {
                   >
                     Reset filter
                   </Button>
-                  <WhatsAppCTA context={{ intent: "Konsultasi", budgetIdr: budget, location: filters.area !== "All" ? filters.area : undefined }} />
+                  <WhatsAppCTA
+                    context={{
+                      intent: "Konsultasi",
+                      budgetIdr: budget,
+                      location: filters.area !== "All" ? filters.area : undefined,
+                    }}
+                  />
                 </div>
               </div>
             ) : (
@@ -149,7 +151,9 @@ export default function Properties() {
                   >
                     Prev
                   </Button>
-                  <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">Page {page} / {totalPages}</div>
+                  <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">
+                    Page {page} / {totalPages}
+                  </div>
                   <Button
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}

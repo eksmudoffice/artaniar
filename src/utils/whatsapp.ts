@@ -20,7 +20,9 @@ export const buildWhatsAppMessage = (ctx: WhatsAppMessageContext) => {
   if (ctx.intent) lines.push(`Saya ingin *${ctx.intent}*.`);
 
   if (ctx.propertyTitle) {
-    lines.push(`Saya tertarik dengan: *${ctx.propertyTitle}*${ctx.listingCode ? ` (Kode: ${ctx.listingCode})` : ""}.`);
+    lines.push(
+      `Saya tertarik dengan: *${ctx.propertyTitle}*${ctx.listingCode ? ` (Kode: ${ctx.listingCode})` : ""}.`,
+    );
   }
 
   if (ctx.location) lines.push(`Preferensi area: ${ctx.location}.`);
@@ -28,10 +30,10 @@ export const buildWhatsAppMessage = (ctx: WhatsAppMessageContext) => {
   if (ctx.budgetIdr?.min || ctx.budgetIdr?.max) {
     const min = ctx.budgetIdr.min ? formatIdrCompact(ctx.budgetIdr.min) : undefined;
     const max = ctx.budgetIdr.max ? formatIdrCompact(ctx.budgetIdr.max) : undefined;
-    lines.push(`Budget: ${min ?? "-"} – ${max ?? "-"}.`);
+    lines.push(`Perkiraan budget: ${min ?? "-"} – ${max ?? "-"}.`);
   }
 
-  lines.push("Masih available?");
+  lines.push("Mohon informasikan apakah unit ini masih tersedia.");
   return lines.join("\n");
 };
 

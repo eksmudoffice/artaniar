@@ -39,7 +39,7 @@ export default function HeaderNav() {
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className={cn("flex h-16 items-center justify-between", transparent ? "" : "")}> 
+        <div className={cn("flex h-16 items-center justify-between", transparent ? "" : "")}>
           <Link to="/" className="flex items-center gap-2">
             <div
               className={cn(
@@ -47,12 +47,19 @@ export default function HeaderNav() {
                 transparent ? "bg-white/10 border border-white/15" : "bg-[hsl(var(--brand-ink))]",
               )}
             >
-              <span className={cn("font-serif text-lg", transparent ? "text-white" : "text-[hsl(var(--brand-ink-foreground))]")}>A</span>
+              <span className={cn("font-serif text-lg", transparent ? "text-white" : "text-[hsl(var(--brand-ink-foreground))]")}>
+                A
+              </span>
             </div>
             <div className={cn("leading-tight", transparent ? "text-white" : "text-[hsl(var(--brand-ink))]")}>
               <div className="font-serif text-base tracking-wide">Artaniar</div>
-              <div className={cn("text-[11px] tracking-[0.18em] uppercase", transparent ? "text-white/70" : "text-[hsl(var(--brand-ink)/0.60)]")}>
-                Bali Property Curator
+              <div
+                className={cn(
+                  "text-[11px] tracking-[0.18em] uppercase",
+                  transparent ? "text-white/70" : "text-[hsl(var(--brand-ink)/0.60)]",
+                )}
+              >
+                Bali Property Agent
               </div>
             </div>
           </Link>
@@ -65,7 +72,9 @@ export default function HeaderNav() {
                 className={({ isActive }) =>
                   cn(
                     "text-sm font-medium transition-colors",
-                    transparent ? "text-white/85 hover:text-white" : "text-[hsl(var(--brand-ink)/0.75)] hover:text-[hsl(var(--brand-ink))]",
+                    transparent
+                      ? "text-white/85 hover:text-white"
+                      : "text-[hsl(var(--brand-ink)/0.75)] hover:text-[hsl(var(--brand-ink))]",
                     isActive && (transparent ? "text-white" : "text-[hsl(var(--brand-ink))]"),
                   )
                 }
@@ -91,7 +100,9 @@ export default function HeaderNav() {
                   variant="ghost"
                   className={cn(
                     "rounded-2xl",
-                    transparent ? "text-white hover:bg-white/10" : "text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink)/0.06)]",
+                    transparent
+                      ? "text-white hover:bg-white/10"
+                      : "text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink)/0.06)]",
                   )}
                 >
                   <Menu className="h-5 w-5" />
@@ -121,7 +132,11 @@ export default function HeaderNav() {
                   ))}
 
                   <div className="pt-2">
-                    <WhatsAppCTA className="w-full justify-center" context={{ intent: "Konsultasi" }} label="Konsultasi via WhatsApp" />
+                    <WhatsAppCTA
+                      className="w-full justify-center"
+                      context={{ intent: "Konsultasi" }}
+                      label="Konsultasi via WhatsApp"
+                    />
                   </div>
                 </div>
               </SheetContent>

@@ -15,11 +15,14 @@ export default function About() {
             <div className="p-7 md:p-10">
               <h1 className="font-serif text-4xl">Tentang Artaniar</h1>
               <p className="mt-3 text-[hsl(var(--brand-ink)/0.70)] leading-relaxed">
-                Artaniar adalah kurator properti Bali yang fokus pada keputusan yang rapi: data pasar, potensi ROI, dan legalitas.
-                Kami bukan sekadar “listing sebanyak-banyaknya”—kami memilih unit yang masuk akal untuk tujuan Anda.
+                Artaniar adalah <span className="font-semibold text-[hsl(var(--brand-ink))]">property agent</span> di Bali yang membantu Anda memilih
+                opsi yang paling relevan—mulai dari shortlist, pembandingan, hingga koordinasi viewing dan negosiasi.
+              </p>
+              <p className="mt-3 text-[hsl(var(--brand-ink)/0.70)] leading-relaxed">
+                Fokus kami adalah proses yang rapi dan efisien: informasi jelas, respons cepat, serta komunikasi yang terstruktur dengan pihak terkait.
               </p>
               <div className="mt-7">
-                <WhatsAppCTA context={{ intent: "Konsultasi" }} label="Konsultasi & ceritakan kebutuhan Anda" />
+                <WhatsAppCTA context={{ intent: "Konsultasi" }} label="Konsultasi & sampaikan kebutuhan Anda" />
               </div>
             </div>
             <div className="relative min-h-[260px] md:min-h-full">
@@ -35,16 +38,22 @@ export default function About() {
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           <Card className="rounded-3xl border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-6">
-            <div className="font-semibold">Kurasi yang tegas</div>
-            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">Kualitas inventory lebih penting daripada kuantitas.</div>
+            <div className="font-semibold">Rekomendasi yang terarah</div>
+            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
+              Menyaring opsi berdasarkan tujuan, area, dan budget Anda.
+            </div>
           </Card>
           <Card className="rounded-3xl border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-6">
-            <div className="font-semibold">Transparansi dokumen</div>
-            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">Checklist legal disajikan jelas untuk minim risiko.</div>
+            <div className="font-semibold">Informasi yang jelas</div>
+            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
+              Detail listing disampaikan rapi agar keputusan lebih tenang.
+            </div>
           </Card>
           <Card className="rounded-3xl border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-6">
-            <div className="font-semibold">Pendampingan closing</div>
-            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">Shortlist → viewing → negosiasi → serah terima.</div>
+            <div className="font-semibold">Pendampingan sampai deal</div>
+            <div className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
+              Shortlist → viewing → negosiasi → koordinasi serah terima.
+            </div>
           </Card>
         </div>
       </main>

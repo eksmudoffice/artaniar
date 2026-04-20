@@ -11,7 +11,8 @@ export default function Footer() {
           <div>
             <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">Artaniar</div>
             <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)] leading-relaxed max-w-sm">
-              Properti Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respon cepat, shortlist rapi, dan pendampingan deal sampai tuntas.
+              Property agent Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respons cepat, shortlist rapi, serta pendampingan deal hingga
+              tuntas.
             </p>
 
             <div className="mt-5">
@@ -22,9 +23,15 @@ export default function Footer() {
           <div className="text-sm">
             <div className="font-semibold text-[hsl(var(--brand-ink))]">Explore</div>
             <div className="mt-3 grid gap-2 text-[hsl(var(--brand-ink)/0.75)]">
-              <Link to="/properties" className="hover:text-[hsl(var(--brand-ink))]">Browse listings</Link>
-              <Link to="/investment" className="hover:text-[hsl(var(--brand-ink))]">Investment guide</Link>
-              <Link to="/about" className="hover:text-[hsl(var(--brand-ink))]">About Artaniar</Link>
+              <Link to="/properties" className="hover:text-[hsl(var(--brand-ink))]">
+                Browse listings
+              </Link>
+              <Link to="/investment" className="hover:text-[hsl(var(--brand-ink))]">
+                Investment guide
+              </Link>
+              <Link to="/about" className="hover:text-[hsl(var(--brand-ink))]">
+                About Artaniar
+              </Link>
             </div>
           </div>
 
@@ -45,9 +52,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between text-xs text-[hsl(var(--brand-ink)/0.60)]">
           <div>© {new Date().getFullYear()} Artaniar. All rights reserved.</div>
-          <div className="leading-relaxed">
-            Disclaimer: Informasi listing bersifat indikatif. Ketersediaan & harga dapat berubah.
-          </div>
+          <div className="leading-relaxed">Disclaimer: Informasi listing bersifat indikatif. Ketersediaan dan harga dapat berubah.</div>
         </div>
       </div>
     </footer>

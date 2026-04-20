@@ -30,16 +30,16 @@ export default function Index() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs text-white/85 backdrop-blur">
                 <Sparkles className="h-4 w-4" />
-                Respon cepat • Shortlist sesuai budget • Siap untuk tinggal / bisnis
+                Respons cepat • Shortlist sesuai budget • Siap untuk tinggal / bisnis
               </div>
 
               <h1 className="mt-5 font-serif text-4xl leading-tight text-white sm:text-5xl md:text-6xl">
-                Cari properti di Bali?
-                <span className="block italic">Kita rapihin dari shortlist sampai deal.</span>
+                Mencari properti di Bali?
+                <span className="block italic">Kami bantu dari shortlist hingga deal.</span>
               </h1>
               <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
-                Untuk hunian, villa bisnis, atau tanah yang potensial untuk pengembangan. Ceritakan budget & area—kami bantu carikan opsi yang relevan,
-                lalu koordinasi viewing dan negosiasi.
+                Untuk hunian, villa bisnis, maupun tanah potensial untuk pengembangan. Sampaikan budget dan area yang diinginkan—kami bantu pilih opsi
+                yang relevan, lalu koordinasi viewing dan negosiasi.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -48,7 +48,7 @@ export default function Index() {
                   to="/properties"
                   className="inline-flex h-12 items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/15 transition-colors"
                 >
-                  Browse listings <ArrowRight className="ml-2 h-4 w-4" />
+                  Lihat listings <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <CallCTA className="h-12 px-7 text-base" />
               </div>
@@ -56,21 +56,27 @@ export default function Index() {
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
                   <div className="flex items-center gap-2 text-white font-semibold">
-                    <Timer className="h-4 w-4" /> Fast response
+                    <Timer className="h-4 w-4" /> Respons cepat
                   </div>
-                  <div className="mt-1 text-sm text-white/75">Follow-up rapi: availability, video, sampai jadwal viewing.</div>
+                  <div className="mt-1 text-sm text-white/75">
+                    Follow-up rapi: availability, video, hingga jadwal viewing.
+                  </div>
                 </div>
                 <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
                   <div className="flex items-center gap-2 text-white font-semibold">
-                    <Building2 className="h-4 w-4" /> One point of contact
+                    <Building2 className="h-4 w-4" /> Satu PIC
                   </div>
-                  <div className="mt-1 text-sm text-white/75">Satu PIC untuk koordinasi owner/agent/notaris Anda.</div>
+                  <div className="mt-1 text-sm text-white/75">
+                    Satu kontak untuk koordinasi owner/agent/notaris Anda.
+                  </div>
                 </div>
                 <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
                   <div className="flex items-center gap-2 text-white font-semibold">
-                    <TrendingUp className="h-4 w-4" /> Market pulse
+                    <TrendingUp className="h-4 w-4" /> Insight pasar
                   </div>
-                  <div className="mt-1 text-sm text-white/75">Insight area & strategi (hunian / bisnis / investment) tanpa ribet.</div>
+                  <div className="mt-1 text-sm text-white/75">
+                    Insight area & strategi (hunian / bisnis / investment) yang praktis.
+                  </div>
                 </div>
               </div>
             </div>
@@ -82,7 +88,7 @@ export default function Index() {
             <div>
               <h2 className="font-serif text-3xl leading-tight">Featured listings</h2>
               <p className="mt-2 text-[hsl(var(--brand-ink)/0.70)]">
-                Mix untuk hunian & peluang bisnis (villa). Klik detail untuk spesifikasi lengkap dan CTA WhatsApp siap pakai.
+                Pilihan untuk hunian dan peluang bisnis (villa). Klik detail untuk spesifikasi lengkap, dengan CTA WhatsApp siap digunakan.
               </p>
             </div>
             <div className="md:justify-self-end">
@@ -106,10 +112,10 @@ export default function Index() {
           <div className="rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-6 md:p-10 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.65)]">
             <div className="grid gap-8 md:grid-cols-2 md:items-center">
               <div>
-                <h2 className="font-serif text-3xl">Cara kerja kami (simple)</h2>
+                <h2 className="font-serif text-3xl">Cara kerja kami (ringkas)</h2>
                 <p className="mt-2 text-[hsl(var(--brand-ink)/0.70)] leading-relaxed">
-                  Anda kirim budget, area, dan tujuan (tinggal / bisnis / investasi) → kami susun shortlist → kirim video/opsi → atur viewing → bantu negosiasi.
-                  Prosesnya cepat, komunikasinya rapi.
+                  Anda kirim budget, area, dan tujuan (tinggal / bisnis / investasi) → kami susun shortlist → kirim video/opsi → atur viewing → bantu
+                  negosiasi. Proses efisien, komunikasi rapi.
                 </p>
 
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -126,18 +132,18 @@ export default function Index() {
               <div className="grid gap-3">
                 <div className="rounded-3xl bg-[hsl(var(--brand-surface-2))] p-5">
                   <div className="flex items-center gap-2 font-semibold">
-                    <TrendingUp className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Market pulse
+                    <TrendingUp className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Insight pasar
                   </div>
                   <div className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                    Untuk villa bisnis: kami bantu baca demand area + asumsi ROI secara indikatif.
+                    Untuk villa bisnis: kami bantu membaca demand area dan asumsi ROI secara indikatif.
                   </div>
                 </div>
                 <div className="rounded-3xl bg-[hsl(var(--brand-surface-2))] p-5">
                   <div className="flex items-center gap-2 font-semibold">
-                    <Building2 className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Deal support
+                    <Building2 className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Dukungan deal
                   </div>
                   <div className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                    Kami bantu koordinasi viewing, komunikasi owner/agent, dan negosiasi—supaya deal lebih mulus.
+                    Kami bantu koordinasi viewing, komunikasi owner/agent, dan negosiasi agar deal lebih lancar.
                   </div>
                 </div>
               </div>
