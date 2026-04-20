@@ -48,6 +48,31 @@ export type TranslationKey =
   | "properties.empty.title"
   | "properties.empty.desc"
   | "properties.pagination"
+  | "filters.title"
+  | "filters.subtitle"
+  | "filters.search.label"
+  | "filters.search.placeholder"
+  | "filters.type.label"
+  | "filters.status.label"
+  | "filters.purpose.label"
+  | "filters.area.label"
+  | "filters.price.label"
+  | "filters.price.min"
+  | "filters.price.max"
+  | "filters.sort.label"
+  | "filters.option.all"
+  | "filters.option.type.villa"
+  | "filters.option.type.house"
+  | "filters.option.type.land"
+  | "filters.option.status.ready"
+  | "filters.option.status.offplan"
+  | "filters.option.status.sold"
+  | "filters.option.purpose.investment"
+  | "filters.option.purpose.residential"
+  | "filters.option.sort.newest"
+  | "filters.option.sort.price_asc"
+  | "filters.option.sort.price_desc"
+  | "filters.option.sort.roi_desc"
   | "investment.title"
   | "investment.subtitle"
   | "investment.card1.title"
@@ -132,6 +157,32 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "properties.empty.desc":
       "Please adjust your filters (price/area), or contact us—share your preferences and we’ll recommend suitable options.",
     "properties.pagination": "Page {page} / {totalPages}",
+
+    "filters.title": "Filters",
+    "filters.subtitle": "Narrow down options and focus on the most relevant listings.",
+    "filters.search.label": "Search",
+    "filters.search.placeholder": "Search area, title, or code (e.g., ART-ULU)",
+    "filters.type.label": "Type",
+    "filters.status.label": "Status",
+    "filters.purpose.label": "Purpose",
+    "filters.area.label": "Area",
+    "filters.price.label": "Budget (IDR)",
+    "filters.price.min": "Min",
+    "filters.price.max": "Max",
+    "filters.sort.label": "Sort",
+    "filters.option.all": "All",
+    "filters.option.type.villa": "Villa",
+    "filters.option.type.house": "House",
+    "filters.option.type.land": "Land",
+    "filters.option.status.ready": "Ready",
+    "filters.option.status.offplan": "Off-plan",
+    "filters.option.status.sold": "Sold",
+    "filters.option.purpose.investment": "Investment",
+    "filters.option.purpose.residential": "Residential",
+    "filters.option.sort.newest": "Newest",
+    "filters.option.sort.price_asc": "Lowest price",
+    "filters.option.sort.price_desc": "Highest price",
+    "filters.option.sort.roi_desc": "Highest ROI",
 
     "investment.title": "Investment Guide",
     "investment.subtitle":
@@ -221,6 +272,32 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "properties.empty.desc":
       "Silakan sesuaikan filter (harga/area), atau konsultasikan preferensi Anda agar kami bantu mencarikan opsi yang tepat.",
     "properties.pagination": "Page {page} / {totalPages}",
+
+    "filters.title": "Filter",
+    "filters.subtitle": "Persempit pilihan dan fokus ke unit yang paling relevan.",
+    "filters.search.label": "Search",
+    "filters.search.placeholder": "Cari area, judul, atau kode (contoh: ART-ULU)",
+    "filters.type.label": "Tipe",
+    "filters.status.label": "Status",
+    "filters.purpose.label": "Purpose",
+    "filters.area.label": "Area",
+    "filters.price.label": "Budget (IDR)",
+    "filters.price.min": "Min",
+    "filters.price.max": "Max",
+    "filters.sort.label": "Sort",
+    "filters.option.all": "Semua",
+    "filters.option.type.villa": "Villa",
+    "filters.option.type.house": "Rumah",
+    "filters.option.type.land": "Tanah",
+    "filters.option.status.ready": "Ready",
+    "filters.option.status.offplan": "Off-plan",
+    "filters.option.status.sold": "Sold",
+    "filters.option.purpose.investment": "Investment",
+    "filters.option.purpose.residential": "Residential",
+    "filters.option.sort.newest": "Terbaru",
+    "filters.option.sort.price_asc": "Harga rendah",
+    "filters.option.sort.price_desc": "Harga tinggi",
+    "filters.option.sort.roi_desc": "ROI tertinggi",
 
     "investment.title": "Investment Guide",
     "investment.subtitle":

@@ -3,17 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import type { PropertyQuery } from "@/services/propertyService";
 import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { useLocale } from "@/i18n/use-locale";
 
-const PRICE_MAX = 12_000_000_000;
+const PRICE_MAX = 100_000_000_000;
 
 const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
+
+const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
 
 export type PropertyFiltersValue = {
   search: string;
@@ -36,6 +38,8 @@ export default function PropertyFilters({
   onReset: () => void;
   compact?: boolean;
 }) {
+  const { t } = useLocale();
+
   const activeChips = useMemo(() => {
     const chips: { key: string; label: string; onClear: () => void }[] = [];
 
@@ -57,21 +61,36 @@ export default function PropertyFilters({
     return chips;
   }, [onChange, value]);
 
+  const priceMin = value.priceRange[0];
+  const priceMax = value.priceRange[1];
+
+  const setPriceMin = (raw: string) => {
+    const nextMin = clamp(Number(raw || 0), 0, PRICE_MAX);
+    const nextMax = clamp(Math.max(priceMax, nextMin), 0, PRICE_MAX);
+    onChange({ ...value, priceRange: [nextMin, nextMax] });
+  };
+
+  const setPriceMax = (raw: string) => {
+    const nextMax = clamp(Number(raw || 0), 0, PRICE_MAX);
+    const nextMin = clamp(Math.min(priceMin, nextMax), 0, PRICE_MAX);
+    onChange({ ...value, priceRange: [nextMin, nextMax] });
+  };
+
   return (
     <div className="grid gap-5">
       {!compact && (
         <div>
-          <div className="font-serif text-xl text-[hsl(var(--brand-ink))]">Filter</div>
-          <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">Persempit pilihan dan fokus ke unit yang paling relevan.</p>
+          <div className="font-serif text-xl text-[hsl(var(--brand-ink))]">{t("filters.title")}</div>
+          <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("filters.subtitle")}</p>
         </div>
       )}
 
       <div className="grid gap-2">
-        <Label className="text-sm text-[hsl(var(--brand-ink))]">Search</Label>
+        <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.search.label")}</Label>
         <Input
           value={value.search}
           onChange={(e) => onChange({ ...value, search: e.target.value })}
-          placeholder="Cari area, judul, atau kode (contoh: ART-ULU)"
+          placeholder={t("filters.search.placeholder")}
           className="rounded-2xl bg-white/70"
         />
       </div>
@@ -79,31 +98,31 @@ export default function PropertyFilters({
       <div className="grid gap-4">
         <div className="grid grid-cols-2 gap-3">
           <div className="grid gap-2">
-            <Label className="text-sm text-[hsl(var(--brand-ink))]">Tipe</Label>
+            <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.type.label")}</Label>
             <Select value={value.type} onValueChange={(v) => onChange({ ...value, type: v as PropertyFiltersValue["type"] })}>
               <SelectTrigger className="rounded-2xl bg-white/70">
-                <SelectValue placeholder="Pilih" />
+                <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Semua</SelectItem>
-                <SelectItem value="Villa">Villa</SelectItem>
-                <SelectItem value="Rumah">Rumah</SelectItem>
-                <SelectItem value="Tanah">Tanah</SelectItem>
+                <SelectItem value="All">{t("filters.option.all")}</SelectItem>
+                <SelectItem value="Villa">{t("filters.option.type.villa")}</SelectItem>
+                <SelectItem value="Rumah">{t("filters.option.type.house")}</SelectItem>
+                <SelectItem value="Tanah">{t("filters.option.type.land")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid gap-2">
-            <Label className="text-sm text-[hsl(var(--brand-ink))]">Status</Label>
+            <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.status.label")}</Label>
             <Select value={value.status} onValueChange={(v) => onChange({ ...value, status: v as PropertyFiltersValue["status"] })}>
               <SelectTrigger className="rounded-2xl bg-white/70">
-                <SelectValue placeholder="Pilih" />
+                <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Semua</SelectItem>
-                <SelectItem value="Ready">Ready</SelectItem>
-                <SelectItem value="Off-plan">Off-plan</SelectItem>
-                <SelectItem value="Sold">Sold</SelectItem>
+                <SelectItem value="All">{t("filters.option.all")}</SelectItem>
+                <SelectItem value="Ready">{t("filters.option.status.ready")}</SelectItem>
+                <SelectItem value="Off-plan">{t("filters.option.status.offplan")}</SelectItem>
+                <SelectItem value="Sold">{t("filters.option.status.sold")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -111,27 +130,27 @@ export default function PropertyFilters({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="grid gap-2">
-            <Label className="text-sm text-[hsl(var(--brand-ink))]">Purpose</Label>
+            <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.purpose.label")}</Label>
             <Select value={value.purpose} onValueChange={(v) => onChange({ ...value, purpose: v as PropertyFiltersValue["purpose"] })}>
               <SelectTrigger className="rounded-2xl bg-white/70">
-                <SelectValue placeholder="Pilih" />
+                <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Semua</SelectItem>
-                <SelectItem value="Investment">Investment</SelectItem>
-                <SelectItem value="Residential">Residential</SelectItem>
+                <SelectItem value="All">{t("filters.option.all")}</SelectItem>
+                <SelectItem value="Investment">{t("filters.option.purpose.investment")}</SelectItem>
+                <SelectItem value="Residential">{t("filters.option.purpose.residential")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid gap-2">
-            <Label className="text-sm text-[hsl(var(--brand-ink))]">Area</Label>
+            <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.area.label")}</Label>
             <Select value={value.area} onValueChange={(v) => onChange({ ...value, area: v })}>
               <SelectTrigger className="rounded-2xl bg-white/70">
-                <SelectValue placeholder="Pilih" />
+                <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Semua</SelectItem>
+                <SelectItem value="All">{t("filters.option.all")}</SelectItem>
                 {AREAS.map((a) => (
                   <SelectItem key={a} value={a}>
                     {a}
@@ -144,31 +163,45 @@ export default function PropertyFilters({
       </div>
 
       <div className="grid gap-3">
-        <div className="flex items-end justify-between">
-          <Label className="text-sm text-[hsl(var(--brand-ink))]">Range harga</Label>
-          <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Rp {formatIdrCompact(value.priceRange[0])} – {formatIdrCompact(value.priceRange[1])}</div>
+        <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.price.label")}</Label>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-2">
+            <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
+            <Input
+              inputMode="numeric"
+              value={String(priceMin)}
+              onChange={(e) => setPriceMin(e.target.value.replace(/[^\d]/g, ""))}
+              className="rounded-2xl bg-white/70"
+            />
+          </div>
+          <div className="grid gap-2">
+            <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
+            <Input
+              inputMode="numeric"
+              value={String(priceMax)}
+              onChange={(e) => setPriceMax(e.target.value.replace(/[^\d]/g, ""))}
+              className="rounded-2xl bg-white/70"
+            />
+          </div>
         </div>
-        <Slider
-          value={value.priceRange}
-          max={PRICE_MAX}
-          step={250_000_000}
-          onValueChange={(v) => onChange({ ...value, priceRange: v as [number, number] })}
-        />
+        <div className="text-[11px] text-[hsl(var(--brand-ink)/0.60)]">
+          Limit: Rp {formatIdrCompact(PRICE_MAX)}
+        </div>
       </div>
 
       <Separator className="bg-[hsl(var(--brand-ink)/0.10)]" />
 
       <div className="grid gap-2">
-        <Label className="text-sm text-[hsl(var(--brand-ink))]">Sort</Label>
+        <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.sort.label")}</Label>
         <Select value={value.sort} onValueChange={(v) => onChange({ ...value, sort: v as PropertyFiltersValue["sort"] })}>
           <SelectTrigger className="rounded-2xl bg-white/70">
-            <SelectValue placeholder="Pilih" />
+            <SelectValue placeholder={t("filters.option.sort.newest")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Terbaru</SelectItem>
-            <SelectItem value="price_asc">Harga rendah</SelectItem>
-            <SelectItem value="price_desc">Harga tinggi</SelectItem>
-            <SelectItem value="roi_desc">ROI tertinggi</SelectItem>
+            <SelectItem value="newest">{t("filters.option.sort.newest")}</SelectItem>
+            <SelectItem value="price_asc">{t("filters.option.sort.price_asc")}</SelectItem>
+            <SelectItem value="price_desc">{t("filters.option.sort.price_desc")}</SelectItem>
+            <SelectItem value="roi_desc">{t("filters.option.sort.roi_desc")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -200,13 +233,13 @@ export default function PropertyFilters({
           onClick={onReset}
           className="flex-1 rounded-2xl border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
         >
-          Reset
+          {t("cta.reset")}
         </Button>
         <Button
           onClick={() => onChange({ ...value })}
           className="flex-1 rounded-2xl bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
         >
-          Terapkan
+          {t("cta.apply")}
         </Button>
       </div>
     </div>
