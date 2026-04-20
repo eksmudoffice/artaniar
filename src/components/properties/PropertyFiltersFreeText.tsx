@@ -25,7 +25,14 @@ export type PropertyFiltersValue = {
   status: PropertyStatus | "All";
   area: string | "All";
   priceRange: [number, number];
-  advancedText: string;
+
+  // Advanced (by category)
+  landMin: string;
+  buildingMax: string;
+  bedsMin: string;
+  bathsMin: string;
+  pool: "Any" | "Yes" | "No";
+
   sort: NonNullable<PropertyQuery["sort"]>;
 };
 
@@ -36,9 +43,39 @@ type Props = {
   compact?: boolean;
 };
 
+const normalizeInt = (raw: string) => raw.replace(/[^\d]/g, "").replace(/^0+(?=\d)/, "");
+
+const toNum = (raw: string) => {
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : undefined;
+};
+
+const buildAdvancedTokens = (v: PropertyFiltersValue) => {
+  const tokens: string[] = [];
+
+  const land = toNum(v.landMin);
+  if (land != null) tokens.push(`land>=${land}`);
+
+  const building = toNum(v.buildingMax);
+  if (building != null) tokens.push(`building<=${building}`);
+
+  const beds = toNum(v.bedsMin);
+  if (beds != null) tokens.push(`beds>=${beds}`);
+
+  const baths = toNum(v.bathsMin);
+  if (baths != null) tokens.push(`baths>=${baths}`);
+
+  if (v.pool === "Yes") tokens.push("pool");
+  if (v.pool === "No") tokens.push("nopool");
+
+  return tokens.join(" ");
+};
+
 export default function PropertyFiltersFreeText({ value, onChange, onReset, compact = false }: Props) {
   const { t } = useLocale();
   const [advancedOpen, setAdvancedOpen] = useState(false);
+
+  const advancedTokens = useMemo(() => buildAdvancedTokens(value), [value]);
 
   const activeChips = useMemo(() => {
     const chips: Array<{ key: string; label: string; onClear: () => void }> = [];
@@ -58,16 +95,24 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
       });
     }
 
-    if (value.advancedText.trim()) {
+    if (advancedTokens.trim()) {
       chips.push({
         key: "advanced",
-        label: value.advancedText.trim(),
-        onClear: () => onChange({ ...value, advancedText: "" }),
+        label: advancedTokens,
+        onClear: () =>
+          onChange({
+            ...value,
+            landMin: "",
+            buildingMax: "",
+            bedsMin: "",
+            bathsMin: "",
+            pool: "Any",
+          }),
       });
     }
 
     return chips;
-  }, [onChange, value]);
+  }, [advancedTokens, onChange, value]);
 
   const priceMin = value.priceRange[0];
   const priceMax = value.priceRange[1];
@@ -157,11 +202,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               value: value.type,
               onValueChange: (v: string) => onChange({ ...value, type: v as PropertyFiltersValue["type"] }),
             },
-            el(
-              SelectTrigger,
-              { className: "rounded-2xl bg-white/70" },
-              el(SelectValue, { placeholder: t("filters.option.all") }),
-            ),
+            el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: t("filters.option.all") })),
             el(
               SelectContent,
               null,
@@ -182,11 +223,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               value: value.status,
               onValueChange: (v: string) => onChange({ ...value, status: v as PropertyFiltersValue["status"] }),
             },
-            el(
-              SelectTrigger,
-              { className: "rounded-2xl bg-white/70" },
-              el(SelectValue, { placeholder: t("filters.option.all") }),
-            ),
+            el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: t("filters.option.all") })),
             el(
               SelectContent,
               null,
@@ -212,11 +249,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               value: value.purpose,
               onValueChange: (v: string) => onChange({ ...value, purpose: v as PropertyFiltersValue["purpose"] }),
             },
-            el(
-              SelectTrigger,
-              { className: "rounded-2xl bg-white/70" },
-              el(SelectValue, { placeholder: t("filters.option.all") }),
-            ),
+            el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: t("filters.option.all") })),
             el(
               SelectContent,
               null,
@@ -236,17 +269,8 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               value: value.area,
               onValueChange: (v: string) => onChange({ ...value, area: v }),
             },
-            el(
-              SelectTrigger,
-              { className: "rounded-2xl bg-white/70" },
-              el(SelectValue, { placeholder: t("filters.option.all") }),
-            ),
-            el(
-              SelectContent,
-              null,
-              el(SelectItem, { value: "All" }, t("filters.option.all")),
-              ...AREAS.map((a) => el(SelectItem, { key: a, value: a }, a)),
-            ),
+            el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: t("filters.option.all") })),
+            el(SelectContent, null, el(SelectItem, { value: "All" }, t("filters.option.all")), ...AREAS.map((a) => el(SelectItem, { key: a, value: a }, a))),
           ),
         ),
       ),
@@ -300,8 +324,14 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
         el(
           "div",
           { className: "sr-only" },
-          el("input", { value: String(priceMin), onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPriceMin(Number(e.target.value || 0)) }),
-          el("input", { value: String(priceMax), onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPriceMax(Number(e.target.value || 0)) }),
+          el("input", {
+            value: String(priceMin),
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPriceMin(Number(e.target.value || 0)),
+          }),
+          el("input", {
+            value: String(priceMax),
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPriceMax(Number(e.target.value || 0)),
+          }),
         ),
       ),
     ),
@@ -316,11 +346,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
           value: value.sort,
           onValueChange: (v: string) => onChange({ ...value, sort: v as PropertyFiltersValue["sort"] }),
         },
-        el(
-          SelectTrigger,
-          { className: "rounded-2xl bg-white/70" },
-          el(SelectValue, { placeholder: t("filters.option.sort.newest") }),
-        ),
+        el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: t("filters.option.sort.newest") })),
         el(
           SelectContent,
           null,
@@ -354,8 +380,8 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
           el(
             "div",
             { className: "text-left" },
-            el("div", { className: "text-sm font-semibold text-[hsl(var(--brand-ink))]" }, "Advanced (free text)"),
-            el("div", { className: "text-[11px] text-[hsl(var(--brand-ink)/0.65)]" }, "Contoh: land>300 building<250 beds>2 baths>2 pool"),
+            el("div", { className: "text-sm font-semibold text-[hsl(var(--brand-ink))]" }, "Advanced (by category)"),
+            el("div", { className: "text-[11px] text-[hsl(var(--brand-ink)/0.65)]" }, "Filter detail: luas, kamar, pool."),
           ),
         ),
         el(
@@ -372,31 +398,122 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
       advancedOpen
         ? el(
             "div",
-            { className: "px-4 pb-4 grid gap-2" },
-            el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Advanced query"),
-            el(Input, {
-              value: value.advancedText,
-              onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, advancedText: e.target.value }),
-              placeholder: "land>=300 building<=250 beds>=2 baths>=2 pool",
-              className: "rounded-2xl bg-white/70",
-            }),
+            { className: "px-4 pb-4 grid gap-4" },
+
             el(
               "div",
-              { className: "text-[11px] text-[hsl(var(--brand-ink)/0.65)] leading-relaxed" },
-              "Tokens: ",
-              el("span", { className: "font-semibold" }, "land"),
-              ", ",
-              el("span", { className: "font-semibold" }, "building"),
-              ", ",
-              el("span", { className: "font-semibold" }, "beds"),
-              ", ",
-              el("span", { className: "font-semibold" }, "baths"),
-              ", ",
-              el("span", { className: "font-semibold" }, "pool"),
-              " / ",
-              el("span", { className: "font-semibold" }, "nopool"),
-              ".",
+              { className: "grid gap-2" },
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Land size (min m²)"),
+              el(Input, {
+                inputMode: "numeric",
+                value: value.landMin,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, landMin: normalizeInt(e.target.value) }),
+                placeholder: "ex: 300",
+                className: "rounded-2xl bg-white/70",
+              }),
             ),
+
+            el(
+              "div",
+              { className: "grid gap-2" },
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Building size (max m²)"),
+              el(Input, {
+                inputMode: "numeric",
+                value: value.buildingMax,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange({ ...value, buildingMax: normalizeInt(e.target.value) }),
+                placeholder: "ex: 250",
+                className: "rounded-2xl bg-white/70",
+              }),
+            ),
+
+            el(
+              "div",
+              { className: "grid grid-cols-2 gap-3" },
+              el(
+                "div",
+                { className: "grid gap-2" },
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Beds (min)"),
+                el(Input, {
+                  inputMode: "numeric",
+                  value: value.bedsMin,
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, bedsMin: normalizeInt(e.target.value) }),
+                  placeholder: "ex: 2",
+                  className: "rounded-2xl bg-white/70",
+                }),
+              ),
+              el(
+                "div",
+                { className: "grid gap-2" },
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Baths (min)"),
+                el(Input, {
+                  inputMode: "numeric",
+                  value: value.bathsMin,
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange({ ...value, bathsMin: normalizeInt(e.target.value) }),
+                  placeholder: "ex: 2",
+                  className: "rounded-2xl bg-white/70",
+                }),
+              ),
+            ),
+
+            el(
+              "div",
+              { className: "grid gap-2" },
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Pool"),
+              el(
+                "div",
+                { className: "grid grid-cols-3 gap-2" },
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, pool: "Any" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.pool === "Any" ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]" : "bg-white/70 hover:bg-white"),
+                  },
+                  "Any",
+                ),
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, pool: "Yes" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.pool === "Yes" ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]" : "bg-white/70 hover:bg-white"),
+                  },
+                  "Yes",
+                ),
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, pool: "No" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.pool === "No" ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]" : "bg-white/70 hover:bg-white"),
+                  },
+                  "No",
+                ),
+              ),
+            ),
+
+            advancedTokens.trim()
+              ? el(
+                  "div",
+                  {
+                    className:
+                      "rounded-2xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-3 text-[11px] text-[hsl(var(--brand-ink)/0.70)]",
+                  },
+                  el("div", { className: "font-semibold text-[hsl(var(--brand-ink))] mb-1" }, "Applied rules"),
+                  advancedTokens,
+                )
+              : null,
           )
         : null,
     ),
@@ -437,7 +554,13 @@ export const DEFAULT_FILTERS: PropertyFiltersValue = {
   status: "All",
   area: "All",
   priceRange: [0, PRICE_MAX],
-  advancedText: "",
+
+  landMin: "",
+  buildingMax: "",
+  bedsMin: "",
+  bathsMin: "",
+  pool: "Any",
+
   sort: "newest",
 };
 
@@ -449,6 +572,6 @@ export const toQuery = (v: PropertyFiltersValue): PropertyQuery => ({
   area: v.area,
   priceMin: v.priceRange[0] || undefined,
   priceMax: v.priceRange[1] === PRICE_MAX ? undefined : v.priceRange[1],
-  advanced: v.advancedText.trim() ? v.advancedText.trim() : undefined,
+  advanced: buildAdvancedTokens(v).trim() ? buildAdvancedTokens(v).trim() : undefined,
   sort: v.sort,
 });
