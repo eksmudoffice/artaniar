@@ -250,7 +250,12 @@ export default function PropertyFilters({
               </div>
             </div>
           </div>
-          <div className={cn("text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform", advancedOpen ? "rotate-180" : "")}>
+          <div
+            className={cn(
+              "text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform",
+              advancedOpen ? "rotate-180" : "",
+            )}
+          >
             ▾
           </div>
         </button>
