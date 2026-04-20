@@ -98,7 +98,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     if (advancedTokens.trim()) {
       chips.push({
         key: "advanced",
-        label: advancedTokens,
+        label: "Advanced filters",
         onClear: () =>
           onChange({
             ...value,
@@ -502,18 +502,6 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                 ),
               ),
             ),
-
-            advancedTokens.trim()
-              ? el(
-                  "div",
-                  {
-                    className:
-                      "rounded-2xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-3 text-[11px] text-[hsl(var(--brand-ink)/0.70)]",
-                  },
-                  el("div", { className: "font-semibold text-[hsl(var(--brand-ink))] mb-1" }, "Applied rules"),
-                  advancedTokens,
-                )
-              : null,
           )
         : null,
     ),
