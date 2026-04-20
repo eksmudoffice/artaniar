@@ -45,12 +45,12 @@ export default function Investment() {
             <h2 className="font-serif text-2xl">{t("investment.process.title")}</h2>
             <div className="mt-3 grid gap-2">
               {[
-                "Konsultasi preferensi (budget, area, tujuan: tinggal / bisnis / investasi)",
-                "Shortlist 3–6 opsi paling relevan, beserta poin pembanding",
-                "Video walkthrough / site visit",
-                "Cek ketersediaan dan skenario deal",
-                "Negosiasi dan koordinasi pihak terkait (owner/agent/notaris Anda)",
-                "Closing sesuai kesepakatan",
+                t("investment.process.step1"),
+                t("investment.process.step2"),
+                t("investment.process.step3"),
+                t("investment.process.step4"),
+                t("investment.process.step5"),
+                t("investment.process.step6"),
               ].map((s) => (
                 <div
                   key={s}
@@ -67,27 +67,23 @@ export default function Investment() {
             <h2 className="font-serif text-2xl">{t("investment.faq.title")}</h2>
             <Accordion type="single" collapsible className="mt-3">
               <AccordionItem value="q1" className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 px-4">
-                <AccordionTrigger className="font-medium">Leasehold vs Freehold, mana yang lebih sesuai?</AccordionTrigger>
+                <AccordionTrigger className="font-medium">{t("investment.faq.q1.q")}</AccordionTrigger>
                 <AccordionContent className="text-sm text-[hsl(var(--brand-ink)/0.75)] leading-relaxed">
-                  Bergantung pada tujuan. Freehold cocok untuk kepemilikan jangka panjang. Leasehold sering lebih efisien untuk strategi yield, dengan
-                  catatan klausul perpanjangan jelas.
+                  {t("investment.faq.q1.a")}
                 </AccordionContent>
               </AccordionItem>
+
               <AccordionItem value="q2" className="mt-3 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 px-4">
-                <AccordionTrigger className="font-medium">
-                  Jika saya mencari tanah untuk bisnis (villa/resto), apa yang perlu dicek?
-                </AccordionTrigger>
+                <AccordionTrigger className="font-medium">{t("investment.faq.q2.q")}</AccordionTrigger>
                 <AccordionContent className="text-sm text-[hsl(var(--brand-ink)/0.75)] leading-relaxed">
-                  Fokus pada feasibility: akses jalan, kontur dan drainase, utilitas, lingkungan sekitar, serta zonasi/aturan setempat. Untuk detail legal
-                  formal, silakan koordinasikan dengan notaris/ahli Anda.
+                  {t("investment.faq.q2.a")}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="q3" className="mt-3 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 px-4">
-                <AccordionTrigger className="font-medium">Apakah ROI yang ditampilkan dijamin?</AccordionTrigger>
+                <AccordionTrigger className="font-medium">{t("investment.faq.q3.q")}</AccordionTrigger>
                 <AccordionContent className="text-sm text-[hsl(var(--brand-ink)/0.75)] leading-relaxed">
-                  Tidak. ROI bersifat indikatif berdasarkan data pasar dan asumsi (ADR, occupancy, biaya). Kami dapat membantu menyusun skenario yang lebih
-                  konservatif agar perhitungan lebih realistis.
+                  {t("investment.faq.q3.a")}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

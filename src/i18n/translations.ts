@@ -83,7 +83,19 @@ export type TranslationKey =
   | "investment.card3.title"
   | "investment.card3.desc"
   | "investment.process.title"
+  | "investment.process.step1"
+  | "investment.process.step2"
+  | "investment.process.step3"
+  | "investment.process.step4"
+  | "investment.process.step5"
+  | "investment.process.step6"
   | "investment.faq.title"
+  | "investment.faq.q1.q"
+  | "investment.faq.q1.a"
+  | "investment.faq.q2.q"
+  | "investment.faq.q2.a"
+  | "investment.faq.q3.q"
+  | "investment.faq.q3.a"
   | "footer.tagline"
   | "footer.explore"
   | "footer.contact"
@@ -195,8 +207,25 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "investment.card2.desc": "For villa business: review ADR, occupancy, and comps—don’t rely on photos alone.",
     "investment.card3.title": "Land feasibility",
     "investment.card3.desc": "Access road, contour, utilities, and realistic usage potential matter.",
+
     "investment.process.title": "Purchase process (high-level)",
+    "investment.process.step1": "Share your preferences (budget, area, goal: living / business / investment)",
+    "investment.process.step2": "We shortlist 3–6 most relevant options, with comparison notes",
+    "investment.process.step3": "Video walkthrough / site visit",
+    "investment.process.step4": "Check availability and deal scenarios",
+    "investment.process.step5": "Negotiation & coordination with relevant parties (owner/agent/your notary)",
+    "investment.process.step6": "Closing based on the agreed terms",
+
     "investment.faq.title": "FAQ",
+    "investment.faq.q1.q": "Leasehold vs Freehold — which one is more suitable?",
+    "investment.faq.q1.a":
+      "It depends on your goal. Freehold suits long-term ownership. Leasehold is often more efficient for yield strategies, as long as the extension clause is clear.",
+    "investment.faq.q2.q": "If I’m looking for land for a business (villa/restaurant), what should I check?",
+    "investment.faq.q2.a":
+      "Focus on feasibility: access road, contour & drainage, utilities, surroundings, and zoning/local regulations. For formal legal verification, please coordinate with your notary/advisor.",
+    "investment.faq.q3.q": "Is the displayed ROI guaranteed?",
+    "investment.faq.q3.a":
+      "No. ROI is indicative based on market data and assumptions (ADR, occupancy, costs). We can help build a more conservative scenario for a more realistic view.",
 
     "footer.tagline":
       "Bali property agent for homes, villa business, and promising land—fast response, tidy shortlists, and support until closing.",
@@ -311,8 +340,25 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "investment.card2.desc": "Untuk villa bisnis: lihat ADR, occupancy, dan pembanding. Jangan hanya terpukau foto.",
     "investment.card3.title": "Feasibility lahan",
     "investment.card3.desc": "Akses jalan, kontur, utilitas, dan potensi pemanfaatan perlu realistis.",
+
     "investment.process.title": "Proses pembelian (high-level)",
+    "investment.process.step1": "Konsultasi preferensi (budget, area, tujuan: tinggal / bisnis / investasi)",
+    "investment.process.step2": "Shortlist 3–6 opsi paling relevan, beserta poin pembanding",
+    "investment.process.step3": "Video walkthrough / site visit",
+    "investment.process.step4": "Cek ketersediaan dan skenario deal",
+    "investment.process.step5": "Negosiasi dan koordinasi pihak terkait (owner/agent/notaris Anda)",
+    "investment.process.step6": "Closing sesuai kesepakatan",
+
     "investment.faq.title": "FAQ",
+    "investment.faq.q1.q": "Leasehold vs Freehold, mana yang lebih sesuai?",
+    "investment.faq.q1.a":
+      "Bergantung pada tujuan. Freehold cocok untuk kepemilikan jangka panjang. Leasehold sering lebih efisien untuk strategi yield, dengan catatan klausul perpanjangan jelas.",
+    "investment.faq.q2.q": "Jika saya mencari tanah untuk bisnis (villa/resto), apa yang perlu dicek?",
+    "investment.faq.q2.a":
+      "Fokus pada feasibility: akses jalan, kontur dan drainase, utilitas, lingkungan sekitar, serta zonasi/aturan setempat. Untuk detail legal formal, silakan koordinasikan dengan notaris/ahli Anda.",
+    "investment.faq.q3.q": "Apakah ROI yang ditampilkan dijamin?",
+    "investment.faq.q3.a":
+      "Tidak. ROI bersifat indikatif berdasarkan data pasar dan asumsi (ADR, occupancy, biaya). Kami dapat membantu menyusun skenario yang lebih konservatif agar perhitungan lebih realistis.",
 
     "footer.tagline":
       "Property agent Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respons cepat, shortlist rapi, serta pendampingan deal hingga tuntas.",
