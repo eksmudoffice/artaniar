@@ -59,6 +59,7 @@ export type TranslationKey =
   | "filters.price.label"
   | "filters.price.min"
   | "filters.price.max"
+  | "filters.price.helper"
   | "filters.sort.label"
   | "filters.option.all"
   | "filters.option.type.villa"
@@ -169,6 +170,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "filters.price.label": "Budget (IDR)",
     "filters.price.min": "Min",
     "filters.price.max": "Max",
+    "filters.price.helper": "Drag the handles • Up to Rp {max}",
     "filters.sort.label": "Sort",
     "filters.option.all": "All",
     "filters.option.type.villa": "Villa",
@@ -284,6 +286,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "filters.price.label": "Budget (IDR)",
     "filters.price.min": "Min",
     "filters.price.max": "Max",
+    "filters.price.helper": "Geser bar • Maksimum Rp {max}",
     "filters.sort.label": "Sort",
     "filters.option.all": "Semua",
     "filters.option.type.villa": "Villa",

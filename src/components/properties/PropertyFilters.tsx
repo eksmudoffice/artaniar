@@ -5,12 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { X } from "lucide-react";
 import type { PropertyQuery } from "@/services/propertyService";
 import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
 import { useLocale } from "@/i18n/use-locale";
 
-const PRICE_MAX = 100_000_000_000;
+const PRICE_MAX = 100_000_000;
 
 const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -164,28 +165,41 @@ export default function PropertyFilters({
 
       <div className="grid gap-3">
         <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.price.label")}</Label>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="grid gap-2">
-            <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
-            <Input
-              inputMode="numeric"
-              value={String(priceMin)}
-              onChange={(e) => setPriceMin(e.target.value.replace(/[^\d]/g, ""))}
-              className="rounded-2xl bg-white/70"
-            />
+
+        <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-4">
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
+              <div className="mt-1 font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMin)}</div>
+            </div>
+            <div className="text-xs text-[hsl(var(--brand-ink)/0.35)]">—</div>
+            <div className="min-w-0 text-right">
+              <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
+              <div className="mt-1 font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMax)}</div>
+            </div>
           </div>
-          <div className="grid gap-2">
-            <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
-            <Input
-              inputMode="numeric"
-              value={String(priceMax)}
-              onChange={(e) => setPriceMax(e.target.value.replace(/[^\d]/g, ""))}
-              className="rounded-2xl bg-white/70"
-            />
+
+          <Slider
+            className="mt-4"
+            value={[priceMin, priceMax]}
+            max={PRICE_MAX}
+            step={1_000_000}
+            onValueChange={(v) => {
+              const nextMin = clamp(v[0] ?? 0, 0, PRICE_MAX);
+              const nextMax = clamp(v[1] ?? PRICE_MAX, 0, PRICE_MAX);
+              onChange({ ...value, priceRange: [Math.min(nextMin, nextMax), Math.max(nextMin, nextMax)] });
+            }}
+          />
+
+          <div className="mt-3 text-[11px] text-[hsl(var(--brand-ink)/0.60)]">
+            {t("filters.price.helper").replace("{max}", formatIdrCompact(PRICE_MAX))}
           </div>
-        </div>
-        <div className="text-[11px] text-[hsl(var(--brand-ink)/0.60)]">
-          Limit: Rp {formatIdrCompact(PRICE_MAX)}
+
+          {/* Keep hidden numeric inputs for accessibility / power users (not visible) */}
+          <div className="sr-only">
+            <input value={String(priceMin)} onChange={(e) => setPriceMin(e.target.value)} />
+            <input value={String(priceMax)} onChange={(e) => setPriceMax(e.target.value)} />
+          </div>
         </div>
       </div>
 
