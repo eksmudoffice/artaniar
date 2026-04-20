@@ -8,24 +8,66 @@ export type PropertyQuery = {
   area?: string | "All";
   priceMin?: number;
   priceMax?: number;
-  landMin?: number;
-  landMax?: number;
-  buildingMin?: number;
-  buildingMax?: number;
-  bedroomsMin?: number;
-  bathroomsMin?: number;
-  pool?: boolean;
+  advanced?: string; // free text tokens: land/building/beds/baths/pool
   sort?: "newest" | "price_asc" | "price_desc" | "roi_desc";
   page?: number;
   pageSize?: number;
 };
 
+type Op = ">" | ">=" | "<" | "<=" | "=";
+
+type NumericRule = { key: "land" | "building" | "beds" | "baths"; op: Op; value: number };
+type PoolRule = { key: "pool"; value: boolean };
+
 const includesLoose = (value: string, query: string) =>
   value.toLowerCase().includes(query.trim().toLowerCase());
 
+const parseAdvanced = (raw?: string): { numeric: NumericRule[]; pool?: PoolRule } => {
+  if (!raw) return { numeric: [] };
+  const tokens = raw
+    .split(/[\s,;]+/g)
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+  const numeric: NumericRule[] = [];
+  let pool: PoolRule | undefined;
+
+  for (const token of tokens) {
+    const lower = token.toLowerCase();
+
+    if (lower === "pool") {
+      pool = { key: "pool", value: true };
+      continue;
+    }
+    if (lower === "nopool" || lower === "no-pool") {
+      pool = { key: "pool", value: false };
+      continue;
+    }
+
+    const m = lower.match(/^(land|building|beds|baths)\s*(>=|<=|=|>|<)\s*(\d+)$/);
+    if (!m) continue;
+
+    const key = m[1] as NumericRule["key"];
+    const op = m[2] as Op;
+    const value = Number(m[3]);
+    if (!Number.isFinite(value)) continue;
+
+    numeric.push({ key, op, value });
+  }
+
+  return { numeric, pool };
+};
+
+const compareOp = (left: number, op: Op, right: number) => {
+  if (op === ">") return left > right;
+  if (op === ">=") return left >= right;
+  if (op === "<") return left < right;
+  if (op === "<=") return left <= right;
+  return left === right;
+};
+
 export const PropertyService = {
   async listProperties(query: PropertyQuery) {
-    // backend-ready shape
     const {
       search,
       type,
@@ -34,13 +76,7 @@ export const PropertyService = {
       area,
       priceMin,
       priceMax,
-      landMin,
-      landMax,
-      buildingMin,
-      buildingMax,
-      bedroomsMin,
-      bathroomsMin,
-      pool,
+      advanced,
       sort = "newest",
       page = 1,
       pageSize = 9,
@@ -65,22 +101,36 @@ export const PropertyService = {
     if (priceMin != null) data = data.filter((p) => p.price >= priceMin);
     if (priceMax != null) data = data.filter((p) => p.price <= priceMax);
 
-    if (landMin != null) data = data.filter((p) => (p.landSize ?? 0) >= landMin);
-    if (landMax != null) data = data.filter((p) => (p.landSize ?? 0) <= landMax);
+    if (advanced && advanced.trim()) {
+      const rules = parseAdvanced(advanced);
 
-    if (buildingMin != null) data = data.filter((p) => (p.buildingSize ?? 0) >= buildingMin);
-    if (buildingMax != null) data = data.filter((p) => (p.buildingSize ?? 0) <= buildingMax);
+      if (rules.pool) {
+        data = data.filter((p) => (p.pool ?? false) === rules.pool!.value);
+      }
 
-    if (bedroomsMin != null) data = data.filter((p) => (p.bedrooms ?? 0) >= bedroomsMin);
-    if (bathroomsMin != null) data = data.filter((p) => (p.bathrooms ?? 0) >= bathroomsMin);
+      if (rules.numeric.length) {
+        data = data.filter((p) => {
+          for (const r of rules.numeric) {
+            const left =
+              r.key === "land"
+                ? p.landSize ?? 0
+                : r.key === "building"
+                  ? p.buildingSize ?? 0
+                  : r.key === "beds"
+                    ? p.bedrooms ?? 0
+                    : p.bathrooms ?? 0;
 
-    if (pool != null) data = data.filter((p) => (p.pool ?? false) === pool);
+            if (!compareOp(left, r.op, r.value)) return false;
+          }
+          return true;
+        });
+      }
+    }
 
     data.sort((a, b) => {
       if (sort === "price_asc") return a.price - b.price;
       if (sort === "price_desc") return b.price - a.price;
       if (sort === "roi_desc") return (b.roi ?? 0) - (a.roi ?? 0);
-      // newest
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
@@ -88,7 +138,6 @@ export const PropertyService = {
     const start = (page - 1) * pageSize;
     const items = data.slice(start, start + pageSize);
 
-    // simulate API latency
     await new Promise((r) => setTimeout(r, 250));
 
     return {

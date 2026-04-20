@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { X, SlidersHorizontal } from "lucide-react";
 import type { PropertyQuery } from "@/services/propertyService";
 import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
@@ -14,10 +13,6 @@ import { useLocale } from "@/i18n/use-locale";
 import { cn } from "@/lib/utils";
 
 const PRICE_MAX = 100_000_000_000;
-const LAND_MAX = 2_000; // m²
-const BUILDING_MAX = 2_000; // m²
-const BEDROOMS_MAX = 10;
-const BATHROOMS_MAX = 10;
 
 const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -31,11 +26,7 @@ export type PropertyFiltersValue = {
   status: PropertyStatus | "All";
   area: string | "All";
   priceRange: [number, number];
-  landRange: [number, number];
-  buildingRange: [number, number];
-  bedroomsMin: number;
-  bathroomsMin: number;
-  poolOnly: boolean;
+  advancedText: string;
   sort: NonNullable<PropertyQuery["sort"]>;
 };
 
@@ -71,45 +62,11 @@ export default function PropertyFilters({
       });
     }
 
-    const [landMin, landMax] = value.landRange;
-    if (landMin !== 0 || landMax !== LAND_MAX) {
+    if (value.advancedText.trim()) {
       chips.push({
-        key: "land",
-        label: `Land ${landMin}–${landMax} m²`,
-        onClear: () => onChange({ ...value, landRange: [0, LAND_MAX] }),
-      });
-    }
-
-    const [bMin, bMax] = value.buildingRange;
-    if (bMin !== 0 || bMax !== BUILDING_MAX) {
-      chips.push({
-        key: "building",
-        label: `Building ${bMin}–${bMax} m²`,
-        onClear: () => onChange({ ...value, buildingRange: [0, BUILDING_MAX] }),
-      });
-    }
-
-    if (value.bedroomsMin > 0) {
-      chips.push({
-        key: "bedrooms",
-        label: `Bedrooms ≥ ${value.bedroomsMin}`,
-        onClear: () => onChange({ ...value, bedroomsMin: 0 }),
-      });
-    }
-
-    if (value.bathroomsMin > 0) {
-      chips.push({
-        key: "bathrooms",
-        label: `Bathrooms ≥ ${value.bathroomsMin}`,
-        onClear: () => onChange({ ...value, bathroomsMin: 0 }),
-      });
-    }
-
-    if (value.poolOnly) {
-      chips.push({
-        key: "pool",
-        label: "Pool only",
-        onClear: () => onChange({ ...value, poolOnly: false }),
+        key: "advanced",
+        label: value.advancedText.trim(),
+        onClear: () => onChange({ ...value, advancedText: "" }),
       });
     }
 
@@ -130,39 +87,6 @@ export default function PropertyFilters({
     const nextMin = clamp(Math.min(priceMin, nextMax), 0, PRICE_MAX);
     onChange({ ...value, priceRange: [nextMin, nextMax] });
   };
-
-  const landMin = value.landRange[0];
-  const landMax = value.landRange[1];
-
-  const setLandMin = (nextMinRaw: number) => {
-    const nextMin = clamp(nextMinRaw, 0, LAND_MAX);
-    const nextMax = clamp(Math.max(landMax, nextMin), 0, LAND_MAX);
-    onChange({ ...value, landRange: [nextMin, nextMax] });
-  };
-
-  const setLandMax = (nextMaxRaw: number) => {
-    const nextMax = clamp(nextMaxRaw, 0, LAND_MAX);
-    const nextMin = clamp(Math.min(landMin, nextMax), 0, LAND_MAX);
-    onChange({ ...value, landRange: [nextMin, nextMax] });
-  };
-
-  const buildingMin = value.buildingRange[0];
-  const buildingMax = value.buildingRange[1];
-
-  const setBuildingMin = (nextMinRaw: number) => {
-    const nextMin = clamp(nextMinRaw, 0, BUILDING_MAX);
-    const nextMax = clamp(Math.max(buildingMax, nextMin), 0, BUILDING_MAX);
-    onChange({ ...value, buildingRange: [nextMin, nextMax] });
-  };
-
-  const setBuildingMax = (nextMaxRaw: number) => {
-    const nextMax = clamp(nextMaxRaw, 0, BUILDING_MAX);
-    const nextMin = clamp(Math.min(buildingMin, nextMax), 0, BUILDING_MAX);
-    onChange({ ...value, buildingRange: [nextMin, nextMax] });
-  };
-
-  const bedroomsMin = value.bedroomsMin;
-  const bathroomsMin = value.bathroomsMin;
 
   return (
     <div className="grid gap-5">
@@ -285,7 +209,6 @@ export default function PropertyFilters({
             </div>
           </div>
 
-          {/* Keep hidden numeric inputs for accessibility / power users (not visible) */}
           <div className="sr-only">
             <input value={String(priceMin)} onChange={(e) => setPriceMin(Number(e.target.value || 0))} />
             <input value={String(priceMax)} onChange={(e) => setPriceMax(Number(e.target.value || 0))} />
@@ -308,8 +231,8 @@ export default function PropertyFilters({
         </Select>
       </div>
 
-      {/* ADVANCED FILTERS */}
-      <div className={cn("rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/55", compact ? "" : "")}>
+      {/* ADVANCED (FREE TEXT) */}
+      <div className={cn("rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/55")}>
         <button
           type="button"
           onClick={() => setAdvancedOpen((s) => !s)}
@@ -321,8 +244,10 @@ export default function PropertyFilters({
               <SlidersHorizontal className="h-4 w-4 text-[hsl(var(--brand-ink)/0.70)]" />
             </div>
             <div className="text-left">
-              <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Advanced</div>
-              <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)]">Land/building, beds, baths, pool</div>
+              <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Advanced (free text)</div>
+              <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)]">
+                Contoh: land>300 building<250 beds>2 baths>2 pool
+              </div>
             </div>
           </div>
           <div className={cn("text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform", advancedOpen ? "rotate-180" : "")}>
@@ -331,119 +256,21 @@ export default function PropertyFilters({
         </button>
 
         {advancedOpen && (
-          <div className="px-4 pb-4 grid gap-4">
-            <div className="grid gap-3">
-              <Label className="text-sm text-[hsl(var(--brand-ink))]">Land size (m²)</Label>
-
-              <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-4">
-                <div className="grid gap-5">
-                  <div>
-                    <div className="flex items-baseline justify-between gap-3">
-                      <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Min</div>
-                      <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{landMin} m²</div>
-                    </div>
-                    <Slider className="mt-3" value={[landMin]} max={LAND_MAX} step={10} onValueChange={(v) => setLandMin(v[0] ?? 0)} />
-                  </div>
-
-                  <div>
-                    <div className="flex items-baseline justify-between gap-3">
-                      <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Max</div>
-                      <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{landMax} m²</div>
-                    </div>
-                    <Slider className="mt-3" value={[landMax]} max={LAND_MAX} step={10} onValueChange={(v) => setLandMax(v[0] ?? LAND_MAX)} />
-                  </div>
-                </div>
-
-                <div className="sr-only">
-                  <input value={String(landMin)} onChange={(e) => setLandMin(Number(e.target.value || 0))} />
-                  <input value={String(landMax)} onChange={(e) => setLandMax(Number(e.target.value || 0))} />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-3">
-              <Label className="text-sm text-[hsl(var(--brand-ink))]">Building size (m²)</Label>
-
-              <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-4">
-                <div className="grid gap-5">
-                  <div>
-                    <div className="flex items-baseline justify-between gap-3">
-                      <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Min</div>
-                      <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{buildingMin} m²</div>
-                    </div>
-                    <Slider
-                      className="mt-3"
-                      value={[buildingMin]}
-                      max={BUILDING_MAX}
-                      step={10}
-                      onValueChange={(v) => setBuildingMin(v[0] ?? 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-baseline justify-between gap-3">
-                      <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Max</div>
-                      <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{buildingMax} m²</div>
-                    </div>
-                    <Slider
-                      className="mt-3"
-                      value={[buildingMax]}
-                      max={BUILDING_MAX}
-                      step={10}
-                      onValueChange={(v) => setBuildingMax(v[0] ?? BUILDING_MAX)}
-                    />
-                  </div>
-                </div>
-
-                <div className="sr-only">
-                  <input value={String(buildingMin)} onChange={(e) => setBuildingMin(Number(e.target.value || 0))} />
-                  <input value={String(buildingMax)} onChange={(e) => setBuildingMax(Number(e.target.value || 0))} />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <Label className="text-sm text-[hsl(var(--brand-ink))]">Bedrooms (min)</Label>
-                <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-4">
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">At least</div>
-                    <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{bedroomsMin}</div>
-                  </div>
-                  <Slider
-                    className="mt-3"
-                    value={[bedroomsMin]}
-                    max={BEDROOMS_MAX}
-                    step={1}
-                    onValueChange={(v) => onChange({ ...value, bedroomsMin: v[0] ?? 0 })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label className="text-sm text-[hsl(var(--brand-ink))]">Bathrooms (min)</Label>
-                <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-4">
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">At least</div>
-                    <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{bathroomsMin}</div>
-                  </div>
-                  <Slider
-                    className="mt-3"
-                    value={[bathroomsMin]}
-                    max={BATHROOMS_MAX}
-                    step={1}
-                    onValueChange={(v) => onChange({ ...value, bathroomsMin: v[0] ?? 0 })}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-4">
-              <div>
-                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Pool only</div>
-                <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)]">Tampilkan listing yang punya pool</div>
-              </div>
-              <Switch checked={value.poolOnly} onCheckedChange={(checked) => onChange({ ...value, poolOnly: checked })} />
+          <div className="px-4 pb-4 grid gap-2">
+            <Label className="text-sm text-[hsl(var(--brand-ink))]">Advanced query</Label>
+            <Input
+              value={value.advancedText}
+              onChange={(e) => onChange({ ...value, advancedText: e.target.value })}
+              placeholder="land>=300 building<=250 beds>=2 baths>=2 pool"
+              className="rounded-2xl bg-white/70"
+            />
+            <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)] leading-relaxed">
+              Tokens yang didukung: <span className="font-semibold">land</span>, <span className="font-semibold">building</span>,{" "}
+              <span className="font-semibold">beds</span>, <span className="font-semibold">baths</span>,{" "}
+              <span className="font-semibold">pool</span> / <span className="font-semibold">nopool</span>. Operator:{" "}
+              <span className="font-semibold">></span>, <span className="font-semibold">>=</span>,{" "}
+              <span className="font-semibold"><</span>, <span className="font-semibold"><=</span>,{" "}
+              <span className="font-semibold">=</span>.
             </div>
           </div>
         )}
@@ -498,11 +325,7 @@ export const DEFAULT_FILTERS: PropertyFiltersValue = {
   status: "All",
   area: "All",
   priceRange: [0, PRICE_MAX],
-  landRange: [0, LAND_MAX],
-  buildingRange: [0, BUILDING_MAX],
-  bedroomsMin: 0,
-  bathroomsMin: 0,
-  poolOnly: false,
+  advancedText: "",
   sort: "newest",
 };
 
@@ -514,12 +337,6 @@ export const toQuery = (v: PropertyFiltersValue): PropertyQuery => ({
   area: v.area,
   priceMin: v.priceRange[0] || undefined,
   priceMax: v.priceRange[1] === PRICE_MAX ? undefined : v.priceRange[1],
-  landMin: v.landRange[0] || undefined,
-  landMax: v.landRange[1] === LAND_MAX ? undefined : v.landRange[1],
-  buildingMin: v.buildingRange[0] || undefined,
-  buildingMax: v.buildingRange[1] === BUILDING_MAX ? undefined : v.buildingRange[1],
-  bedroomsMin: v.bedroomsMin || undefined,
-  bathroomsMin: v.bathroomsMin || undefined,
-  pool: v.poolOnly ? true : undefined,
+  advanced: v.advancedText.trim() ? v.advancedText.trim() : undefined,
   sort: v.sort,
 });
