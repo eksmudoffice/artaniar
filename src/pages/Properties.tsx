@@ -11,8 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Filter, SearchX } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
+import { useLocale } from "@/i18n/use-locale";
 
 export default function Properties() {
+  const { t } = useLocale();
   const [filters, setFilters] = useState<PropertyFiltersValue>(DEFAULT_FILTERS);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -59,10 +61,8 @@ export default function Properties() {
           <div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h1 className="font-serif text-3xl">Browse listings</h1>
-                <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                  Gunakan filter untuk mempersempit pilihan, lalu klik WhatsApp untuk menanyakan ketersediaan.
-                </p>
+                <h1 className="font-serif text-3xl">{t("properties.title")}</h1>
+                <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("properties.subtitle")}</p>
               </div>
 
               <div className="flex gap-2 lg:hidden">
@@ -72,12 +72,12 @@ export default function Properties() {
                       variant="outline"
                       className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
                     >
-                      <Filter className="mr-2 h-4 w-4" /> Filter
+                      <Filter className="mr-2 h-4 w-4" /> {t("properties.filterTitle")}
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="bottom" className="rounded-t-[2rem] bg-[hsl(var(--brand-surface))]">
                     <SheetHeader>
-                      <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">Filter listings</SheetTitle>
+                      <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">{t("properties.filterTitle")}</SheetTitle>
                     </SheetHeader>
                     <div className="mt-4 pb-3">
                       <PropertyFilters compact value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
@@ -113,17 +113,15 @@ export default function Properties() {
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[hsl(var(--brand-surface-2))]">
                   <SearchX className="h-6 w-6 text-[hsl(var(--brand-ink)/0.60)]" />
                 </div>
-                <h2 className="mt-4 font-serif text-2xl">Tidak ada hasil</h2>
-                <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                  Silakan sesuaikan filter (harga/area), atau konsultasikan preferensi Anda agar kami bantu mencarikan opsi yang tepat.
-                </p>
+                <h2 className="mt-4 font-serif text-2xl">{t("properties.empty.title")}</h2>
+                <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("properties.empty.desc")}</p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Button
                     variant="outline"
                     onClick={() => setFilters(DEFAULT_FILTERS)}
                     className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
                   >
-                    Reset filter
+                    {t("cta.reset")}
                   </Button>
                   <WhatsAppCTA
                     context={{
@@ -131,6 +129,7 @@ export default function Properties() {
                       budgetIdr: budget,
                       location: filters.area !== "All" ? filters.area : undefined,
                     }}
+                    label={t("cta.consult")}
                   />
                 </div>
               </div>
@@ -152,7 +151,7 @@ export default function Properties() {
                     Prev
                   </Button>
                   <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                    Page {page} / {totalPages}
+                    {t("properties.pagination").replace("{page}", String(page)).replace("{totalPages}", String(totalPages))}
                   </div>
                   <Button
                     disabled={page >= totalPages}

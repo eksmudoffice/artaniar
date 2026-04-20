@@ -9,6 +9,11 @@ export type TranslationKey =
   | "cta.consult"
   | "cta.whatsapp"
   | "cta.call"
+  | "cta.reset"
+  | "cta.apply"
+  | "cta.viewListings"
+  | "cta.requestShortlist"
+  | "cta.discussInvestment"
   | "home.badge"
   | "home.hero.title1"
   | "home.hero.title2"
@@ -26,7 +31,43 @@ export type TranslationKey =
   | "home.process.title"
   | "home.process.desc"
   | "home.process.readGuide"
-  | "home.process.requestShortlist";
+  | "home.process.requestShortlist"
+  | "about.title"
+  | "about.p1"
+  | "about.p2"
+  | "about.cta"
+  | "about.card1.title"
+  | "about.card1.desc"
+  | "about.card2.title"
+  | "about.card2.desc"
+  | "about.card3.title"
+  | "about.card3.desc"
+  | "properties.title"
+  | "properties.subtitle"
+  | "properties.filterTitle"
+  | "properties.empty.title"
+  | "properties.empty.desc"
+  | "properties.pagination"
+  | "investment.title"
+  | "investment.subtitle"
+  | "investment.card1.title"
+  | "investment.card1.desc"
+  | "investment.card2.title"
+  | "investment.card2.desc"
+  | "investment.card3.title"
+  | "investment.card3.desc"
+  | "investment.process.title"
+  | "investment.faq.title"
+  | "footer.tagline"
+  | "footer.explore"
+  | "footer.contact"
+  | "footer.browse"
+  | "footer.guide"
+  | "footer.about"
+  | "footer.disclaimer"
+  | "notfound.title"
+  | "notfound.subtitle"
+  | "notfound.back";
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
   en: {
@@ -40,6 +81,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.consult": "Consultation",
     "cta.whatsapp": "WhatsApp",
     "cta.call": "Call",
+    "cta.reset": "Reset",
+    "cta.apply": "Apply",
+    "cta.viewListings": "Browse listings",
+    "cta.requestShortlist": "Request a shortlist",
+    "cta.discussInvestment": "Discuss investment strategy",
 
     "home.badge": "Fast response • Shortlist by budget • Ready for living / business",
     "home.hero.title1": "Looking for property in Bali?",
@@ -57,7 +103,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
 
     "home.featured.title": "Featured listings",
     "home.featured.desc":
-      "Curated options for living and villa business. Open details for full specs, with ready-to-use WhatsApp CTAs.",
+      "Selected options for living and villa business. Open details for full specs, with ready-to-use WhatsApp CTAs.",
     "home.featured.all": "View all listings",
 
     "home.process.title": "How we work (brief)",
@@ -65,6 +111,52 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
       "You share budget, area, and goal (living / business / investment) → we prepare a shortlist → send videos/options → schedule viewings → support negotiation. Efficient process, clear communication.",
     "home.process.readGuide": "Read Investment Guide",
     "home.process.requestShortlist": "Request a shortlist",
+
+    "about.title": "About Artaniar",
+    "about.p1":
+      "Artaniar is a Bali property agent who helps you choose the most relevant options—from shortlisting and comparison to coordinating viewings and negotiation.",
+    "about.p2":
+      "Our focus is a tidy, efficient process: clear information, fast response, and structured communication with all parties involved.",
+    "about.cta": "Consultation & share your requirements",
+    "about.card1.title": "Focused recommendations",
+    "about.card1.desc": "We filter options based on your goal, area, and budget.",
+    "about.card2.title": "Clear information",
+    "about.card2.desc": "Listings are presented clearly so you can decide with confidence.",
+    "about.card3.title": "Support until closing",
+    "about.card3.desc": "Shortlist → viewing → negotiation → handover coordination.",
+
+    "properties.title": "Browse listings",
+    "properties.subtitle": "Use filters to narrow your options, then WhatsApp us to check availability.",
+    "properties.filterTitle": "Filters",
+    "properties.empty.title": "No results found",
+    "properties.empty.desc":
+      "Please adjust your filters (price/area), or contact us—share your preferences and we’ll recommend suitable options.",
+    "properties.pagination": "Page {page} / {totalPages}",
+
+    "investment.title": "Investment Guide",
+    "investment.subtitle":
+      "Short and practical—focused on what affects villa business ROI, and how to assess land feasibility for development (villa / restaurant / retreat).",
+    "investment.card1.title": "Define your goal",
+    "investment.card1.desc": "Living, villa business, or land banking. Your goal impacts area, type, and budget.",
+    "investment.card2.title": "Check area demand",
+    "investment.card2.desc": "For villa business: review ADR, occupancy, and comps—don’t rely on photos alone.",
+    "investment.card3.title": "Land feasibility",
+    "investment.card3.desc": "Access road, contour, utilities, and realistic usage potential matter.",
+    "investment.process.title": "Purchase process (high-level)",
+    "investment.faq.title": "FAQ",
+
+    "footer.tagline":
+      "Bali property agent for homes, villa business, and promising land—fast response, tidy shortlists, and support until closing.",
+    "footer.explore": "Explore",
+    "footer.contact": "Contact",
+    "footer.browse": "Browse listings",
+    "footer.guide": "Investment guide",
+    "footer.about": "About Artaniar",
+    "footer.disclaimer": "Disclaimer: Listing information is indicative. Availability and pricing may change.",
+
+    "notfound.title": "404",
+    "notfound.subtitle": "Oops! Page not found",
+    "notfound.back": "Return to Home",
   },
 
   id: {
@@ -78,6 +170,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.consult": "Konsultasi",
     "cta.whatsapp": "WhatsApp",
     "cta.call": "Call",
+    "cta.reset": "Reset",
+    "cta.apply": "Terapkan",
+    "cta.viewListings": "Lihat listings",
+    "cta.requestShortlist": "Minta shortlist",
+    "cta.discussInvestment": "Diskusikan strategi investment",
 
     "home.badge": "Respons cepat • Shortlist sesuai budget • Siap untuk tinggal / bisnis",
     "home.hero.title1": "Mencari properti di Bali?",
@@ -103,5 +200,51 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
       "Anda kirim budget, area, dan tujuan (tinggal / bisnis / investasi) → kami susun shortlist → kirim video/opsi → atur viewing → bantu negosiasi. Proses efisien, komunikasi rapi.",
     "home.process.readGuide": "Baca Investment Guide",
     "home.process.requestShortlist": "Minta shortlist",
+
+    "about.title": "Tentang Artaniar",
+    "about.p1":
+      "Artaniar adalah property agent di Bali yang membantu Anda memilih opsi yang paling relevan—mulai dari shortlist, pembandingan, hingga koordinasi viewing dan negosiasi.",
+    "about.p2":
+      "Fokus kami adalah proses yang rapi dan efisien: informasi jelas, respons cepat, serta komunikasi yang terstruktur dengan pihak terkait.",
+    "about.cta": "Konsultasi & sampaikan kebutuhan Anda",
+    "about.card1.title": "Rekomendasi yang terarah",
+    "about.card1.desc": "Menyaring opsi berdasarkan tujuan, area, dan budget Anda.",
+    "about.card2.title": "Informasi yang jelas",
+    "about.card2.desc": "Detail listing disampaikan rapi agar keputusan lebih tenang.",
+    "about.card3.title": "Pendampingan sampai deal",
+    "about.card3.desc": "Shortlist → viewing → negosiasi → koordinasi serah terima.",
+
+    "properties.title": "Browse listings",
+    "properties.subtitle": "Gunakan filter untuk mempersempit pilihan, lalu klik WhatsApp untuk menanyakan ketersediaan.",
+    "properties.filterTitle": "Filter",
+    "properties.empty.title": "Tidak ada hasil",
+    "properties.empty.desc":
+      "Silakan sesuaikan filter (harga/area), atau konsultasikan preferensi Anda agar kami bantu mencarikan opsi yang tepat.",
+    "properties.pagination": "Page {page} / {totalPages}",
+
+    "investment.title": "Investment Guide",
+    "investment.subtitle":
+      "Ringkas dan praktis—fokus pada hal yang memengaruhi ROI villa bisnis, serta cara menilai tanah yang masuk akal untuk dikembangkan (villa / resto / retreat).",
+    "investment.card1.title": "Tentukan tujuan",
+    "investment.card1.desc": "Hunian, villa bisnis, atau land banking. Tujuan memengaruhi area, tipe, dan budget.",
+    "investment.card2.title": "Cek demand area",
+    "investment.card2.desc": "Untuk villa bisnis: lihat ADR, occupancy, dan pembanding. Jangan hanya terpukau foto.",
+    "investment.card3.title": "Feasibility lahan",
+    "investment.card3.desc": "Akses jalan, kontur, utilitas, dan potensi pemanfaatan perlu realistis.",
+    "investment.process.title": "Proses pembelian (high-level)",
+    "investment.faq.title": "FAQ",
+
+    "footer.tagline":
+      "Property agent Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respons cepat, shortlist rapi, serta pendampingan deal hingga tuntas.",
+    "footer.explore": "Explore",
+    "footer.contact": "Contact",
+    "footer.browse": "Browse listings",
+    "footer.guide": "Investment guide",
+    "footer.about": "About Artaniar",
+    "footer.disclaimer": "Disclaimer: Informasi listing bersifat indikatif. Ketersediaan dan harga dapat berubah.",
+
+    "notfound.title": "404",
+    "notfound.subtitle": "Oops! Page not found",
+    "notfound.back": "Return to Home",
   },
 };
