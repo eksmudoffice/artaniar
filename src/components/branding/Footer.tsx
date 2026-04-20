@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { Instagram, Mail } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 export default function Footer() {
+  const { t } = useLocale();
+
   return (
     <footer className="mt-16 bg-[hsl(var(--brand-surface-2))]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
@@ -11,32 +14,31 @@ export default function Footer() {
           <div>
             <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">Artaniar</div>
             <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)] leading-relaxed max-w-sm">
-              Property agent Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respons cepat, shortlist rapi, serta pendampingan deal hingga
-              tuntas.
+              {t("footer.tagline")}
             </p>
 
             <div className="mt-5">
-              <WhatsAppCTA context={{ intent: "Konsultasi" }} />
+              <WhatsAppCTA context={{ intent: "Konsultasi" }} label={t("cta.consult")} />
             </div>
           </div>
 
           <div className="text-sm">
-            <div className="font-semibold text-[hsl(var(--brand-ink))]">Explore</div>
+            <div className="font-semibold text-[hsl(var(--brand-ink))]">{t("footer.explore")}</div>
             <div className="mt-3 grid gap-2 text-[hsl(var(--brand-ink)/0.75)]">
               <Link to="/properties" className="hover:text-[hsl(var(--brand-ink))]">
-                Browse listings
+                {t("footer.browse")}
               </Link>
               <Link to="/investment" className="hover:text-[hsl(var(--brand-ink))]">
-                Investment guide
+                {t("footer.guide")}
               </Link>
               <Link to="/about" className="hover:text-[hsl(var(--brand-ink))]">
-                About Artaniar
+                {t("footer.about")}
               </Link>
             </div>
           </div>
 
           <div className="text-sm">
-            <div className="font-semibold text-[hsl(var(--brand-ink))]">Contact</div>
+            <div className="font-semibold text-[hsl(var(--brand-ink))]">{t("footer.contact")}</div>
             <div className="mt-3 grid gap-2 text-[hsl(var(--brand-ink)/0.75)]">
               <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="mailto:hello@artaniar.com">
                 <Mail className="h-4 w-4" /> hello@artaniar.com
@@ -52,7 +54,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between text-xs text-[hsl(var(--brand-ink)/0.60)]">
           <div>© {new Date().getFullYear()} Artaniar. All rights reserved.</div>
-          <div className="leading-relaxed">Disclaimer: Informasi listing bersifat indikatif. Ketersediaan dan harga dapat berubah.</div>
+          <div className="leading-relaxed">{t("footer.disclaimer")}</div>
         </div>
       </div>
     </footer>
