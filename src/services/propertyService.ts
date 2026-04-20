@@ -12,6 +12,9 @@ export type PropertyQuery = {
   landMax?: number;
   buildingMin?: number;
   buildingMax?: number;
+  bedroomsMin?: number;
+  bathroomsMin?: number;
+  pool?: boolean;
   sort?: "newest" | "price_asc" | "price_desc" | "roi_desc";
   page?: number;
   pageSize?: number;
@@ -35,6 +38,9 @@ export const PropertyService = {
       landMax,
       buildingMin,
       buildingMax,
+      bedroomsMin,
+      bathroomsMin,
+      pool,
       sort = "newest",
       page = 1,
       pageSize = 9,
@@ -64,6 +70,11 @@ export const PropertyService = {
 
     if (buildingMin != null) data = data.filter((p) => (p.buildingSize ?? 0) >= buildingMin);
     if (buildingMax != null) data = data.filter((p) => (p.buildingSize ?? 0) <= buildingMax);
+
+    if (bedroomsMin != null) data = data.filter((p) => (p.bedrooms ?? 0) >= bedroomsMin);
+    if (bathroomsMin != null) data = data.filter((p) => (p.bathrooms ?? 0) >= bathroomsMin);
+
+    if (pool != null) data = data.filter((p) => (p.pool ?? false) === pool);
 
     data.sort((a, b) => {
       if (sort === "price_asc") return a.price - b.price;

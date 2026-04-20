@@ -21,6 +21,7 @@ export type Property = {
   bathrooms?: number;
   landSize?: number; // m2
   buildingSize?: number; // m2
+  pool?: boolean;
   ownership: "Freehold" | "Leasehold";
   yearBuilt?: number;
   zoning?: string;
@@ -67,6 +68,7 @@ export const properties: Property[] = [
     bathrooms: 3,
     landSize: 320,
     buildingSize: 280,
+    pool: true,
     ownership: "Freehold",
     yearBuilt: 2022,
     images: [
@@ -118,6 +120,7 @@ export const properties: Property[] = [
     bathrooms: 2,
     landSize: 180,
     buildingSize: 160,
+    pool: true,
     ownership: "Leasehold",
     yearBuilt: 2021,
     images: [
@@ -168,6 +171,7 @@ export const properties: Property[] = [
     bathrooms: 3,
     landSize: 260,
     buildingSize: 240,
+    pool: true,
     ownership: "Leasehold",
     yearBuilt: 2026,
     images: [
@@ -208,6 +212,7 @@ export const properties: Property[] = [
     roi: 14,
     status: "Ready",
     landSize: 520,
+    pool: false,
     ownership: "Freehold",
     zoning: "Pariwisata (cek RDTR)",
     images: [
@@ -251,6 +256,7 @@ export const properties: Property[] = [
     bathrooms: 4,
     landSize: 410,
     buildingSize: 360,
+    pool: true,
     ownership: "Freehold",
     yearBuilt: 2020,
     images: [
