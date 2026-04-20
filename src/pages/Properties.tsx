@@ -3,7 +3,11 @@ import HeaderNav from "@/components/branding/HeaderNav";
 import Footer from "@/components/branding/Footer";
 import WhatsAppFloatingCTA from "@/components/cta/WhatsAppFloatingCTA";
 import PropertyCard from "@/components/properties/PropertyCard";
-import PropertyFilters, { DEFAULT_FILTERS, toQuery, type PropertyFiltersValue } from "@/components/properties/PropertyFilters";
+import PropertyFilters, {
+  DEFAULT_FILTERS,
+  toQuery,
+  type PropertyFiltersValue,
+} from "@/components/properties/PropertyFiltersFreeText";
 import { PropertyService } from "@/services/propertyService";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
