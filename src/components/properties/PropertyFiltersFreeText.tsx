@@ -33,7 +33,7 @@ export type PropertyFiltersValue = {
   bathsMin: string;
   pool: "Any" | "Yes" | "No";
 
-  carportMin: string;
+  carport: "Any" | "Yes" | "No";
   roadMin: string; // meters
   powerMin: string; // VA
   water: "Any" | "PDAM" | "Well" | "Other";
@@ -75,8 +75,8 @@ const buildAdvancedTokens = (v: PropertyFiltersValue) => {
   if (v.pool === "Yes") tokens.push("pool");
   if (v.pool === "No") tokens.push("nopool");
 
-  const carport = toNum(v.carportMin);
-  if (carport != null) tokens.push(`carport>=${carport}`);
+  if (v.carport === "Yes") tokens.push("carport>=1");
+  if (v.carport === "No") tokens.push("carport=0");
 
   const road = toNum(v.roadMin);
   if (road != null) tokens.push(`road>=${road}`);
@@ -128,7 +128,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             bedsMin: "",
             bathsMin: "",
             pool: "Any",
-            carportMin: "",
+            carport: "Any",
             roadMin: "",
             powerMin: "",
             water: "Any",
@@ -474,19 +474,59 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
 
             el(
               "div",
-              { className: "grid grid-cols-2 gap-3" },
+              { className: "grid gap-2" },
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Carport"),
               el(
                 "div",
-                { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Carport (min)"),
-                el(Input, {
-                  inputMode: "numeric",
-                  value: value.carportMin,
-                  onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, carportMin: normalizeInt(e.target.value) }),
-                  placeholder: "ex: 1",
-                  className: "rounded-2xl bg-white/70",
-                }),
+                { className: "grid grid-cols-3 gap-2" },
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, carport: "Any" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.carport === "Any"
+                        ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
+                        : "bg-white/70 hover:bg-white"),
+                  },
+                  "Any",
+                ),
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, carport: "Yes" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.carport === "Yes"
+                        ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
+                        : "bg-white/70 hover:bg-white"),
+                  },
+                  "Yes",
+                ),
+                el(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    onClick: () => onChange({ ...value, carport: "No" }),
+                    className:
+                      "rounded-2xl border-[hsl(var(--brand-ink)/0.16)] " +
+                      (value.carport === "No"
+                        ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
+                        : "bg-white/70 hover:bg-white"),
+                  },
+                  "No",
+                ),
               ),
+            ),
+
+            el(
+              "div",
+              { className: "grid grid-cols-2 gap-3" },
               el(
                 "div",
                 { className: "grid gap-2" },
@@ -499,19 +539,19 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                   className: "rounded-2xl bg-white/70",
                 }),
               ),
-            ),
-
-            el(
-              "div",
-              { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Electricity (min VA)"),
-              el(Input, {
-                inputMode: "numeric",
-                value: value.powerMin,
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, powerMin: normalizeInt(e.target.value) }),
-                placeholder: "ex: 5500",
-                className: "rounded-2xl bg-white/70",
-              }),
+              el(
+                "div",
+                { className: "grid gap-2" },
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Electricity (min VA)"),
+                el(Input, {
+                  inputMode: "numeric",
+                  value: value.powerMin,
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange({ ...value, powerMin: normalizeInt(e.target.value) }),
+                  placeholder: "ex: 5500",
+                  className: "rounded-2xl bg-white/70",
+                }),
+              ),
             ),
 
             el(
@@ -682,7 +722,7 @@ export const DEFAULT_FILTERS: PropertyFiltersValue = {
   bathsMin: "",
   pool: "Any",
 
-  carportMin: "",
+  carport: "Any",
   roadMin: "",
   powerMin: "",
   water: "Any",
