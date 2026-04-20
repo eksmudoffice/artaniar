@@ -24,8 +24,9 @@ export default function Index() {
               alt="Bali property"
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-[hsl(var(--brand-ink))]/55" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[hsl(var(--brand-surface))]" />
+            {/* Stronger contrast overlays for readability across bright images */}
+            <div className="absolute inset-0 bg-[hsl(var(--brand-ink))]/70" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/25 to-[hsl(var(--brand-surface))]" />
           </div>
 
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-28 pb-16 md:pt-32 md:pb-24">
@@ -46,7 +47,7 @@ export default function Index() {
                 <WhatsAppCTA context={{ intent: "Konsultasi" }} className="h-12 px-7 text-base" label={t("cta.consult")} />
                 <Link
                   to="/properties"
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/15 transition-colors"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/30 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/15 transition-colors"
                 >
                   {t("home.hero.browse")} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
