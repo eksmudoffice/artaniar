@@ -12,6 +12,8 @@ import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } f
 import { useLocale } from "@/i18n/use-locale";
 
 const PRICE_MAX = 100_000_000_000;
+const LAND_MAX = 2_000; // m²
+const BUILDING_MAX = 2_000; // m²
 
 const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -25,6 +27,8 @@ export type PropertyFiltersValue = {
   status: PropertyStatus | "All";
   area: string | "All";
   priceRange: [number, number];
+  landRange: [number, number];
+  buildingRange: [number, number];
   sort: NonNullable<PropertyQuery["sort"]>;
 };
 
@@ -59,6 +63,24 @@ export default function PropertyFilters({
       });
     }
 
+    const [landMin, landMax] = value.landRange;
+    if (landMin !== 0 || landMax !== LAND_MAX) {
+      chips.push({
+        key: "land",
+        label: `Land ${landMin}–${landMax} m²`,
+        onClear: () => onChange({ ...value, landRange: [0, LAND_MAX] }),
+      });
+    }
+
+    const [bMin, bMax] = value.buildingRange;
+    if (bMin !== 0 || bMax !== BUILDING_MAX) {
+      chips.push({
+        key: "building",
+        label: `Building ${bMin}–${bMax} m²`,
+        onClear: () => onChange({ ...value, buildingRange: [0, BUILDING_MAX] }),
+      });
+    }
+
     return chips;
   }, [onChange, value]);
 
@@ -75,6 +97,36 @@ export default function PropertyFilters({
     const nextMax = clamp(nextMaxRaw, 0, PRICE_MAX);
     const nextMin = clamp(Math.min(priceMin, nextMax), 0, PRICE_MAX);
     onChange({ ...value, priceRange: [nextMin, nextMax] });
+  };
+
+  const landMin = value.landRange[0];
+  const landMax = value.landRange[1];
+
+  const setLandMin = (nextMinRaw: number) => {
+    const nextMin = clamp(nextMinRaw, 0, LAND_MAX);
+    const nextMax = clamp(Math.max(landMax, nextMin), 0, LAND_MAX);
+    onChange({ ...value, landRange: [nextMin, nextMax] });
+  };
+
+  const setLandMax = (nextMaxRaw: number) => {
+    const nextMax = clamp(nextMaxRaw, 0, LAND_MAX);
+    const nextMin = clamp(Math.min(landMin, nextMax), 0, LAND_MAX);
+    onChange({ ...value, landRange: [nextMin, nextMax] });
+  };
+
+  const buildingMin = value.buildingRange[0];
+  const buildingMax = value.buildingRange[1];
+
+  const setBuildingMin = (nextMinRaw: number) => {
+    const nextMin = clamp(nextMinRaw, 0, BUILDING_MAX);
+    const nextMax = clamp(Math.max(buildingMax, nextMin), 0, BUILDING_MAX);
+    onChange({ ...value, buildingRange: [nextMin, nextMax] });
+  };
+
+  const setBuildingMax = (nextMaxRaw: number) => {
+    const nextMax = clamp(nextMaxRaw, 0, BUILDING_MAX);
+    const nextMin = clamp(Math.min(buildingMin, nextMax), 0, BUILDING_MAX);
+    onChange({ ...value, buildingRange: [nextMin, nextMax] });
   };
 
   return (
@@ -205,6 +257,76 @@ export default function PropertyFilters({
         </div>
       </div>
 
+      <div className="grid gap-3">
+        <Label className="text-sm text-[hsl(var(--brand-ink))]">Land size (m²)</Label>
+
+        <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-4">
+          <div className="grid gap-5">
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Min</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{landMin} m²</div>
+              </div>
+              <Slider className="mt-3" value={[landMin]} max={LAND_MAX} step={10} onValueChange={(v) => setLandMin(v[0] ?? 0)} />
+            </div>
+
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Max</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{landMax} m²</div>
+              </div>
+              <Slider className="mt-3" value={[landMax]} max={LAND_MAX} step={10} onValueChange={(v) => setLandMax(v[0] ?? LAND_MAX)} />
+            </div>
+          </div>
+
+          <div className="sr-only">
+            <input value={String(landMin)} onChange={(e) => setLandMin(Number(e.target.value || 0))} />
+            <input value={String(landMax)} onChange={(e) => setLandMax(Number(e.target.value || 0))} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-3">
+        <Label className="text-sm text-[hsl(var(--brand-ink))]">Building size (m²)</Label>
+
+        <div className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/60 p-4">
+          <div className="grid gap-5">
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Min</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{buildingMin} m²</div>
+              </div>
+              <Slider
+                className="mt-3"
+                value={[buildingMin]}
+                max={BUILDING_MAX}
+                step={10}
+                onValueChange={(v) => setBuildingMin(v[0] ?? 0)}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">Max</div>
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{buildingMax} m²</div>
+              </div>
+              <Slider
+                className="mt-3"
+                value={[buildingMax]}
+                max={BUILDING_MAX}
+                step={10}
+                onValueChange={(v) => setBuildingMax(v[0] ?? BUILDING_MAX)}
+              />
+            </div>
+          </div>
+
+          <div className="sr-only">
+            <input value={String(buildingMin)} onChange={(e) => setBuildingMin(Number(e.target.value || 0))} />
+            <input value={String(buildingMax)} onChange={(e) => setBuildingMax(Number(e.target.value || 0))} />
+          </div>
+        </div>
+      </div>
+
       <Separator className="bg-[hsl(var(--brand-ink)/0.10)]" />
 
       <div className="grid gap-2">
@@ -269,6 +391,8 @@ export const DEFAULT_FILTERS: PropertyFiltersValue = {
   status: "All",
   area: "All",
   priceRange: [0, PRICE_MAX],
+  landRange: [0, LAND_MAX],
+  buildingRange: [0, BUILDING_MAX],
   sort: "newest",
 };
 
@@ -280,5 +404,9 @@ export const toQuery = (v: PropertyFiltersValue): PropertyQuery => ({
   area: v.area,
   priceMin: v.priceRange[0] || undefined,
   priceMax: v.priceRange[1] === PRICE_MAX ? undefined : v.priceRange[1],
+  landMin: v.landRange[0] || undefined,
+  landMax: v.landRange[1] === LAND_MAX ? undefined : v.landRange[1],
+  buildingMin: v.buildingRange[0] || undefined,
+  buildingMax: v.buildingRange[1] === BUILDING_MAX ? undefined : v.buildingRange[1],
   sort: v.sort,
 });
