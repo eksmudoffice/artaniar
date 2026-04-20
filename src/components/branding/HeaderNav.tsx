@@ -5,17 +5,23 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
-
-const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/properties", label: "Properties" },
-  { to: "/investment", label: "Investment" },
-  { to: "/about", label: "About" },
-];
+import { useLocale } from "@/i18n/use-locale";
+import LanguageToggle from "@/components/branding/LanguageToggle";
 
 export default function HeaderNav() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { locale, setLocale, t } = useLocale();
+
+  const navItems = useMemo(
+    () => [
+      { to: "/", label: t("nav.home") },
+      { to: "/properties", label: t("nav.properties") },
+      { to: "/investment", label: t("nav.investment") },
+      { to: "/about", label: t("nav.about") },
+    ],
+    [t],
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -59,7 +65,7 @@ export default function HeaderNav() {
                   transparent ? "text-white/70" : "text-[hsl(var(--brand-ink)/0.60)]",
                 )}
               >
-                Bali Property Agent
+                {t("brand.subtitle")}
               </div>
             </div>
           </Link>
@@ -85,9 +91,10 @@ export default function HeaderNav() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <LanguageToggle value={locale} onChange={setLocale} transparent={transparent} />
             <WhatsAppCTA
               context={{ intent: "Konsultasi" }}
-              label="Konsultasi"
+              label={t("cta.consult")}
               variant={transparent ? "soft" : "primary"}
               className={cn(transparent ? "bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90" : "")}
             />
@@ -114,6 +121,10 @@ export default function HeaderNav() {
                 </SheetHeader>
 
                 <div className="mt-6 flex flex-col gap-2">
+                  <div className="pb-2">
+                    <LanguageToggle value={locale} onChange={setLocale} />
+                  </div>
+
                   {navItems.map((item) => (
                     <NavLink
                       key={item.to}
@@ -135,7 +146,7 @@ export default function HeaderNav() {
                     <WhatsAppCTA
                       className="w-full justify-center"
                       context={{ intent: "Konsultasi" }}
-                      label="Konsultasi via WhatsApp"
+                      label={t("cta.consult")}
                     />
                   </div>
                 </div>
