@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
-import { CheckCircle2, ChevronLeft, MapPin, ShieldCheck, TrendingUp, Video } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Compass, MapPin, TrendingUp, Video } from "lucide-react";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -145,10 +145,10 @@ export default function PropertyDetail() {
                 )}
 
                 <section>
-                  <h2 className="font-serif text-2xl">Legal & dokumen</h2>
+                  <h2 className="font-serif text-2xl">Kesiapan & catatan penting</h2>
                   <div className="mt-3 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-6">
                     <div className="flex items-center gap-2 font-semibold">
-                      <ShieldCheck className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Checklist
+                      <Compass className="h-5 w-5 text-[hsl(var(--brand-accent))]" /> Checklist ringkas
                     </div>
                     <div className="mt-3 grid gap-2">
                       {property.legal.checklist.map((c) => (
@@ -158,11 +158,12 @@ export default function PropertyDetail() {
                         </div>
                       ))}
                     </div>
-                    {property.legal.notes && (
-                      <div className="mt-4 text-xs text-[hsl(var(--brand-ink)/0.60)] leading-relaxed">{property.legal.notes}</div>
-                    )}
+                    <div className="mt-4 text-xs text-[hsl(var(--brand-ink)/0.60)] leading-relaxed">
+                      {property.legal.notes ?? "Catatan: untuk verifikasi legal formal, silakan koordinasi dengan notaris/ahli Anda. Kami bantu rapikan informasi dan komunikasi ke pihak terkait."}
+                    </div>
                   </div>
                 </section>
+
               </div>
             </div>
 

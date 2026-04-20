@@ -86,13 +86,14 @@ export const properties: Property[] = [
     coordinates: { lat: -8.829, lng: 115.085 },
     legal: {
       checklist: [
-        "Sertifikat hak milik / SHM",
-        "IMB/PBG (izin bangunan)",
-        "Dokumen pajak & PBB terkini",
-        "Kontrak manajemen (opsional)",
+        "Dokumen kepemilikan tersedia (cek via notaris/ahli Anda)",
+        "Izin bangunan (bila ada) — cek detail sebelum deal",
+        "PBB/pajak: minta bukti pembayaran terbaru",
+        "Opsi manajemen (bila untuk sewa) — bisa dibahas",
       ],
-      notes: "Tim legal kami bantu verifikasi dokumen dan due diligence sebelum deal.",
+      notes: "Kami bantu rapikan info dan koordinasi ke pihak terkait. Untuk verifikasi legal formal, silakan gunakan notaris/ahli Anda.",
     },
+
     roiProjection: {
       nightlyRateIdr: 4_500_000,
       occupancy: 0.62,
@@ -135,12 +136,14 @@ export const properties: Property[] = [
     coordinates: { lat: -8.654, lng: 115.132 },
     legal: {
       checklist: [
-        "Perjanjian leasehold + opsi perpanjangan",
-        "IMB/PBG",
-        "PBB & bukti pembayaran",
-        "Surat bebas sengketa",
+        "Kesiapan move-in & kondisi bangunan",
+        "Biaya tahunan (maintenance/keamanan) — minta estimasi",
+        "Jika disewakan: cek demand micro-area & aturan lingkungan",
+        "Dokumen kepemilikan (cek via notaris/ahli Anda)",
       ],
+      notes: "Untuk hunian, fokus di kenyamanan & akses. Kalau mau hybrid (tinggal + sewakan), kita bisa bahas strategi seasonality.",
     },
+
     roiProjection: {
       nightlyRateIdr: 2_800_000,
       occupancy: 0.58,
@@ -182,13 +185,14 @@ export const properties: Property[] = [
     tags: ["Off-plan", "Eco"],
     legal: {
       checklist: [
-        "Kontrak pembangunan & milestone payment",
-        "Legalitas lahan & zonasi",
-        "IMB/PBG dalam proses",
-        "Garansi struktur (sesuai kontrak)",
+        "Milestone payment & timeline pembangunan jelas",
+        "Update progres bisa diminta berkala",
+        "Dokumen lahan & rencana izin: minta ringkasan dari developer",
+        "Garansi/defect liability (sesuai kontrak)",
       ],
-      notes: "Kami bantu review kontrak dan timeline pembangunan.",
+      notes: "Kami bantu koordinasi pertanyaan ke developer dan rapikan poin-poin kontrak. Untuk review legal formal, gunakan notaris/ahli Anda.",
     },
+
     createdAt: "2026-04-15T10:00:00.000Z",
   },
   {
@@ -221,12 +225,14 @@ export const properties: Property[] = [
     tags: ["Ricefield", "Development"],
     legal: {
       checklist: [
-        "SHM/Freehold",
-        "Cek zonasi & RDTR",
-        "Letter of no dispute",
-        "Akses jalan & batas lahan jelas",
+        "Akses jalan & lebar akses (krusial untuk proyek)",
+        "Kontur, drainase, dan risiko banjir",
+        "Utilitas (listrik/air/internet) & jarak ke titik ramai",
+        "Zonasi & aturan setempat (cek via notaris/ahli Anda)",
       ],
+      notes: "Potensial untuk build villa/retreat kecil. Untuk kepastian perizinan & legal formal, koordinasikan dengan notaris/ahli Anda.",
     },
+
     createdAt: "2026-02-28T10:00:00.000Z",
   },
   {
@@ -257,14 +263,17 @@ export const properties: Property[] = [
       "Reputasi sewa kuat",
     ],
     description:
-      "Listing ini sudah terjual. Bila Anda mencari unit serupa di Seminyak, tim kami bisa kurasi opsi yang relevan.",
+      "Listing ini sudah terjual. Jika Anda cari unit serupa di Seminyak, kami bisa bantu carikan opsi sesuai budget dan preferensi.",
+
     tags: ["Sold"],
     legal: {
       checklist: [
-        "Dokumen lengkap diverifikasi sebelum closing",
-        "Riwayat transaksi jelas",
+        "Unit ini sudah SOLD",
+        "Kami bisa carikan opsi serupa di area yang sama",
       ],
+      notes: "Klik WhatsApp untuk minta unit serupa (budget & preferensi Anda akan kami catat).",
     },
+
     createdAt: "2025-12-12T10:00:00.000Z",
   },
 ];

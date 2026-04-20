@@ -11,8 +11,9 @@ export default function Footer() {
           <div>
             <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">Artaniar</div>
             <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)] leading-relaxed max-w-sm">
-              Properti Bali terkurasi untuk investment & hunian — dengan pendampingan legal dan insight pasar untuk keputusan yang lebih tenang.
+              Properti Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respon cepat, shortlist rapi, dan pendampingan deal sampai tuntas.
             </p>
+
             <div className="mt-5">
               <WhatsAppCTA context={{ intent: "Konsultasi" }} />
             </div>
