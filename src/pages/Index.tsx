@@ -55,25 +55,25 @@ export default function Index() {
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
-                  <div className="flex items-center gap-2 text-white font-semibold">
-                    <Timer className="h-4 w-4" /> {t("home.trust.fast.title")}
+                <div className="rounded-3xl border border-white/35 bg-white/90 p-4 shadow-[0_18px_55px_-35px_rgba(0,0,0,0.65)]">
+                  <div className="flex items-center gap-2 text-[hsl(var(--brand-ink))] font-semibold">
+                    <Timer className="h-4 w-4 text-[hsl(var(--brand-accent))]" /> {t("home.trust.fast.title")}
                   </div>
-                  <div className="mt-1 text-sm text-white/75">{t("home.trust.fast.desc")}</div>
+                  <div className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.75)]">{t("home.trust.fast.desc")}</div>
                 </div>
 
-                <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
-                  <div className="flex items-center gap-2 text-white font-semibold">
-                    <Building2 className="h-4 w-4" /> {t("home.trust.pic.title")}
+                <div className="rounded-3xl border border-white/35 bg-white/90 p-4 shadow-[0_18px_55px_-35px_rgba(0,0,0,0.65)]">
+                  <div className="flex items-center gap-2 text-[hsl(var(--brand-ink))] font-semibold">
+                    <Building2 className="h-4 w-4 text-[hsl(var(--brand-accent))]" /> {t("home.trust.pic.title")}
                   </div>
-                  <div className="mt-1 text-sm text-white/75">{t("home.trust.pic.desc")}</div>
+                  <div className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.75)]">{t("home.trust.pic.desc")}</div>
                 </div>
 
-                <div className="rounded-3xl border border-white/12 bg-white/10 p-4 backdrop-blur">
-                  <div className="flex items-center gap-2 text-white font-semibold">
-                    <TrendingUp className="h-4 w-4" /> {t("home.trust.insight.title")}
+                <div className="rounded-3xl border border-white/35 bg-white/90 p-4 shadow-[0_18px_55px_-35px_rgba(0,0,0,0.65)]">
+                  <div className="flex items-center gap-2 text-[hsl(var(--brand-ink))] font-semibold">
+                    <TrendingUp className="h-4 w-4 text-[hsl(var(--brand-accent))]" /> {t("home.trust.insight.title")}
                   </div>
-                  <div className="mt-1 text-sm text-white/75">{t("home.trust.insight.desc")}</div>
+                  <div className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.75)]">{t("home.trust.insight.desc")}</div>
                 </div>
               </div>
             </div>
