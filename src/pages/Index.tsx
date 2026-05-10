@@ -17,6 +17,8 @@ import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { Filter, SearchX } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
 import { Input } from "@/components/ui/input";
+import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
+import { properties } from "@/data/properties";
 
 export default function Index() {
   const { t } = useLocale();
@@ -54,24 +56,27 @@ export default function Index() {
 
   const quickKeyword = filters.search.trim();
 
+  const topListings = useMemo(() => {
+    const byRoi = [...properties].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
+    return byRoi.slice(0, 4);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">
-        <section className="rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
+        <TopListingsCarousel items={topListings} />
+
+        <section className="mt-10 rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="grid gap-6 p-6 md:p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--brand-ink)/0.12)] bg-[hsl(var(--brand-surface-2))] px-4 py-2 text-xs font-semibold text-[hsl(var(--brand-ink))]">
                 {t("home.listings.badge")}
               </div>
 
-              <h1 className="mt-4 font-serif text-4xl leading-tight">
-                {t("home.listings.title")}
-              </h1>
-              <p className="mt-2 text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">
-                {t("home.listings.desc")}
-              </p>
+              <h2 className="mt-4 font-serif text-4xl leading-tight">{t("home.listings.title")}</h2>
+              <p className="mt-2 text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.desc")}</p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <WhatsAppCTA
@@ -96,9 +101,7 @@ export default function Index() {
                       className="h-7 border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                   </div>
-                  <div className="mt-1 text-[11px] text-[hsl(var(--brand-ink)/0.62)]">
-                    {t("home.listings.searchHint")}
-                  </div>
+                  <div className="mt-1 text-[11px] text-[hsl(var(--brand-ink)/0.62)]">{t("home.listings.searchHint")}</div>
                 </div>
 
                 <div className="lg:hidden">
@@ -116,7 +119,12 @@ export default function Index() {
                         <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">{t("properties.filterTitle")}</SheetTitle>
                       </SheetHeader>
                       <div className="mt-4 pb-3">
-                        <PropertyFilters compact value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
+                        <PropertyFilters
+                          compact
+                          value={filters}
+                          onChange={setFilters}
+                          onReset={() => setFilters(DEFAULT_FILTERS)}
+                        />
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -126,9 +134,7 @@ export default function Index() {
 
             <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-[hsl(var(--brand-surface-2))] p-6">
               <div className="font-serif text-2xl">{t("home.listings.ctaCardTitle")}</div>
-              <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">
-                {t("home.listings.ctaCardDesc")}
-              </p>
+              <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.ctaCardDesc")}</p>
               <div className="mt-5 flex flex-col gap-2">
                 <WhatsAppCTA
                   context={{
@@ -164,7 +170,7 @@ export default function Index() {
           <div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-serif text-3xl">{t("home.listings.resultsTitle")}</h2>
+                <h3 className="font-serif text-3xl">{t("home.listings.resultsTitle")}</h3>
                 <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("home.listings.resultsDesc")}</p>
               </div>
 
@@ -185,10 +191,7 @@ export default function Index() {
             {loading ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 9 }).map((_, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden"
-                  >
+                  <div key={idx} className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden">
                     <Skeleton className="aspect-[16/11] w-full" />
                     <div className="p-4 grid gap-3">
                       <Skeleton className="h-4 w-2/3" />
@@ -206,7 +209,7 @@ export default function Index() {
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[hsl(var(--brand-surface-2))]">
                   <SearchX className="h-6 w-6 text-[hsl(var(--brand-ink)/0.60)]" />
                 </div>
-                <h3 className="mt-4 font-serif text-2xl">{t("properties.empty.title")}</h3>
+                <h4 className="mt-4 font-serif text-2xl">{t("properties.empty.title")}</h4>
                 <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("properties.empty.desc")}</p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Button
