@@ -274,10 +274,10 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
   },
 
   id: {
-    "nav.home": "Home",
-    "nav.properties": "Find Property",
+    "nav.home": "Beranda",
+    "nav.properties": "Cari Properti",
     "nav.investment": "Panduan Investasi",
-    "nav.agentGuide": "Sell Your Property",
+    "nav.agentGuide": "Jual Properti",
 
     // currently not shown (subtitle removed), but keep consistent
     "brand.subtitle": "Agen Properti Bali",
@@ -295,16 +295,16 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.title": "Cari properti Bali—tanpa ribet.",
     "home.listings.desc":
       "Pakai filter (termasuk advanced) buat mempersempit pilihan. Kalau sudah cocok, klik WhatsApp—pesan otomatis berisi konteks seperti area, budget, dan kode listing.",
-    "home.listings.searchLabel": "Quick search",
+    "home.listings.searchLabel": "Pencarian cepat",
     "home.listings.searchPlaceholder": "Area, judul, atau kode (contoh: Uluwatu / ART-ULU)",
-    "home.listings.searchHint": "Tips: buka Filters untuk land size, bedrooms, road width, view, dan lainnya.",
+    "home.listings.searchHint": "Tips: buka Filter untuk land size, bedrooms, road width, view, dan lainnya.",
     "home.listings.ctaCardTitle": "Mau shortlist yang lebih pas?",
     "home.listings.ctaCardDesc":
       "Kirim target area + budget. Aku bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
     "home.listings.resultsTitle": "Listing",
     "home.listings.resultsDesc": "Browse hasil di bawah, atau refine pakai filter.",
 
-    "properties.title": "Find Property",
+    "properties.title": "Cari Properti",
     "properties.subtitle": "Filter cepat, bandingkan santai—lalu WhatsApp untuk cek availability.",
     "properties.filterTitle": "Filter",
     "properties.empty.title": "Belum ada yang cocok",
@@ -368,14 +368,14 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "investment.faq.q3.a":
       "Nggak. ROI itu indikatif berdasarkan asumsi pasar (ADR, occupancy, biaya). Kalau mau lebih aman, aku bisa bantu bikin skenario yang lebih konservatif.",
 
-    "agent.title": "Sell your property dengan Artaniar",
+    "agent.title": "Jual properti bersama Artaniar",
     "agent.subtitle":
       "Untuk owner yang mau proses intake rapi dan follow-up cepat. Isi data inti di sini—lanjutnya via WhatsApp.",
     "agent.benefit1": "Intake terstruktur: area, harga, tipe, link media, dan catatan penting.",
     "agent.benefit2": "Follow-up lebih cepat: bisa langsung mulai review.",
     "agent.benefit3": "Next steps jelas: requirement, pengecekan, dan alur listing.",
     "agent.privacy": "Privasi: data dipakai hanya untuk follow-up submission ini. Estimasi respons: hari yang sama (jam kerja).",
-    "agent.heroCard.title": "Owner listing intake",
+    "agent.heroCard.title": "Form intake listing owner",
     "agent.heroCard.desc": "Kirim data inti—nanti aku follow-up pertanyaan dengan format yang rapi.",
 
     "agent.form.title": "Submit detail properti",
@@ -408,16 +408,16 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
 
     "footer.tagline":
       "Bali property agent untuk buyer—respons cepat, shortlist rapi, dan dibantu sampai deal beres.",
-    "footer.explore": "Explore",
+    "footer.explore": "Menu",
     "footer.contact": "Kontak",
-    "footer.home": "Home",
-    "footer.browse": "Find Property",
-    "footer.agentGuide": "Sell Your Property",
+    "footer.home": "Beranda",
+    "footer.browse": "Cari Properti",
+    "footer.agentGuide": "Jual Properti",
     "footer.guide": "Panduan Investasi",
     "footer.disclaimer": "Disclaimer: Informasi listing bersifat indikatif. Availability dan harga bisa berubah.",
 
     "notfound.title": "404",
     "notfound.subtitle": "Halaman tidak ditemukan",
-    "notfound.back": "Kembali ke Home",
+    "notfound.back": "Kembali ke Beranda",
   },
 };
