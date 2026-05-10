@@ -7,7 +7,7 @@ const STORAGE_KEY = "locale";
 export function useLocale() {
   const [locale, setLocale] = React.useState<Locale>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved === "id" || saved === "en" ? saved : "en";
+    return saved === "id" || saved === "en" ? saved : "id";
   });
 
   React.useEffect(() => {
