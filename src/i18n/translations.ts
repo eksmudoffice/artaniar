@@ -348,7 +348,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.searchPlaceholder": "Area, judul, atau kode (contoh: Uluwatu / ART-ULU)",
     "home.listings.searchHint": "Tips: buka Filter untuk land size, bedrooms, road width, view, dan lainnya.",
     "home.listings.ctaCardTitle": "Mau shortlist yang lebih pas?",
-    "home.listings.ctaCardDesc": "Kirim target area + budget. Aku bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
+    "home.listings.ctaCardDesc": "Kirim target area + budget. Kami bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
     "home.listings.resultsTitle": "Listing",
     "home.listings.resultsDesc": "Lihat hasil di bawah, atau refine pakai filter.",
 
@@ -356,7 +356,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "properties.subtitle": "Filter cepat, bandingkan santai—lalu WhatsApp untuk cek availability.",
     "properties.filterTitle": "Filter",
     "properties.empty.title": "Belum ada yang cocok",
-    "properties.empty.desc": "Coba ubah filter (area/budget), atau WhatsApp preferensimu—aku bantu shortlist yang paling mendekati.",
+    "properties.empty.desc": "Coba ubah filter (area/budget), atau WhatsApp preferensimu—kami bantu shortlist yang paling mendekati.",
     "properties.pagination": "Halaman {page} / {totalPages}",
 
     "filters.title": "Filter",
@@ -398,7 +398,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
 
     "investment.process.title": "Alur pembelian (high-level)",
     "investment.process.step1": "Konsultasi preferensi (budget, area, tujuan: tinggal / bisnis / investasi)",
-    "investment.process.step2": "Aku bantu shortlist 3–6 opsi paling relevan + poin pembanding",
+    "investment.process.step2": "Kami bantu shortlist 3–6 opsi paling relevan + poin pembanding",
     "investment.process.step3": "Video walkthrough / site visit",
     "investment.process.step4": "Cek availability dan skenario deal",
     "investment.process.step5": "Negosiasi + koordinasi pihak terkait (owner/agent/notaris kamu)",
@@ -413,16 +413,17 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
       "Fokus ke feasibility: akses jalan, kontur & drainase, utilitas, sekitar, dan zonasi/aturan setempat. Untuk legal formal, koordinasikan dengan notaris/ahli kamu.",
     "investment.faq.q3.q": "ROI yang ditampilkan itu dijamin?",
     "investment.faq.q3.a":
-      "Nggak. ROI itu indikatif berdasarkan asumsi pasar (ADR, occupancy, biaya). Kalau mau lebih aman, aku bisa bantu bikin skenario yang lebih konservatif.",
+      "Nggak. ROI itu indikatif berdasarkan asumsi pasar (ADR, occupancy, biaya). Kalau mau lebih aman, kami bisa bantu bikin skenario yang lebih konservatif.",
 
     "agent.title": "Jual properti bersama Artaniar",
-    "agent.subtitle": "Untuk owner yang mau proses intake rapi dan follow-up cepat. Isi data inti di sini—lanjutnya via WhatsApp.",
+    "agent.subtitle":
+      "Untuk owner yang mau proses intake rapi dan follow-up cepat. Isi data inti di sini—lanjutnya via WhatsApp.",
     "agent.benefit1": "Intake terstruktur: area, harga, tipe, link media, dan catatan penting.",
-    "agent.benefit2": "Follow-up lebih cepat: bisa langsung mulai review.",
+    "agent.benefit2": "Follow-up lebih cepat: kami bisa langsung mulai review.",
     "agent.benefit3": "Next steps jelas: requirement, pengecekan, dan alur listing.",
     "agent.privacy": "Privasi: data dipakai hanya untuk follow-up submission ini. Estimasi respons: hari yang sama (jam kerja).",
     "agent.heroCard.title": "Form intake listing owner",
-    "agent.heroCard.desc": "Kirim data inti—nanti aku follow-up pertanyaan dengan format yang rapi.",
+    "agent.heroCard.desc": "Kirim data inti—nanti kami follow-up pertanyaan dengan format yang rapi.",
 
     "agent.form.title": "Submit detail properti",
     "agent.form.desc": "Isi field wajib, lalu klik “Kirim via WhatsApp” untuk mengirim dalam format yang rapi.",
@@ -446,7 +447,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.notesPh": "Akses jalan, land/building size, bedrooms, legal notes, urgency, dll.",
     "agent.form.optional": "Opsional",
     "agent.form.responseTitle": "Habis kirim, next-nya apa?",
-    "agent.form.responseDesc": "Setelah pesan terkirim, aku akan reply requirement dan langkah berikutnya.",
+    "agent.form.responseDesc": "Setelah pesan terkirim, kami akan reply requirement dan langkah berikutnya.",
     "agent.form.disclaimer": "Dengan mengirim, kamu setuju dihubungi via WhatsApp untuk verifikasi dan follow-up.",
     "agent.form.submit": "Kirim via WhatsApp",
     "agent.form.toastTitle": "Membuka WhatsApp…",
