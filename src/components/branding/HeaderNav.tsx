@@ -7,6 +7,7 @@ import { Menu } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
 import LanguageToggle from "@/components/branding/LanguageToggle";
+import artaniarLogo from "@/assets/artaniar-logo.png";
 
 export default function HeaderNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -39,12 +40,18 @@ export default function HeaderNav() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-2xl bg-[hsl(var(--brand-ink))]">
-              <span className="font-serif text-lg text-[hsl(var(--brand-ink-foreground))]">A</span>
+          <Link to="/" className="flex items-center gap-3">
+            <div className="flex items-center">
+              <img
+                src={artaniarLogo}
+                alt="Artaniar"
+                className="h-9 w-auto object-contain"
+                loading="eager"
+                decoding="async"
+              />
             </div>
-            <div className="leading-tight text-[hsl(var(--brand-ink))]">
-              <div className="font-serif text-base tracking-wide">Artaniar</div>
+
+            <div className="hidden sm:block leading-tight text-[hsl(var(--brand-ink))]">
               <div className="text-[11px] tracking-[0.18em] uppercase text-[hsl(var(--brand-ink)/0.60)]">
                 {t("brand.subtitle")}
               </div>
@@ -71,11 +78,7 @@ export default function HeaderNav() {
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageToggle value={locale} onChange={setLocale} transparent={false} />
-            <WhatsAppCTA
-              context={{ intent: "Konsultasi" }}
-              label={t("cta.consult")}
-              variant="primary"
-            />
+            <WhatsAppCTA context={{ intent: "Konsultasi" }} label={t("cta.consult")} variant="primary" />
           </div>
 
           <div className="md:hidden">
@@ -90,7 +93,18 @@ export default function HeaderNav() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[86vw] max-w-sm bg-[hsl(var(--brand-surface))]">
                 <SheetHeader>
-                  <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">Artaniar</SheetTitle>
+                  <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={artaniarLogo}
+                        alt="Artaniar"
+                        className="h-8 w-auto object-contain"
+                        loading="eager"
+                        decoding="async"
+                      />
+                      <span className="sr-only">Artaniar</span>
+                    </div>
+                  </SheetTitle>
                 </SheetHeader>
 
                 <div className="mt-6 flex flex-col gap-2">
@@ -116,11 +130,7 @@ export default function HeaderNav() {
                   ))}
 
                   <div className="pt-2">
-                    <WhatsAppCTA
-                      className="w-full justify-center"
-                      context={{ intent: "Konsultasi" }}
-                      label={t("cta.consult")}
-                    />
+                    <WhatsAppCTA className="w-full justify-center" context={{ intent: "Konsultasi" }} label={t("cta.consult")} />
                   </div>
                 </div>
               </SheetContent>
