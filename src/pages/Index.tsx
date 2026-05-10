@@ -60,7 +60,6 @@ export default function Index() {
   const quickKeyword = filters.search.trim();
 
   const topListings = useMemo(() => {
-    // Sample: show many items so the carousel style is obvious (duplicates are handled inside component).
     const byRoi = [...properties].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
     return byRoi.slice(0, Math.min(8, byRoi.length));
   }, []);
@@ -162,7 +161,7 @@ export default function Index() {
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
                     >
-                      Prev
+                      {t("cta.prev")}
                     </Button>
                     <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">
                       {t("properties.pagination").replace("{page}", String(page)).replace("{totalPages}", String(totalPages))}
@@ -172,7 +171,7 @@ export default function Index() {
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       className="rounded-full bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
                     >
-                      Next
+                      {t("cta.next")}
                     </Button>
                   </div>
                 </>

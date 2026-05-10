@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
+import { useLocale } from "@/i18n/use-locale";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -28,25 +29,33 @@ function AutoSlide({ api, intervalMs = 3000 }: { api: EmblaCarouselType | undefi
 export default function TopListingsCarousel({
   items,
   className,
-  title = "Top Listings",
-  subtitle = "Pilihan unit paling menarik saat ini—klik untuk detail atau tanya via WhatsApp.",
+  title,
+  subtitle,
 }: {
   items: Property[];
   className?: string;
   title?: string;
   subtitle?: string;
 }) {
+  const { t } = useLocale();
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
 
   const slides = useMemo(() => {
-    // For better visual testing with many listings, we allow duplicates (id becomes stable with suffix)
-    // when items are fewer than 8.
     if (items.length >= 8) return items;
     const target = 10;
     const out: Property[] = [];
     for (let i = 0; i < target; i++) out.push(items[i % Math.max(1, items.length)]!);
     return out;
   }, [items]);
+
+  const purposeLabel = (p: Property["purpose"]) =>
+    p === "Investment" ? t("property.purpose.investment") : t("property.purpose.residential");
+
+  const statusLabel = (s: Property["status"]) =>
+    s === "Ready" ? t("property.status.ready") : s === "Off-plan" ? t("property.status.offplan") : t("property.status.sold");
+
+  const ownershipLabel = (o: Property["ownership"]) =>
+    o === "Freehold" ? t("property.ownership.freehold") : t("property.ownership.leasehold");
 
   return (
     <section
@@ -58,12 +67,14 @@ export default function TopListingsCarousel({
       <div className="p-6 md:p-10">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-serif text-3xl md:text-4xl">{title}</h1>
-            <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.72)] max-w-2xl leading-relaxed">{subtitle}</p>
+            <h1 className="font-serif text-3xl md:text-4xl">{title ?? t("home.topListings.title")}</h1>
+            <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.72)] max-w-2xl leading-relaxed">
+              {subtitle ?? t("home.topListings.subtitle")}
+            </p>
           </div>
 
           <div className="hidden md:flex">
-            <WhatsAppCTA context={{ intent: "Minta rekomendasi top listings" }} label="Konsultasi cepat" />
+            <WhatsAppCTA context={{ intent: "Minta rekomendasi top listings" }} label={t("cta.consult")} />
           </div>
         </div>
 
@@ -103,7 +114,7 @@ export default function TopListingsCarousel({
                           </Badge>
                           {sold ? (
                             <Badge className="rounded-full px-3 py-1 text-[11px] bg-[hsl(var(--brand-accent))] text-[hsl(var(--brand-accent-foreground))]">
-                              Sold
+                              {statusLabel(p.status)}
                             </Badge>
                           ) : null}
                         </div>
@@ -136,19 +147,19 @@ export default function TopListingsCarousel({
                             variant="secondary"
                             className="rounded-full bg-white/70 text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
                           >
-                            {p.purpose}
+                            {purposeLabel(p.purpose)}
                           </Badge>
                           <Badge
                             variant="secondary"
                             className="rounded-full bg-white/70 text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
                           >
-                            {p.status}
+                            {statusLabel(p.status)}
                           </Badge>
                           <Badge
                             variant="secondary"
                             className="rounded-full bg-white/70 text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
                           >
-                            {p.ownership}
+                            {ownershipLabel(p.ownership)}
                           </Badge>
                         </div>
 
@@ -169,18 +180,18 @@ export default function TopListingsCarousel({
                               listingCode: p.code,
                               location: p.location.area,
                             }}
-                            label={sold ? "Minta unit serupa" : "Tanya via WhatsApp"}
+                            label={t("cta.askWhatsapp")}
                           />
                           <Link
                             to={`/properties/${p.slug}`}
                             className="inline-flex items-center justify-center rounded-full border border-[hsl(var(--brand-ink)/0.16)] bg-white/70 px-5 py-2.5 text-sm font-medium text-[hsl(var(--brand-ink))] hover:bg-white transition-colors"
                           >
-                            Lihat detail
+                            {t("cta.detail")}
                           </Link>
                         </div>
 
                         <div className="mt-auto pt-4 text-[11px] text-[hsl(var(--brand-ink)/0.62)] leading-relaxed">
-                          Kode listing: <span className="font-semibold">{p.code}</span>
+                          {t("label.listingCode")}: <span className="font-semibold">{p.code}</span>
                         </div>
                       </div>
                     </div>
@@ -195,7 +206,7 @@ export default function TopListingsCarousel({
         </div>
 
         <div className="mt-4 flex md:hidden">
-          <WhatsAppCTA className="w-full justify-center" context={{ intent: "Minta rekomendasi top listings" }} label="Konsultasi cepat" />
+          <WhatsAppCTA className="w-full justify-center" context={{ intent: "Minta rekomendasi top listings" }} label={t("cta.consult")} />
         </div>
       </div>
     </section>

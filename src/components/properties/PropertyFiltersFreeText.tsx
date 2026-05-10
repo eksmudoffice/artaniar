@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useLocale } from "@/i18n/use-locale";
-import type { PropertyPurpose, PropertyStatus, PropertyType } from "@/data/properties";
 import type { PropertyQuery } from "@/services/propertyService";
 
 import FilterHeader from "@/components/properties/filters/FilterHeader";
@@ -71,7 +70,7 @@ type Props = {
 };
 
 export default function PropertyFiltersFreeText({ value, onChange, onReset, compact = false }: Props) {
-  const { locale } = useLocale();
+  const { t } = useLocale();
 
   const advancedTokens = useMemo(() => buildAdvancedTokens(value), [value]);
 
@@ -96,7 +95,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     if (advancedTokens.trim()) {
       out.push({
         key: "advanced",
-        label: locale === "id" ? "Advanced filters" : "Advanced filters",
+        label: t("filters.advanced.chip"),
         onClear: () =>
           onChange({
             ...value,
@@ -116,7 +115,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     }
 
     return out;
-  }, [advancedTokens, locale, onChange, value]);
+  }, [advancedTokens, onChange, t, value]);
 
   return (
     <div className="grid gap-5">

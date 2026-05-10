@@ -14,6 +14,21 @@ export type TranslationKey =
   | "cta.viewListings"
   | "cta.requestShortlist"
   | "cta.discussInvestment"
+  | "cta.prev"
+  | "cta.next"
+  | "cta.detail"
+  | "cta.askWhatsapp"
+  | "home.topListings.title"
+  | "home.topListings.subtitle"
+  | "filters.advanced.chip"
+  | "label.listingCode"
+  | "property.purpose.investment"
+  | "property.purpose.residential"
+  | "property.status.ready"
+  | "property.status.offplan"
+  | "property.status.sold"
+  | "property.ownership.freehold"
+  | "property.ownership.leasehold"
   | "home.listings.badge"
   | "home.listings.title"
   | "home.listings.desc"
@@ -132,7 +147,6 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "nav.investment": "Investment Guide",
     "nav.agentGuide": "Sell Your Property",
 
-    // currently not shown (subtitle removed), but keep consistent
     "brand.subtitle": "Bali Property Agent",
 
     "cta.consult": "Consult",
@@ -143,6 +157,24 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.viewListings": "Browse listings",
     "cta.requestShortlist": "Request shortlist",
     "cta.discussInvestment": "Talk investment strategy",
+    "cta.prev": "Prev",
+    "cta.next": "Next",
+    "cta.detail": "View details",
+    "cta.askWhatsapp": "Ask on WhatsApp",
+
+    "home.topListings.title": "Top Listings",
+    "home.topListings.subtitle": "Most interesting picks right now—open details or ask via WhatsApp.",
+
+    "filters.advanced.chip": "Advanced filters",
+    "label.listingCode": "Listing code",
+
+    "property.purpose.investment": "Investment",
+    "property.purpose.residential": "Living",
+    "property.status.ready": "Ready",
+    "property.status.offplan": "Off-plan",
+    "property.status.sold": "Sold",
+    "property.ownership.freehold": "Freehold",
+    "property.ownership.leasehold": "Leasehold",
 
     "home.listings.badge": "Fast filters • WhatsApp-ready • Buyer-first",
     "home.listings.title": "Find the right Bali property—without the hassle.",
@@ -152,7 +184,8 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.searchPlaceholder": "Area, title, or code (e.g., Uluwatu / ART-ULU)",
     "home.listings.searchHint": "Tip: open Filters for land size, bedrooms, road width, view, and more.",
     "home.listings.ctaCardTitle": "Want a curated shortlist?",
-    "home.listings.ctaCardDesc": "Send your target area + budget. We'll recommend options that actually match, then help with next steps.",
+    "home.listings.ctaCardDesc":
+      "Send your target area + budget. We'll recommend options that actually match, then help with next steps.",
     "home.listings.resultsTitle": "Listings",
     "home.listings.resultsDesc": "Browse results below, or refine using filters.",
 
@@ -258,8 +291,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastTitle": "Opening WhatsApp…",
     "agent.form.toastDesc": "Your message is pre-filled with your property details.",
 
-    "footer.tagline":
-      "Bali property agent for buyers—fast response, tidy shortlists, and support until closing.",
+    "footer.tagline": "Bali property agent for buyers—fast response, tidy shortlists, and support until closing.",
     "footer.explore": "Explore",
     "footer.contact": "Contact",
     "footer.home": "Home",
@@ -279,7 +311,6 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "nav.investment": "Panduan Investasi",
     "nav.agentGuide": "Jual Properti",
 
-    // currently not shown (subtitle removed), but keep consistent
     "brand.subtitle": "Agen Properti Bali",
 
     "cta.consult": "Konsultasi",
@@ -290,6 +321,24 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.viewListings": "Lihat listing",
     "cta.requestShortlist": "Minta shortlist",
     "cta.discussInvestment": "Diskusi strategi investasi",
+    "cta.prev": "Sebelumnya",
+    "cta.next": "Berikutnya",
+    "cta.detail": "Lihat detail",
+    "cta.askWhatsapp": "Tanya via WhatsApp",
+
+    "home.topListings.title": "Top Listing",
+    "home.topListings.subtitle": "Pilihan unit paling menarik saat ini—klik untuk detail atau tanya via WhatsApp.",
+
+    "filters.advanced.chip": "Filter lanjutan",
+    "label.listingCode": "Kode listing",
+
+    "property.purpose.investment": "Investasi",
+    "property.purpose.residential": "Tinggal",
+    "property.status.ready": "Ready",
+    "property.status.offplan": "Off-plan",
+    "property.status.sold": "Sold",
+    "property.ownership.freehold": "Freehold",
+    "property.ownership.leasehold": "Leasehold",
 
     "home.listings.badge": "Filter cepat • WhatsApp-ready • Buyer-first",
     "home.listings.title": "Cari properti Bali—tanpa ribet.",
@@ -299,17 +348,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.searchPlaceholder": "Area, judul, atau kode (contoh: Uluwatu / ART-ULU)",
     "home.listings.searchHint": "Tips: buka Filter untuk land size, bedrooms, road width, view, dan lainnya.",
     "home.listings.ctaCardTitle": "Mau shortlist yang lebih pas?",
-    "home.listings.ctaCardDesc":
-      "Kirim target area + budget. Aku bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
+    "home.listings.ctaCardDesc": "Kirim target area + budget. Aku bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
     "home.listings.resultsTitle": "Listing",
-    "home.listings.resultsDesc": "Browse hasil di bawah, atau refine pakai filter.",
+    "home.listings.resultsDesc": "Lihat hasil di bawah, atau refine pakai filter.",
 
     "properties.title": "Cari Properti",
     "properties.subtitle": "Filter cepat, bandingkan santai—lalu WhatsApp untuk cek availability.",
     "properties.filterTitle": "Filter",
     "properties.empty.title": "Belum ada yang cocok",
-    "properties.empty.desc":
-      "Coba ubah filter (area/budget), atau WhatsApp preferensimu—aku bantu shortlist yang paling mendekati.",
+    "properties.empty.desc": "Coba ubah filter (area/budget), atau WhatsApp preferensimu—aku bantu shortlist yang paling mendekati.",
     "properties.pagination": "Halaman {page} / {totalPages}",
 
     "filters.title": "Filter",
@@ -369,8 +416,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
       "Nggak. ROI itu indikatif berdasarkan asumsi pasar (ADR, occupancy, biaya). Kalau mau lebih aman, aku bisa bantu bikin skenario yang lebih konservatif.",
 
     "agent.title": "Jual properti bersama Artaniar",
-    "agent.subtitle":
-      "Untuk owner yang mau proses intake rapi dan follow-up cepat. Isi data inti di sini—lanjutnya via WhatsApp.",
+    "agent.subtitle": "Untuk owner yang mau proses intake rapi dan follow-up cepat. Isi data inti di sini—lanjutnya via WhatsApp.",
     "agent.benefit1": "Intake terstruktur: area, harga, tipe, link media, dan catatan penting.",
     "agent.benefit2": "Follow-up lebih cepat: bisa langsung mulai review.",
     "agent.benefit3": "Next steps jelas: requirement, pengecekan, dan alur listing.",
@@ -406,8 +452,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastTitle": "Membuka WhatsApp…",
     "agent.form.toastDesc": "Pesan sudah terisi otomatis dengan detail properti kamu.",
 
-    "footer.tagline":
-      "Bali property agent untuk buyer—respons cepat, shortlist rapi, dan dibantu sampai deal beres.",
+    "footer.tagline": "Bali property agent untuk buyer—respons cepat, shortlist rapi, dan dibantu sampai deal beres.",
     "footer.explore": "Menu",
     "footer.contact": "Kontak",
     "footer.home": "Beranda",
