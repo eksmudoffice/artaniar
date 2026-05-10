@@ -16,8 +16,13 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-3">
-              <img src={artaniarLogo} alt="Artaniar" className="h-9 w-auto object-contain" loading="lazy" decoding="async" />
-              <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">{t("footer.headline")}</div>
+              <img
+                src={artaniarLogo}
+                alt="Artaniar"
+                className="h-10 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <p className="mt-3 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed max-w-md">
