@@ -31,7 +31,7 @@ export default function Index() {
   const [filterOpen, setFilterOpen] = useState(false);
   const topRef = useRef<HTMLDivElement | null>(null);
 
-  const query = useMemo(() => ({ ...toQuery(filters), page, pageSize: 9 }), [filters, page]);
+  const query = useMemo(() => ({ ...toQuery(filters), page, pageSize: 12 }), [filters, page]);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,8 +70,10 @@ export default function Index() {
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">
+        {/* TOP LISTINGS */}
         <TopListingsCarousel items={topListings} />
 
+        {/* HERO (moved below top listings) */}
         <section className="mt-10 rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="grid gap-6 p-6 md:p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div>
@@ -140,107 +142,113 @@ export default function Index() {
           </div>
         </section>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[320px_1fr]">
-          <div className="hidden lg:block">
-            <div className="sticky top-24 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-5 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
-              <PropertyFilters value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
+        {/* LISTINGS SECTION (smaller sizing) */}
+        <section className="mt-10">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 className="font-serif text-3xl">{t("home.listings.resultsTitle")}</h3>
+              <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("home.listings.resultsDesc")}</p>
+            </div>
+
+            <div className="hidden lg:flex">
+              <WhatsAppCTA
+                context={{
+                  intent: "Konsultasi",
+                  location: filters.area !== "All" ? filters.area : undefined,
+                  budgetIdr: budget,
+                }}
+                label={t("cta.consult")}
+              />
             </div>
           </div>
 
-          <div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h3 className="font-serif text-3xl">{t("home.listings.resultsTitle")}</h3>
-                <p className="mt-1 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("home.listings.resultsDesc")}</p>
-              </div>
+          <Separator className="my-6 bg-[hsl(var(--brand-ink)/0.10)]" />
 
-              <div className="hidden lg:flex">
-                <WhatsAppCTA
-                  context={{
-                    intent: "Konsultasi",
-                    location: filters.area !== "All" ? filters.area : undefined,
-                    budgetIdr: budget,
-                  }}
-                  label={t("cta.consult")}
-                />
+          <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
+            <div className="hidden lg:block">
+              <div className="sticky top-24 rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-5 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
+                <PropertyFilters value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
               </div>
             </div>
 
-            <Separator className="my-6 bg-[hsl(var(--brand-ink)/0.10)]" />
-
-            {loading ? (
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 9 }).map((_, idx) => (
-                  <div key={idx} className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden">
-                    <Skeleton className="aspect-[16/11] w-full" />
-                    <div className="p-4 grid gap-3">
-                      <Skeleton className="h-4 w-2/3" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <div className="flex gap-2">
-                        <Skeleton className="h-9 w-full rounded-full" />
-                        <Skeleton className="h-9 w-24 rounded-full" />
+            <div>
+              {loading ? (
+                <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                  {Array.from({ length: 12 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 overflow-hidden"
+                    >
+                      <Skeleton className="aspect-[16/11] w-full" />
+                      <div className="p-4 grid gap-3">
+                        <Skeleton className="h-4 w-2/3" />
+                        <Skeleton className="h-4 w-1/2" />
+                        <div className="flex gap-2">
+                          <Skeleton className="h-9 w-full rounded-full" />
+                          <Skeleton className="h-9 w-24 rounded-full" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : items.length === 0 ? (
-              <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-8 text-center shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
-                <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[hsl(var(--brand-surface-2))]">
-                  <SearchX className="h-6 w-6 text-[hsl(var(--brand-ink)/0.60)]" />
-                </div>
-                <h4 className="mt-4 font-serif text-2xl">{t("properties.empty.title")}</h4>
-                <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("properties.empty.desc")}</p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                  <Button
-                    variant="outline"
-                    onClick={() => setFilters(DEFAULT_FILTERS)}
-                    className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
-                  >
-                    {t("cta.reset")}
-                  </Button>
-                  <WhatsAppCTA
-                    context={{
-                      intent: "Konsultasi",
-                      budgetIdr: budget,
-                      location: filters.area !== "All" ? filters.area : undefined,
-                    }}
-                    label={t("cta.consult")}
-                  />
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {items.map((p) => (
-                    <PropertyCard key={p.id} property={p} budget={budget} />
                   ))}
                 </div>
-
-                <div className="mt-8 flex items-center justify-between">
-                  <Button
-                    variant="outline"
-                    disabled={page <= 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
-                  >
-                    Prev
-                  </Button>
-                  <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">
-                    {t("properties.pagination").replace("{page}", String(page)).replace("{totalPages}", String(totalPages))}
+              ) : items.length === 0 ? (
+                <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-8 text-center shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
+                  <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[hsl(var(--brand-surface-2))]">
+                    <SearchX className="h-6 w-6 text-[hsl(var(--brand-ink)/0.60)]" />
                   </div>
-                  <Button
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="rounded-full bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
-                  >
-                    Next
-                  </Button>
+                  <h4 className="mt-4 font-serif text-2xl">{t("properties.empty.title")}</h4>
+                  <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("properties.empty.desc")}</p>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => setFilters(DEFAULT_FILTERS)}
+                      className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
+                    >
+                      {t("cta.reset")}
+                    </Button>
+                    <WhatsAppCTA
+                      context={{
+                        intent: "Konsultasi",
+                        budgetIdr: budget,
+                        location: filters.area !== "All" ? filters.area : undefined,
+                      }}
+                      label={t("cta.consult")}
+                    />
+                  </div>
                 </div>
-              </>
-            )}
+              ) : (
+                <>
+                  <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                    {items.map((p) => (
+                      <PropertyCard key={p.id} property={p} budget={budget} />
+                    ))}
+                  </div>
+
+                  <div className="mt-7 flex items-center justify-between">
+                    <Button
+                      variant="outline"
+                      disabled={page <= 1}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
+                    >
+                      Prev
+                    </Button>
+                    <div className="text-sm text-[hsl(var(--brand-ink)/0.70)]">
+                      {t("properties.pagination").replace("{page}", String(page)).replace("{totalPages}", String(totalPages))}
+                    </div>
+                    <Button
+                      disabled={page >= totalPages}
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      className="rounded-full bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        </section>
       </main>
 
       <Footer />
