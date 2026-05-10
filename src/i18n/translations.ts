@@ -381,7 +381,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.ctaCardTitle": "Mau shortlist yang lebih pas?",
     "home.listings.ctaCardDesc": "Kirim target area + budget. Kami bantu pilihkan opsi yang paling mendekati, lalu lanjut koordinasi.",
     "home.listings.resultsTitle": "Listing",
-    "home.listings.resultsDesc": "Lihat hasil di bawah, atau refine pakai filter.",
+    "home.listings.resultsDesc": "Lihat hasil di bawah, atau pakai filter untuk mempersempit pilihan.",
 
     "filters.advanced.chip": "Filter lanjutan",
     "filters.title": "Filter",

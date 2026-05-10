@@ -103,7 +103,7 @@ export default function Index() {
 
             <div>
               {loading ? (
-                <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                   {Array.from({ length: 12 }).map((_, idx) => (
                     <div
                       key={idx}
@@ -148,7 +148,7 @@ export default function Index() {
                 </div>
               ) : (
                 <>
-                  <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                     {items.map((p) => (
                       <PropertyCard key={p.id} property={p} budget={budget} />
                     ))}
