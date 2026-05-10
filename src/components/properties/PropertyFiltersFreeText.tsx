@@ -93,10 +93,40 @@ const buildAdvancedTokens = (v: PropertyFiltersValue) => {
 };
 
 export default function PropertyFiltersFreeText({ value, onChange, onReset, compact = false }: Props) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const advancedTokens = useMemo(() => buildAdvancedTokens(value), [value]);
+
+  const text = useMemo(() => {
+    const isId = locale === "id";
+    return {
+      advancedTitle: isId ? "Advanced (kategori)" : "Advanced (by category)",
+      advancedSubtitle: isId ? "Ukuran, akses, utilitas, dan view." : "Size, access, utilities, and view.",
+
+      landMin: isId ? "Luas tanah (min m²)" : "Land size (min m²)",
+      landPh: isId ? "cth: 300" : "ex: 300",
+
+      buildingMax: isId ? "Luas bangunan (maks m²)" : "Building size (max m²)",
+      buildingPh: isId ? "cth: 250" : "ex: 250",
+
+      bedsMin: isId ? "Kamar (min)" : "Beds (min)",
+      bathsMin: isId ? "Kamar mandi (min)" : "Baths (min)",
+
+      carport: isId ? "Carport" : "Carport",
+      roadMin: isId ? "Lebar jalan (min m)" : "Road width (min m)",
+      powerMin: isId ? "Listrik (min VA)" : "Electricity (min VA)",
+
+      water: isId ? "Sumber air" : "Water",
+      furnished: isId ? "Furnish" : "Furnished",
+      view: isId ? "View" : "View",
+      pool: isId ? "Kolam renang" : "Pool",
+
+      any: isId ? "Bebas" : "Any",
+      yes: isId ? "Ya" : "Yes",
+      no: isId ? "Tidak" : "No",
+    };
+  }, [locale]);
 
   const activeChips = useMemo(() => {
     const chips: Array<{ key: string; label: string; onClear: () => void }> = [];
@@ -119,7 +149,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     if (advancedTokens.trim()) {
       chips.push({
         key: "advanced",
-        label: "Advanced filters",
+        label: locale === "id" ? "Advanced filters" : "Advanced filters",
         onClear: () =>
           onChange({
             ...value,
@@ -139,7 +169,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     }
 
     return chips;
-  }, [advancedTokens, onChange, value]);
+  }, [advancedTokens, locale, onChange, value]);
 
   const priceMin = value.priceRange[0];
   const priceMax = value.priceRange[1];
@@ -395,8 +425,8 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
           el(
             "div",
             { className: "text-left" },
-            el("div", { className: "text-sm font-semibold text-[hsl(var(--brand-ink))]" }, "Advanced (by category)"),
-            el("div", { className: "text-[11px] text-[hsl(var(--brand-ink)/0.65)]" }, "Ukuran, akses, utilitas, dan view."),
+            el("div", { className: "text-sm font-semibold text-[hsl(var(--brand-ink))]" }, text.advancedTitle),
+            el("div", { className: "text-[11px] text-[hsl(var(--brand-ink)/0.65)]" }, text.advancedSubtitle),
           ),
         ),
         el(
@@ -418,12 +448,12 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             el(
               "div",
               { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Land size (min m²)"),
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.landMin),
               el(Input, {
                 inputMode: "numeric",
                 value: value.landMin,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, landMin: normalizeInt(e.target.value) }),
-                placeholder: "ex: 300",
+                placeholder: text.landPh,
                 className: "rounded-2xl bg-white/70",
               }),
             ),
@@ -431,13 +461,13 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             el(
               "div",
               { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Building size (max m²)"),
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.buildingMax),
               el(Input, {
                 inputMode: "numeric",
                 value: value.buildingMax,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                   onChange({ ...value, buildingMax: normalizeInt(e.target.value) }),
-                placeholder: "ex: 250",
+                placeholder: text.buildingPh,
                 className: "rounded-2xl bg-white/70",
               }),
             ),
@@ -448,25 +478,25 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Beds (min)"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.bedsMin),
                 el(Input, {
                   inputMode: "numeric",
                   value: value.bedsMin,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, bedsMin: normalizeInt(e.target.value) }),
-                  placeholder: "ex: 2",
+                  placeholder: locale === "id" ? "cth: 2" : "ex: 2",
                   className: "rounded-2xl bg-white/70",
                 }),
               ),
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Baths (min)"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.bathsMin),
                 el(Input, {
                   inputMode: "numeric",
                   value: value.bathsMin,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                     onChange({ ...value, bathsMin: normalizeInt(e.target.value) }),
-                  placeholder: "ex: 2",
+                  placeholder: locale === "id" ? "cth: 2" : "ex: 2",
                   className: "rounded-2xl bg-white/70",
                 }),
               ),
@@ -475,7 +505,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             el(
               "div",
               { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Carport"),
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.carport),
               el(
                 "div",
                 { className: "grid grid-cols-3 gap-2" },
@@ -491,7 +521,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "Any",
+                  text.any,
                 ),
                 el(
                   Button,
@@ -505,7 +535,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "Yes",
+                  text.yes,
                 ),
                 el(
                   Button,
@@ -519,7 +549,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "No",
+                  text.no,
                 ),
               ),
             ),
@@ -530,25 +560,25 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Road width (min m)"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.roadMin),
                 el(Input, {
                   inputMode: "numeric",
                   value: value.roadMin,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, roadMin: normalizeInt(e.target.value) }),
-                  placeholder: "ex: 4",
+                  placeholder: locale === "id" ? "cth: 4" : "ex: 4",
                   className: "rounded-2xl bg-white/70",
                 }),
               ),
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Electricity (min VA)"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.powerMin),
                 el(Input, {
                   inputMode: "numeric",
                   value: value.powerMin,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                     onChange({ ...value, powerMin: normalizeInt(e.target.value) }),
-                  placeholder: "ex: 5500",
+                  placeholder: locale === "id" ? "cth: 5500" : "ex: 5500",
                   className: "rounded-2xl bg-white/70",
                 }),
               ),
@@ -560,18 +590,18 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Water"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.water),
                 el(
                   Select,
                   {
                     value: value.water,
                     onValueChange: (v: string) => onChange({ ...value, water: v as PropertyFiltersValue["water"] }),
                   },
-                  el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: "Any" })),
+                  el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: text.any })),
                   el(
                     SelectContent,
                     null,
-                    el(SelectItem, { value: "Any" }, "Any"),
+                    el(SelectItem, { value: "Any" }, text.any),
                     el(SelectItem, { value: "PDAM" }, "PDAM"),
                     el(SelectItem, { value: "Well" }, "Well"),
                     el(SelectItem, { value: "Other" }, "Other"),
@@ -581,20 +611,20 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
               el(
                 "div",
                 { className: "grid gap-2" },
-                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Furnished"),
+                el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.furnished),
                 el(
                   Select,
                   {
                     value: value.furnished,
                     onValueChange: (v: string) => onChange({ ...value, furnished: v as PropertyFiltersValue["furnished"] }),
                   },
-                  el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: "Any" })),
+                  el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: text.any })),
                   el(
                     SelectContent,
                     null,
-                    el(SelectItem, { value: "Any" }, "Any"),
-                    el(SelectItem, { value: "Yes" }, "Yes"),
-                    el(SelectItem, { value: "No" }, "No"),
+                    el(SelectItem, { value: "Any" }, text.any),
+                    el(SelectItem, { value: "Yes" }, text.yes),
+                    el(SelectItem, { value: "No" }, text.no),
                   ),
                 ),
               ),
@@ -603,18 +633,18 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             el(
               "div",
               { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "View"),
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.view),
               el(
                 Select,
                 {
                   value: value.view,
                   onValueChange: (v: string) => onChange({ ...value, view: v as PropertyFiltersValue["view"] }),
                 },
-                el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: "Any" })),
+                el(SelectTrigger, { className: "rounded-2xl bg-white/70" }, el(SelectValue, { placeholder: text.any })),
                 el(
                   SelectContent,
                   null,
-                  el(SelectItem, { value: "Any" }, "Any"),
+                  el(SelectItem, { value: "Any" }, text.any),
                   el(SelectItem, { value: "Ocean" }, "Ocean"),
                   el(SelectItem, { value: "Ricefield" }, "Ricefield"),
                   el(SelectItem, { value: "Jungle" }, "Jungle"),
@@ -627,7 +657,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
             el(
               "div",
               { className: "grid gap-2" },
-              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, "Pool"),
+              el(Label, { className: "text-sm text-[hsl(var(--brand-ink))]" }, text.pool),
               el(
                 "div",
                 { className: "grid grid-cols-3 gap-2" },
@@ -643,7 +673,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "Any",
+                  text.any,
                 ),
                 el(
                   Button,
@@ -657,7 +687,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "Yes",
+                  text.yes,
                 ),
                 el(
                   Button,
@@ -671,7 +701,7 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
                         ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))]"
                         : "bg-white/70 hover:bg-white"),
                   },
-                  "No",
+                  text.no,
                 ),
               ),
             ),
