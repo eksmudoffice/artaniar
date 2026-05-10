@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import HeaderNav from "@/components/branding/HeaderNav";
 import Footer from "@/components/branding/Footer";
 import WhatsAppFloatingCTA from "@/components/cta/WhatsAppFloatingCTA";
@@ -9,16 +9,17 @@ import PropertyFilters, {
   type PropertyFiltersValue,
 } from "@/components/properties/PropertyFiltersFreeText";
 import { PropertyService } from "@/services/propertyService";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
-import { Filter, SearchX } from "lucide-react";
+import { SearchX } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
 import { Input } from "@/components/ui/input";
 import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
 import { properties } from "@/data/properties";
+import MobileFilterFab from "@/components/cta/MobileFilterFab";
 
 export default function Index() {
   const { t } = useLocale();
@@ -27,6 +28,8 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Awaited<ReturnType<typeof PropertyService.listProperties>>["items"]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const topRef = useRef<HTMLDivElement | null>(null);
 
   const query = useMemo(() => ({ ...toQuery(filters), page, pageSize: 9 }), [filters, page]);
 
@@ -57,12 +60,13 @@ export default function Index() {
   const quickKeyword = filters.search.trim();
 
   const topListings = useMemo(() => {
+    // Sample: show many items so the carousel style is obvious (duplicates are handled inside component).
     const byRoi = [...properties].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
-    return byRoi.slice(0, 4);
+    return byRoi.slice(0, Math.min(8, byRoi.length));
   }, []);
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
+    <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]" ref={topRef}>
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">
@@ -104,31 +108,7 @@ export default function Index() {
                   <div className="mt-1 text-[11px] text-[hsl(var(--brand-ink)/0.62)]">{t("home.listings.searchHint")}</div>
                 </div>
 
-                <div className="lg:hidden">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="h-12 rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
-                      >
-                        <Filter className="mr-2 h-4 w-4" /> {t("properties.filterTitle")}
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="bottom" className="rounded-t-[2rem] bg-[hsl(var(--brand-surface))]">
-                      <SheetHeader>
-                        <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">{t("properties.filterTitle")}</SheetTitle>
-                      </SheetHeader>
-                      <div className="mt-4 pb-3">
-                        <PropertyFilters
-                          compact
-                          value={filters}
-                          onChange={setFilters}
-                          onReset={() => setFilters(DEFAULT_FILTERS)}
-                        />
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </div>
+                <div className="hidden lg:block" />
               </div>
             </div>
 
@@ -265,6 +245,19 @@ export default function Index() {
 
       <Footer />
       <WhatsAppFloatingCTA />
+
+      <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
+        <SheetContent side="bottom" className="rounded-t-[2rem] bg-[hsl(var(--brand-surface))]">
+          <SheetHeader>
+            <SheetTitle className="font-serif text-[hsl(var(--brand-ink))]">{t("properties.filterTitle")}</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 pb-3">
+            <PropertyFilters compact value={filters} onChange={setFilters} onReset={() => setFilters(DEFAULT_FILTERS)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <MobileFilterFab label={t("properties.filterTitle")} onClick={() => setFilterOpen(true)} />
     </div>
   );
 }

@@ -1,4 +1,6 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import type { EmblaCarouselType } from "embla-carousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -8,6 +10,20 @@ import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
+
+function AutoSlide({ api, intervalMs = 3000 }: { api: EmblaCarouselType | undefined; intervalMs?: number }) {
+  useEffect(() => {
+    if (!api) return;
+
+    const id = window.setInterval(() => {
+      if (!document.hidden) api.scrollNext();
+    }, intervalMs);
+
+    return () => window.clearInterval(id);
+  }, [api, intervalMs]);
+
+  return null;
+}
 
 export default function TopListingsCarousel({
   items,
@@ -20,6 +36,18 @@ export default function TopListingsCarousel({
   title?: string;
   subtitle?: string;
 }) {
+  const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
+
+  const slides = useMemo(() => {
+    // For better visual testing with many listings, we allow duplicates (id becomes stable with suffix)
+    // when items are fewer than 8.
+    if (items.length >= 8) return items;
+    const target = 10;
+    const out: Property[] = [];
+    for (let i = 0; i < target; i++) out.push(items[i % Math.max(1, items.length)]!);
+    return out;
+  }, [items]);
+
   return (
     <section
       className={cn(
@@ -40,14 +68,17 @@ export default function TopListingsCarousel({
         </div>
 
         <div className="mt-6">
-          <Carousel opts={{ align: "start", loop: true }} className="w-full">
+          <Carousel setApi={setApi} opts={{ align: "start", loop: true }} className="w-full">
+            <AutoSlide api={api} intervalMs={3000} />
+
             <CarouselContent>
-              {items.map((p) => {
+              {slides.map((p, idx) => {
                 const cover = p.images[0];
                 const sold = p.status === "Sold";
+                const key = `${p.id}_${idx}`;
 
                 return (
-                  <CarouselItem key={p.id} className="basis-full">
+                  <CarouselItem key={key} className="basis-[92%] sm:basis-[72%] lg:basis-[58%]">
                     <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr] md:items-stretch">
                       <Link
                         to={`/properties/${p.slug}`}
