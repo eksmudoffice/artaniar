@@ -322,7 +322,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastDesc": "Your message is pre-filled with your property details.",
 
     "footer.headline": "Artaniar",
-    "footer.tagline": "Bali property agent for buyers—fast response, tidy shortlists, and support until closing.",
+    "footer.tagline": "Buyer-focused Bali property agent—fast response, curated shortlists, and support through closing.",
     "footer.explore": "Explore",
     "footer.contact": "Contact",
     "footer.home": "Home",
@@ -502,7 +502,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastDesc": "Pesan sudah terisi otomatis dengan detail properti kamu.",
 
     "footer.headline": "Artaniar",
-    "footer.tagline": "Agen properti Bali untuk buyer—respons cepat, shortlist rapi, dan didampingi sampai deal beres.",
+    "footer.tagline": "Artaniar adalah agen properti Bali yang berfokus pada kebutuhan buyer—respons cepat, shortlist terkurasi, dan pendampingan hingga closing.",
     "footer.explore": "Menu",
     "footer.contact": "Kontak",
     "footer.home": "Beranda",
