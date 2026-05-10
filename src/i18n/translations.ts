@@ -141,6 +141,7 @@ export type TranslationKey =
   | "agent.form.submit"
   | "agent.form.toastTitle"
   | "agent.form.toastDesc"
+  | "footer.headline"
   | "footer.tagline"
   | "footer.explore"
   | "footer.contact"
@@ -150,6 +151,7 @@ export type TranslationKey =
   | "footer.guide"
   | "footer.disclaimer"
   | "footer.instagramLabel"
+  | "footer.instagramHandle"
   | "notfound.title"
   | "notfound.subtitle"
   | "notfound.back";
@@ -319,6 +321,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastTitle": "Opening WhatsApp…",
     "agent.form.toastDesc": "Your message is pre-filled with your property details.",
 
+    "footer.headline": "Artaniar",
     "footer.tagline": "Bali property agent for buyers—fast response, tidy shortlists, and support until closing.",
     "footer.explore": "Explore",
     "footer.contact": "Contact",
@@ -328,6 +331,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "footer.guide": "Investment Guide",
     "footer.disclaimer": "Disclaimer: Listing info is indicative. Availability and pricing may change.",
     "footer.instagramLabel": "Instagram",
+    "footer.instagramHandle": "@artaniar.property",
 
     "notfound.title": "404",
     "notfound.subtitle": "Page not found",
@@ -497,7 +501,8 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "agent.form.toastTitle": "Membuka WhatsApp…",
     "agent.form.toastDesc": "Pesan sudah terisi otomatis dengan detail properti kamu.",
 
-    "footer.tagline": "Bali property agent untuk buyer—respons cepat, shortlist rapi, dan dibantu sampai deal beres.",
+    "footer.headline": "Artaniar",
+    "footer.tagline": "Agen properti Bali untuk buyer—respons cepat, shortlist rapi, dan didampingi sampai deal beres.",
     "footer.explore": "Menu",
     "footer.contact": "Kontak",
     "footer.home": "Beranda",
@@ -506,6 +511,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "footer.guide": "Panduan Investasi",
     "footer.disclaimer": "Disclaimer: Informasi listing bersifat indikatif. Availability dan harga bisa berubah.",
     "footer.instagramLabel": "Instagram",
+    "footer.instagramHandle": "@artaniar.property",
 
     "notfound.title": "404",
     "notfound.subtitle": "Halaman tidak ditemukan",

@@ -3,6 +3,9 @@ import { Separator } from "@/components/ui/separator";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { Instagram, Mail } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
+import artaniarLogo from "@/assets/artaniar-logo.png";
+
+const INSTAGRAM_URL = "https://instagram.com/artaniar.property";
 
 export default function Footer() {
   const { t } = useLocale();
@@ -10,15 +13,22 @@ export default function Footer() {
   return (
     <footer className="mt-16 bg-[hsl(var(--brand-surface-2))]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-        <div className="grid gap-8 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-10 md:grid-cols-[1.6fr_1fr_1fr]">
           <div>
-            <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">Artaniar</div>
-            <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)] leading-relaxed max-w-sm">
+            <div className="flex items-center gap-3">
+              <img src={artaniarLogo} alt="Artaniar" className="h-9 w-auto object-contain" loading="lazy" decoding="async" />
+              <div className="font-serif text-2xl text-[hsl(var(--brand-ink))]">{t("footer.headline")}</div>
+            </div>
+
+            <p className="mt-3 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed max-w-md">
               {t("footer.tagline")}
             </p>
 
-            <div className="mt-5">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center">
               <WhatsAppCTA context={{ intent: "Konsultasi" }} label={t("cta.consult")} />
+              <div className="text-xs text-[hsl(var(--brand-ink)/0.62)] leading-relaxed">
+                {t("footer.disclaimer")}
+              </div>
             </div>
           </div>
 
@@ -46,8 +56,14 @@ export default function Footer() {
               <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="mailto:hello@artaniar.com">
                 <Mail className="h-4 w-4" /> hello@artaniar.com
               </a>
-              <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="#" aria-label={t("footer.instagramLabel")}>
-                <Instagram className="h-4 w-4" /> @artaniar
+              <a
+                className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]"
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={t("footer.instagramLabel")}
+              >
+                <Instagram className="h-4 w-4" /> {t("footer.instagramHandle")}
               </a>
             </div>
           </div>
@@ -57,7 +73,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between text-xs text-[hsl(var(--brand-ink)/0.60)]">
           <div>© {new Date().getFullYear()} Artaniar. All rights reserved.</div>
-          <div className="leading-relaxed">{t("footer.disclaimer")}</div>
+          <div className="leading-relaxed">hello@artaniar.com • {t("footer.instagramHandle")}</div>
         </div>
       </div>
     </footer>
