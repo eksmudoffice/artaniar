@@ -46,6 +46,9 @@ export default function Footer() {
               <Link to="/properties" className="hover:text-[hsl(var(--brand-ink))]">
                 {t("footer.browse")}
               </Link>
+              <Link to="/news" className="hover:text-[hsl(var(--brand-ink))]">
+                News
+              </Link>
               <Link to="/agent-guide" className="hover:text-[hsl(var(--brand-ink))]">
                 {t("footer.agentGuide")}
               </Link>

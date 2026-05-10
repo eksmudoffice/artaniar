@@ -7,6 +7,9 @@
     <loc>https://artaniarproperty.com/properties</loc>
   </url>
   <url>
+    <loc>https://artaniarproperty.com/news</loc>
+  </url>
+  <url>
     <loc>https://artaniarproperty.com/investment</loc>
   </url>
   <url>
@@ -27,5 +30,12 @@
   </url>
   <url>
     <loc>https://artaniarproperty.com/properties/seminyak-lux-villa-sold</loc>
+  </url>
+
+  <url>
+    <loc>https://artaniarproperty.com/news/panduan-beli-properti-bali-untuk-pemula</loc>
+  </url>
+  <url>
+    <loc>https://artaniarproperty.com/news/leasehold-vs-freehold-bali</loc>
   </url>
 </urlset>

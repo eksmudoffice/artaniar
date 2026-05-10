@@ -8,6 +8,8 @@ import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import Investment from "./pages/Investment";
 import AgentGuide from "./pages/AgentGuide";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
 import { LocaleProvider } from "@/i18n/locale-provider";
 
@@ -26,6 +28,8 @@ const App = () => (
             <Route path="/properties/:slug" element={<PropertyDetail />} />
             <Route path="/investment" element={<Investment />} />
             <Route path="/agent-guide" element={<AgentGuide />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:slug" element={<NewsDetail />} />
             <Route path="/about" element={<Navigate to="/" replace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

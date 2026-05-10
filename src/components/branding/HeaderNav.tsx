@@ -17,6 +17,7 @@ export default function HeaderNav() {
     () => [
       { to: "/", label: t("nav.home") },
       { to: "/properties", label: t("nav.properties") },
+      { to: "/news", label: "News" },
       { to: "/agent-guide", label: t("nav.agentGuide") },
       { to: "/investment", label: t("nav.investment") },
     ],
