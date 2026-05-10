@@ -7,12 +7,18 @@ import { Separator } from "@/components/ui/separator";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { CheckCircle2 } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
+import Seo from "@/components/seo/Seo";
 
 export default function Investment() {
   const { t } = useLocale();
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
+      <Seo
+        title={`${t("nav.investment")} | Artaniar Property`}
+        description={t("investment.subtitle")}
+        canonicalPath="/investment"
+      />
       <HeaderNav />
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 pt-24 pb-16">

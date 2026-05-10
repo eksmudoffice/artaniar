@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { CheckCircle2, ChevronLeft, Compass, MapPin, TrendingUp, Video } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
+import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -51,8 +52,59 @@ export default function PropertyDetail() {
     };
   }, [property]);
 
+  const canonicalPath = property ? `/properties/${property.slug}` : `/properties/${slug ?? ""}`;
+  const seoTitle = property
+    ? `${property.title} | Artaniar Property`
+    : "Detail Properti | Artaniar Property";
+
+  const seoDesc = property
+    ? `${property.type} di ${property.location.area}, ${property.location.city}. Status: ${property.status}. Harga: Rp ${formatIdr(
+        property.price,
+      )}.`
+    : "Detail listing properti di Artaniar Property.";
+
+  const seoImage = property?.images?.[0];
+
+  const jsonLd = useMemo(() => {
+    if (!property) return undefined;
+
+    const listingUrl = `${SITE_ORIGIN}/properties/${property.slug}`;
+    return {
+      "@context": "https://schema.org",
+      "@type": "RealEstateListing",
+      url: listingUrl,
+      name: property.title,
+      description: property.description,
+      image: property.images?.slice(0, 6) ?? [],
+      datePosted: property.createdAt,
+      category: property.type,
+      offers: {
+        "@type": "Offer",
+        price: property.price,
+        priceCurrency: "IDR",
+        availability:
+          property.status === "Sold"
+            ? "https://schema.org/SoldOut"
+            : "https://schema.org/InStock",
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: property.location.area,
+        addressRegion: property.location.city,
+        addressCountry: "ID",
+      },
+    };
+  }, [property]);
+
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
+      <Seo
+        title={seoTitle}
+        description={seoDesc}
+        canonicalPath={canonicalPath}
+        image={seoImage}
+        jsonLd={jsonLd}
+      />
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">

@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
 import { properties } from "@/data/properties";
 import MobileFilterFab from "@/components/cta/MobileFilterFab";
+import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
 
 export default function Index() {
   const { t } = useLocale();
@@ -64,8 +65,28 @@ export default function Index() {
     return byRoi.slice(0, Math.min(8, byRoi.length));
   }, []);
 
+  const seoTitle = "Artaniar Property — Bali Property Listings";
+  const seoDesc =
+    "Cari properti Bali dengan filter cepat dan detail lengkap. Lihat top listings, bandingkan opsi, lalu konsultasi via WhatsApp untuk cek ketersediaan.";
+  const seoImage = topListings[0]?.images?.[0] ? topListings[0].images[0] : `${SITE_ORIGIN}/placeholder.svg`;
+
+  const jsonLd = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Artaniar Property",
+      url: SITE_ORIGIN,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${SITE_ORIGIN}/properties?search={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]" ref={topRef}>
+      <Seo title={seoTitle} description={seoDesc} canonicalPath="/" image={seoImage} jsonLd={jsonLd} />
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">

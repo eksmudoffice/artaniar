@@ -4,12 +4,18 @@ import WhatsAppFloatingCTA from "@/components/cta/WhatsAppFloatingCTA";
 import AgentSubmitListingForm from "@/components/agent/AgentSubmitListingForm";
 import { Card } from "@/components/ui/card";
 import { useLocale } from "@/i18n/use-locale";
+import Seo from "@/components/seo/Seo";
 
 export default function AgentGuide() {
   const { t } = useLocale();
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
+      <Seo
+        title={`${t("nav.agentGuide")} | Artaniar Property`}
+        description={t("agent.subtitle")}
+        canonicalPath="/agent-guide"
+      />
       <HeaderNav />
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 pt-24 pb-16">

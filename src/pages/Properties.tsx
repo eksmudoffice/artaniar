@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Filter, SearchX } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
+import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
 
 export default function Properties() {
   const { t } = useLocale();
@@ -50,8 +51,24 @@ export default function Properties() {
     return { min, max };
   }, [filters.priceRange]);
 
+  const seoTitle = "Cari Properti Bali | Artaniar Property";
+  const seoDesc =
+    "Browse listing properti di Bali dengan filter lengkap (tipe, status, area, budget, advanced). Klik untuk detail atau tanya via WhatsApp.";
+  const canonicalPath = "/properties";
+
+  const jsonLd = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Property Listings",
+      url: `${SITE_ORIGIN}${canonicalPath}`,
+      isPartOf: { "@type": "WebSite", name: "Artaniar Property", url: SITE_ORIGIN },
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]">
+      <Seo title={seoTitle} description={seoDesc} canonicalPath={canonicalPath} jsonLd={jsonLd} />
       <HeaderNav />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">
