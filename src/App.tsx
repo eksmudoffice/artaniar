@@ -9,27 +9,30 @@ import PropertyDetail from "./pages/PropertyDetail";
 import Investment from "./pages/Investment";
 import AgentGuide from "./pages/AgentGuide";
 import NotFound from "./pages/NotFound";
+import { LocaleProvider } from "@/i18n/locale-provider";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/properties" element={<Properties />} />
-          <Route path="/properties/:slug" element={<PropertyDetail />} />
-          <Route path="/investment" element={<Investment />} />
-          <Route path="/agent-guide" element={<AgentGuide />} />
-          <Route path="/about" element={<Navigate to="/" replace />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <LocaleProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/properties/:slug" element={<PropertyDetail />} />
+            <Route path="/investment" element={<Investment />} />
+            <Route path="/agent-guide" element={<AgentGuide />} />
+            <Route path="/about" element={<Navigate to="/" replace />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </LocaleProvider>
   </QueryClientProvider>
 );
 
