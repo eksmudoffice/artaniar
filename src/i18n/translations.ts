@@ -4,7 +4,7 @@ export type TranslationKey =
   | "nav.home"
   | "nav.properties"
   | "nav.investment"
-  | "nav.about"
+  | "nav.agentGuide"
   | "brand.subtitle"
   | "cta.consult"
   | "cta.whatsapp"
@@ -14,34 +14,16 @@ export type TranslationKey =
   | "cta.viewListings"
   | "cta.requestShortlist"
   | "cta.discussInvestment"
-  | "home.badge"
-  | "home.hero.title1"
-  | "home.hero.title2"
-  | "home.hero.desc"
-  | "home.hero.browse"
-  | "home.trust.fast.title"
-  | "home.trust.fast.desc"
-  | "home.trust.pic.title"
-  | "home.trust.pic.desc"
-  | "home.trust.insight.title"
-  | "home.trust.insight.desc"
-  | "home.featured.title"
-  | "home.featured.desc"
-  | "home.featured.all"
-  | "home.process.title"
-  | "home.process.desc"
-  | "home.process.readGuide"
-  | "home.process.requestShortlist"
-  | "about.title"
-  | "about.p1"
-  | "about.p2"
-  | "about.cta"
-  | "about.card1.title"
-  | "about.card1.desc"
-  | "about.card2.title"
-  | "about.card2.desc"
-  | "about.card3.title"
-  | "about.card3.desc"
+  | "home.listings.badge"
+  | "home.listings.title"
+  | "home.listings.desc"
+  | "home.listings.searchLabel"
+  | "home.listings.searchPlaceholder"
+  | "home.listings.searchHint"
+  | "home.listings.ctaCardTitle"
+  | "home.listings.ctaCardDesc"
+  | "home.listings.resultsTitle"
+  | "home.listings.resultsDesc"
   | "properties.title"
   | "properties.subtitle"
   | "properties.filterTitle"
@@ -96,12 +78,48 @@ export type TranslationKey =
   | "investment.faq.q2.a"
   | "investment.faq.q3.q"
   | "investment.faq.q3.a"
+  | "agent.title"
+  | "agent.subtitle"
+  | "agent.benefit1"
+  | "agent.benefit2"
+  | "agent.benefit3"
+  | "agent.privacy"
+  | "agent.heroCard.title"
+  | "agent.heroCard.desc"
+  | "agent.form.title"
+  | "agent.form.desc"
+  | "agent.form.name"
+  | "agent.form.namePh"
+  | "agent.form.wa"
+  | "agent.form.waPh"
+  | "agent.form.waHint"
+  | "agent.form.type"
+  | "agent.form.area"
+  | "agent.form.areaPh"
+  | "agent.form.price"
+  | "agent.form.pricePh"
+  | "agent.form.priceHint"
+  | "agent.form.status"
+  | "agent.form.ownership"
+  | "agent.form.media"
+  | "agent.form.mediaPh"
+  | "agent.form.mediaHint"
+  | "agent.form.notes"
+  | "agent.form.notesPh"
+  | "agent.form.optional"
+  | "agent.form.responseTitle"
+  | "agent.form.responseDesc"
+  | "agent.form.disclaimer"
+  | "agent.form.submit"
+  | "agent.form.toastTitle"
+  | "agent.form.toastDesc"
   | "footer.tagline"
   | "footer.explore"
   | "footer.contact"
+  | "footer.home"
   | "footer.browse"
+  | "footer.agentGuide"
   | "footer.guide"
-  | "footer.about"
   | "footer.disclaimer"
   | "notfound.title"
   | "notfound.subtitle"
@@ -112,7 +130,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "nav.home": "Home",
     "nav.properties": "Properties",
     "nav.investment": "Investment",
-    "nav.about": "About",
+    "nav.agentGuide": "Agent Guide",
 
     "brand.subtitle": "Bali Property Agent",
 
@@ -125,43 +143,18 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.requestShortlist": "Request a shortlist",
     "cta.discussInvestment": "Discuss investment strategy",
 
-    "home.badge": "Fast response • Shortlist by budget • Ready for living / business",
-    "home.hero.title1": "Looking for property in Bali?",
-    "home.hero.title2": "We help from shortlist to closing.",
-    "home.hero.desc":
-      "For living, villa business, or land for development. Share your budget and preferred area—we’ll recommend the most relevant options and coordinate viewings and negotiation.",
-    "home.hero.browse": "Browse listings",
-
-    "home.trust.fast.title": "Fast response",
-    "home.trust.fast.desc": "Structured follow-up: availability, video, and viewing schedule.",
-    "home.trust.pic.title": "One point of contact",
-    "home.trust.pic.desc": "One contact person to coordinate owners/agents/your notary.",
-    "home.trust.insight.title": "Market insight",
-    "home.trust.insight.desc": "Practical guidance on areas & strategy (living / business / investment).",
-
-    "home.featured.title": "Featured listings",
-    "home.featured.desc":
-      "Selected options for living and villa business. Open details for full specs, with ready-to-use WhatsApp CTAs.",
-    "home.featured.all": "View all listings",
-
-    "home.process.title": "How we work (brief)",
-    "home.process.desc":
-      "You share budget, area, and goal (living / business / investment) → we prepare a shortlist → send videos/options → schedule viewings → support negotiation. Efficient process, clear communication.",
-    "home.process.readGuide": "Read Investment Guide",
-    "home.process.requestShortlist": "Request a shortlist",
-
-    "about.title": "About Artaniar",
-    "about.p1":
-      "Artaniar is a Bali property agent who helps you choose the most relevant options—from shortlisting and comparison to coordinating viewings and negotiation.",
-    "about.p2":
-      "Our focus is a tidy, efficient process: clear information, fast response, and structured communication with all parties involved.",
-    "about.cta": "Consultation & share your requirements",
-    "about.card1.title": "Focused recommendations",
-    "about.card1.desc": "We filter options based on your goal, area, and budget.",
-    "about.card2.title": "Clear information",
-    "about.card2.desc": "Listings are presented clearly so you can decide with confidence.",
-    "about.card3.title": "Support until closing",
-    "about.card3.desc": "Shortlist → viewing → negotiation → handover coordination.",
+    "home.listings.badge": "Listings-first • Filter fast • WhatsApp-ready",
+    "home.listings.title": "Find the right Bali property—fast.",
+    "home.listings.desc":
+      "Use filters (including advanced) to narrow down options. When you’re ready, WhatsApp us—your message will include the context (area/budget/listing).",
+    "home.listings.searchLabel": "Quick search",
+    "home.listings.searchPlaceholder": "Area, title, or code (e.g., Uluwatu / ART-ULU)",
+    "home.listings.searchHint": "Tip: open Filters for advanced criteria (land, beds, road width, view, etc.).",
+    "home.listings.ctaCardTitle": "Want a curated shortlist?",
+    "home.listings.ctaCardDesc":
+      "Share your target area + budget—we’ll recommend the most relevant options and help coordinate next steps.",
+    "home.listings.resultsTitle": "Listings",
+    "home.listings.resultsDesc": "Browse results below, or adjust filters to refine.",
 
     "properties.title": "Browse listings",
     "properties.subtitle": "Use filters to narrow your options, then WhatsApp us to check availability.",
@@ -227,13 +220,52 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "investment.faq.q3.a":
       "No. ROI is indicative based on market data and assumptions (ADR, occupancy, costs). We can help build a more conservative scenario for a more realistic view.",
 
+    "agent.title": "Submit your listing to Artaniar",
+    "agent.subtitle":
+      "For owners/agents who want a tidy listing intake and fast follow-up. Submit the basics here—then we’ll continue via WhatsApp with the right format.",
+    "agent.benefit1": "Structured intake: title, area, price, media link, key notes.",
+    "agent.benefit2": "Faster response time: we can start qualifying immediately.",
+    "agent.benefit3": "Clear next steps: requirements, data needed, and listing workflow.",
+    "agent.privacy": "Privacy: We use your details only to follow up on this submission. Typical response time: same day (business hours).",
+    "agent.heroCard.title": "Agent / Owner intake",
+    "agent.heroCard.desc": "Send the essentials—then we’ll ask follow-up questions and guide you through the process.",
+
+    "agent.form.title": "Submit listing details",
+    "agent.form.desc": "Fill the required fields, then click “Send via WhatsApp” to submit in a clean format.",
+    "agent.form.name": "Name",
+    "agent.form.namePh": "Your name",
+    "agent.form.wa": "WhatsApp number",
+    "agent.form.waPh": "e.g., +62 812-xxxx-xxxx",
+    "agent.form.waHint": "Tip: include country code (+62).",
+    "agent.form.type": "Property type (optional)",
+    "agent.form.area": "Area",
+    "agent.form.areaPh": "Choose area",
+    "agent.form.price": "Price (IDR)",
+    "agent.form.pricePh": "e.g., 8500000000",
+    "agent.form.priceHint": "Numbers only (we’ll format it in the message).",
+    "agent.form.status": "Status (optional)",
+    "agent.form.ownership": "Ownership (optional)",
+    "agent.form.media": "Media link (optional)",
+    "agent.form.mediaPh": "Google Drive / Photos / Video link",
+    "agent.form.mediaHint": "Use a shareable link (anyone with link can view).",
+    "agent.form.notes": "Additional notes",
+    "agent.form.notesPh": "Access road, land/building size, bedrooms, legal notes, urgency, etc.",
+    "agent.form.optional": "Optional",
+    "agent.form.responseTitle": "What happens next?",
+    "agent.form.responseDesc": "After you send the message, we’ll reply with listing requirements and the next steps.",
+    "agent.form.disclaimer": "By sending, you agree to be contacted via WhatsApp for listing verification and follow-up.",
+    "agent.form.submit": "Send via WhatsApp",
+    "agent.form.toastTitle": "Opening WhatsApp…",
+    "agent.form.toastDesc": "Your message is pre-filled with your listing details.",
+
     "footer.tagline":
       "Bali property agent for homes, villa business, and promising land—fast response, tidy shortlists, and support until closing.",
     "footer.explore": "Explore",
     "footer.contact": "Contact",
+    "footer.home": "Home (Listings)",
     "footer.browse": "Browse listings",
+    "footer.agentGuide": "Agent Guide",
     "footer.guide": "Investment guide",
-    "footer.about": "About Artaniar",
     "footer.disclaimer": "Disclaimer: Listing information is indicative. Availability and pricing may change.",
 
     "notfound.title": "404",
@@ -245,7 +277,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "nav.home": "Home",
     "nav.properties": "Properties",
     "nav.investment": "Investment",
-    "nav.about": "About",
+    "nav.agentGuide": "Agent Guide",
 
     "brand.subtitle": "Bali Property Agent",
 
@@ -258,43 +290,18 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.requestShortlist": "Minta shortlist",
     "cta.discussInvestment": "Diskusikan strategi investment",
 
-    "home.badge": "Respons cepat • Shortlist sesuai budget • Siap untuk tinggal / bisnis",
-    "home.hero.title1": "Mencari properti di Bali?",
-    "home.hero.title2": "Kami bantu dari shortlist hingga deal.",
-    "home.hero.desc":
-      "Untuk hunian, villa bisnis, maupun tanah potensial untuk pengembangan. Sampaikan budget dan area yang diinginkan—kami bantu pilih opsi yang relevan, lalu koordinasi viewing dan negosiasi.",
-    "home.hero.browse": "Lihat listings",
-
-    "home.trust.fast.title": "Respons cepat",
-    "home.trust.fast.desc": "Follow-up rapi: availability, video, hingga jadwal viewing.",
-    "home.trust.pic.title": "Satu PIC",
-    "home.trust.pic.desc": "Satu kontak untuk koordinasi owner/agent/notaris Anda.",
-    "home.trust.insight.title": "Insight pasar",
-    "home.trust.insight.desc": "Insight area & strategi (hunian / bisnis / investment) yang praktis.",
-
-    "home.featured.title": "Featured listings",
-    "home.featured.desc":
-      "Pilihan untuk hunian dan peluang bisnis (villa). Klik detail untuk spesifikasi lengkap, dengan CTA WhatsApp siap digunakan.",
-    "home.featured.all": "Lihat semua listings",
-
-    "home.process.title": "Cara kerja kami (ringkas)",
-    "home.process.desc":
-      "Anda kirim budget, area, dan tujuan (tinggal / bisnis / investasi) → kami susun shortlist → kirim video/opsi → atur viewing → bantu negosiasi. Proses efisien, komunikasi rapi.",
-    "home.process.readGuide": "Baca Investment Guide",
-    "home.process.requestShortlist": "Minta shortlist",
-
-    "about.title": "Tentang Artaniar",
-    "about.p1":
-      "Artaniar adalah property agent di Bali yang membantu Anda memilih opsi yang paling relevan—mulai dari shortlist, pembandingan, hingga koordinasi viewing dan negosiasi.",
-    "about.p2":
-      "Fokus kami adalah proses yang rapi dan efisien: informasi jelas, respons cepat, serta komunikasi yang terstruktur dengan pihak terkait.",
-    "about.cta": "Konsultasi & sampaikan kebutuhan Anda",
-    "about.card1.title": "Rekomendasi yang terarah",
-    "about.card1.desc": "Menyaring opsi berdasarkan tujuan, area, dan budget Anda.",
-    "about.card2.title": "Informasi yang jelas",
-    "about.card2.desc": "Detail listing disampaikan rapi agar keputusan lebih tenang.",
-    "about.card3.title": "Pendampingan sampai deal",
-    "about.card3.desc": "Shortlist → viewing → negosiasi → koordinasi serah terima.",
+    "home.listings.badge": "Listings-first • Filter cepat • WhatsApp-ready",
+    "home.listings.title": "Cari properti Bali—lebih cepat.",
+    "home.listings.desc":
+      "Gunakan filter (termasuk advanced) untuk mempersempit opsi. Saat siap, klik WhatsApp—pesan otomatis berisi context (area/budget/listing).",
+    "home.listings.searchLabel": "Quick search",
+    "home.listings.searchPlaceholder": "Area, judul, atau kode (contoh: Uluwatu / ART-ULU)",
+    "home.listings.searchHint": "Tips: buka Filters untuk advanced (land, beds, road width, view, dll).",
+    "home.listings.ctaCardTitle": "Mau shortlist yang lebih terarah?",
+    "home.listings.ctaCardDesc":
+      "Kirim target area + budget—kami bantu pilih opsi yang paling relevan dan koordinasi langkah berikutnya.",
+    "home.listings.resultsTitle": "Listings",
+    "home.listings.resultsDesc": "Browse hasil di bawah, atau atur filter untuk mempersempit.",
 
     "properties.title": "Browse listings",
     "properties.subtitle": "Gunakan filter untuk mempersempit pilihan, lalu klik WhatsApp untuk menanyakan ketersediaan.",
@@ -360,13 +367,52 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "investment.faq.q3.a":
       "Tidak. ROI bersifat indikatif berdasarkan data pasar dan asumsi (ADR, occupancy, biaya). Kami dapat membantu menyusun skenario yang lebih konservatif agar perhitungan lebih realistis.",
 
+    "agent.title": "Submit listing Anda ke Artaniar",
+    "agent.subtitle":
+      "Untuk owner/agent yang ingin proses intake listing rapi dan respons cepat. Isi data dasar di sini—lalu lanjut via WhatsApp dengan format yang jelas.",
+    "agent.benefit1": "Intake terstruktur: tipe, area, harga, link media, catatan penting.",
+    "agent.benefit2": "Respons lebih cepat: kami bisa mulai qualify dari awal.",
+    "agent.benefit3": "Next steps jelas: requirement dan alur listing.",
+    "agent.privacy": "Privasi: data dipakai hanya untuk follow-up submission ini. Estimasi respons: hari yang sama (jam kerja).",
+    "agent.heroCard.title": "Agent / Owner intake",
+    "agent.heroCard.desc": "Kirim data inti—kami akan follow-up pertanyaan dan pandu proses selanjutnya.",
+
+    "agent.form.title": "Form submit listing",
+    "agent.form.desc": "Isi field wajib, lalu klik “Kirim via WhatsApp” untuk mengirim dalam format yang rapi.",
+    "agent.form.name": "Nama",
+    "agent.form.namePh": "Nama Anda",
+    "agent.form.wa": "Nomor WhatsApp",
+    "agent.form.waPh": "Contoh: +62 812-xxxx-xxxx",
+    "agent.form.waHint": "Tips: pakai kode negara (+62).",
+    "agent.form.type": "Tipe properti (opsional)",
+    "agent.form.area": "Area",
+    "agent.form.areaPh": "Pilih area",
+    "agent.form.price": "Harga (IDR)",
+    "agent.form.pricePh": "Contoh: 8500000000",
+    "agent.form.priceHint": "Angka saja (nanti kami format di pesan).",
+    "agent.form.status": "Status (opsional)",
+    "agent.form.ownership": "Ownership (opsional)",
+    "agent.form.media": "Link foto/video (opsional)",
+    "agent.form.mediaPh": "Google Drive / link foto / video",
+    "agent.form.mediaHint": "Pastikan link bisa diakses (shareable).",
+    "agent.form.notes": "Catatan tambahan",
+    "agent.form.notesPh": "Akses jalan, land/building size, bedrooms, legal notes, urgency, dll.",
+    "agent.form.optional": "Opsional",
+    "agent.form.responseTitle": "Setelah kirim, apa berikutnya?",
+    "agent.form.responseDesc": "Setelah pesan terkirim, kami reply requirement listing dan langkah berikutnya.",
+    "agent.form.disclaimer": "Dengan mengirim, Anda setuju dihubungi via WhatsApp untuk verifikasi dan follow-up listing.",
+    "agent.form.submit": "Kirim via WhatsApp",
+    "agent.form.toastTitle": "Membuka WhatsApp…",
+    "agent.form.toastDesc": "Pesan sudah terisi otomatis dengan detail listing Anda.",
+
     "footer.tagline":
       "Property agent Bali untuk hunian, villa bisnis, dan tanah potensial—dengan respons cepat, shortlist rapi, serta pendampingan deal hingga tuntas.",
     "footer.explore": "Explore",
     "footer.contact": "Contact",
+    "footer.home": "Home (Listings)",
     "footer.browse": "Browse listings",
+    "footer.agentGuide": "Agent Guide",
     "footer.guide": "Investment guide",
-    "footer.about": "About Artaniar",
     "footer.disclaimer": "Disclaimer: Informasi listing bersifat indikatif. Ketersediaan dan harga dapat berubah.",
 
     "notfound.title": "404",

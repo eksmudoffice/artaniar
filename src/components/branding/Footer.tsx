@@ -25,14 +25,17 @@ export default function Footer() {
           <div className="text-sm">
             <div className="font-semibold text-[hsl(var(--brand-ink))]">{t("footer.explore")}</div>
             <div className="mt-3 grid gap-2 text-[hsl(var(--brand-ink)/0.75)]">
+              <Link to="/" className="hover:text-[hsl(var(--brand-ink))]">
+                {t("footer.home")}
+              </Link>
               <Link to="/properties" className="hover:text-[hsl(var(--brand-ink))]">
                 {t("footer.browse")}
               </Link>
+              <Link to="/agent-guide" className="hover:text-[hsl(var(--brand-ink))]">
+                {t("footer.agentGuide")}
+              </Link>
               <Link to="/investment" className="hover:text-[hsl(var(--brand-ink))]">
                 {t("footer.guide")}
-              </Link>
-              <Link to="/about" className="hover:text-[hsl(var(--brand-ink))]">
-                {t("footer.about")}
               </Link>
             </div>
           </div>

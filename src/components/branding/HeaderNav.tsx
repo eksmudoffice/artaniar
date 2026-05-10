@@ -17,8 +17,8 @@ export default function HeaderNav() {
     () => [
       { to: "/", label: t("nav.home") },
       { to: "/properties", label: t("nav.properties") },
+      { to: "/agent-guide", label: t("nav.agentGuide") },
       { to: "/investment", label: t("nav.investment") },
-      { to: "/about", label: t("nav.about") },
     ],
     [t],
   );
@@ -31,7 +31,7 @@ export default function HeaderNav() {
   }, []);
 
   const transparent = useMemo(() => {
-    // only hero page starts transparent
+    // home starts slightly transparent only at top
     return location.pathname === "/" && !scrolled;
   }, [location.pathname, scrolled]);
 
@@ -45,7 +45,7 @@ export default function HeaderNav() {
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className={cn("flex h-16 items-center justify-between", transparent ? "" : "")}>
+        <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div
               className={cn(

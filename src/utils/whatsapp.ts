@@ -3,7 +3,19 @@ export type WhatsAppMessageContext = {
   listingCode?: string;
   location?: string;
   budgetIdr?: { min?: number; max?: number };
-  intent?: "Minta video" | "Cek ketersediaan" | "Negosiasi" | "Konsultasi";
+  intent?: string;
+};
+
+export type AgentSubmitListingInput = {
+  name: string;
+  whatsapp: string;
+  propertyType?: string;
+  area: string;
+  priceIdr: number;
+  status?: string;
+  ownership?: string;
+  mediaLink?: string;
+  notes?: string;
 };
 
 const formatIdrCompact = (value: number) => {
@@ -34,6 +46,30 @@ export const buildWhatsAppMessage = (ctx: WhatsAppMessageContext) => {
   }
 
   lines.push("Mohon informasikan apakah unit ini masih tersedia.");
+  return lines.join("\n");
+};
+
+export const buildAgentSubmitMessage = (input: AgentSubmitListingInput) => {
+  const lines: string[] = [];
+  lines.push("Halo Artaniar, saya ingin *submit listing* untuk dipasarkan.");
+  lines.push("");
+
+  lines.push("*Data pengirim:*");
+  lines.push(`- Nama: ${input.name}`);
+  lines.push(`- WhatsApp: ${input.whatsapp}`);
+
+  lines.push("");
+  lines.push("*Detail properti:*");
+  if (input.propertyType) lines.push(`- Tipe: ${input.propertyType}`);
+  lines.push(`- Area: ${input.area}`);
+  lines.push(`- Harga: ${formatIdrCompact(input.priceIdr)}`);
+  if (input.status) lines.push(`- Status: ${input.status}`);
+  if (input.ownership) lines.push(`- Ownership: ${input.ownership}`);
+  if (input.mediaLink) lines.push(`- Link foto/video: ${input.mediaLink}`);
+  if (input.notes?.trim()) lines.push(`- Catatan: ${input.notes.trim()}`);
+
+  lines.push("");
+  lines.push("Mohon info proses berikutnya & requirement untuk listing.");
   return lines.join("\n");
 };
 
