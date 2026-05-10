@@ -73,76 +73,7 @@ export default function Index() {
         {/* TOP LISTINGS */}
         <TopListingsCarousel items={topListings} />
 
-        {/* HERO (moved below top listings) */}
-        <section className="mt-10 rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
-          <div className="grid gap-6 p-6 md:p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--brand-ink)/0.12)] bg-[hsl(var(--brand-surface-2))] px-4 py-2 text-xs font-semibold text-[hsl(var(--brand-ink))]">
-                {t("home.listings.badge")}
-              </div>
-
-              <h2 className="mt-4 font-serif text-4xl leading-tight">{t("home.listings.title")}</h2>
-              <p className="mt-2 text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.desc")}</p>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <WhatsAppCTA
-                  context={{
-                    intent: "Konsultasi",
-                    location: filters.area !== "All" ? filters.area : undefined,
-                    budgetIdr: budget,
-                  }}
-                  label={t("cta.consult")}
-                  className="h-12 px-7 text-base"
-                />
-
-                <div className="flex-1">
-                  <div className="rounded-full border border-[hsl(var(--brand-ink)/0.14)] bg-white/70 px-4 py-2.5 flex items-center gap-3">
-                    <div className="text-xs font-semibold text-[hsl(var(--brand-ink)/0.65)] shrink-0">
-                      {t("home.listings.searchLabel")}
-                    </div>
-                    <Input
-                      value={filters.search}
-                      onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-                      placeholder={t("home.listings.searchPlaceholder")}
-                      className="h-7 border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                  </div>
-                  <div className="mt-1 text-[11px] text-[hsl(var(--brand-ink)/0.62)]">{t("home.listings.searchHint")}</div>
-                </div>
-
-                <div className="hidden lg:block" />
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-[hsl(var(--brand-surface-2))] p-6">
-              <div className="font-serif text-2xl">{t("home.listings.ctaCardTitle")}</div>
-              <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.ctaCardDesc")}</p>
-              <div className="mt-5 flex flex-col gap-2">
-                <WhatsAppCTA
-                  context={{
-                    intent: "Minta shortlist",
-                    location: filters.area !== "All" ? filters.area : undefined,
-                    budgetIdr: budget,
-                  }}
-                  label={t("cta.requestShortlist")}
-                  className="w-full justify-center"
-                />
-                <WhatsAppCTA
-                  variant="soft"
-                  context={{
-                    intent: quickKeyword ? `Cari: ${quickKeyword}` : "Konsultasi",
-                    location: filters.area !== "All" ? filters.area : undefined,
-                    budgetIdr: budget,
-                  }}
-                  label={t("cta.whatsapp")}
-                  className="w-full justify-center"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* LISTINGS SECTION (smaller sizing) */}
+        {/* LISTINGS SECTION (smaller sizing) - moved ABOVE hero */}
         <section className="mt-10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -246,6 +177,75 @@ export default function Index() {
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* HERO (now below listings) */}
+        <section className="mt-10 rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
+          <div className="grid gap-6 p-6 md:p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--brand-ink)/0.12)] bg-[hsl(var(--brand-surface-2))] px-4 py-2 text-xs font-semibold text-[hsl(var(--brand-ink))]">
+                {t("home.listings.badge")}
+              </div>
+
+              <h2 className="mt-4 font-serif text-4xl leading-tight">{t("home.listings.title")}</h2>
+              <p className="mt-2 text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.desc")}</p>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <WhatsAppCTA
+                  context={{
+                    intent: "Konsultasi",
+                    location: filters.area !== "All" ? filters.area : undefined,
+                    budgetIdr: budget,
+                  }}
+                  label={t("cta.consult")}
+                  className="h-12 px-7 text-base"
+                />
+
+                <div className="flex-1">
+                  <div className="rounded-full border border-[hsl(var(--brand-ink)/0.14)] bg-white/70 px-4 py-2.5 flex items-center gap-3">
+                    <div className="text-xs font-semibold text-[hsl(var(--brand-ink)/0.65)] shrink-0">
+                      {t("home.listings.searchLabel")}
+                    </div>
+                    <Input
+                      value={filters.search}
+                      onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
+                      placeholder={t("home.listings.searchPlaceholder")}
+                      className="h-7 border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                  </div>
+                  <div className="mt-1 text-[11px] text-[hsl(var(--brand-ink)/0.62)]">{t("home.listings.searchHint")}</div>
+                </div>
+
+                <div className="hidden lg:block" />
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-[hsl(var(--brand-surface-2))] p-6">
+              <div className="font-serif text-2xl">{t("home.listings.ctaCardTitle")}</div>
+              <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.72)] leading-relaxed">{t("home.listings.ctaCardDesc")}</p>
+              <div className="mt-5 flex flex-col gap-2">
+                <WhatsAppCTA
+                  context={{
+                    intent: "Minta shortlist",
+                    location: filters.area !== "All" ? filters.area : undefined,
+                    budgetIdr: budget,
+                  }}
+                  label={t("cta.requestShortlist")}
+                  className="w-full justify-center"
+                />
+                <WhatsAppCTA
+                  variant="soft"
+                  context={{
+                    intent: quickKeyword ? `Cari: ${quickKeyword}` : "Konsultasi",
+                    location: filters.area !== "All" ? filters.area : undefined,
+                    budgetIdr: budget,
+                  }}
+                  label={t("cta.whatsapp")}
+                  className="w-full justify-center"
+                />
+              </div>
             </div>
           </div>
         </section>
