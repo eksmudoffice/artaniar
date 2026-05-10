@@ -50,12 +50,6 @@ export default function HeaderNav() {
                 decoding="async"
               />
             </div>
-
-            <div className="hidden sm:block leading-tight text-[hsl(var(--brand-ink))]">
-              <div className="text-[11px] tracking-[0.18em] uppercase text-[hsl(var(--brand-ink)/0.60)]">
-                {t("brand.subtitle")}
-              </div>
-            </div>
           </Link>
 
           <nav className="hidden md:flex items-center gap-7">
