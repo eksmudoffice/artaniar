@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,6 @@ import LanguageToggle from "@/components/branding/LanguageToggle";
 
 export default function HeaderNav() {
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
   const { locale, setLocale, t } = useLocale();
 
   const navItems = useMemo(
@@ -30,41 +29,23 @@ export default function HeaderNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const transparent = useMemo(() => {
-    // home starts slightly transparent only at top
-    return location.pathname === "/" && !scrolled;
-  }, [location.pathname, scrolled]);
-
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        transparent
-          ? "bg-transparent"
-          : "bg-[hsl(var(--brand-surface))]/85 backdrop-blur-md border-b border-[hsl(var(--brand-ink)/0.10)] shadow-[0_10px_30px_-20px_rgba(0,0,0,0.25)]",
+        "bg-[hsl(var(--brand-surface))]/92 backdrop-blur-md border-b border-[hsl(var(--brand-ink)/0.10)]",
+        scrolled ? "shadow-[0_10px_30px_-20px_rgba(0,0,0,0.25)]" : "",
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div
-              className={cn(
-                "grid h-9 w-9 place-items-center rounded-2xl",
-                transparent ? "bg-white/10 border border-white/15" : "bg-[hsl(var(--brand-ink))]",
-              )}
-            >
-              <span className={cn("font-serif text-lg", transparent ? "text-white" : "text-[hsl(var(--brand-ink-foreground))]")}>
-                A
-              </span>
+            <div className="grid h-9 w-9 place-items-center rounded-2xl bg-[hsl(var(--brand-ink))]">
+              <span className="font-serif text-lg text-[hsl(var(--brand-ink-foreground))]">A</span>
             </div>
-            <div className={cn("leading-tight", transparent ? "text-white" : "text-[hsl(var(--brand-ink))]")}>
+            <div className="leading-tight text-[hsl(var(--brand-ink))]">
               <div className="font-serif text-base tracking-wide">Artaniar</div>
-              <div
-                className={cn(
-                  "text-[11px] tracking-[0.18em] uppercase",
-                  transparent ? "text-white/70" : "text-[hsl(var(--brand-ink)/0.60)]",
-                )}
-              >
+              <div className="text-[11px] tracking-[0.18em] uppercase text-[hsl(var(--brand-ink)/0.60)]">
                 {t("brand.subtitle")}
               </div>
             </div>
@@ -78,10 +59,8 @@ export default function HeaderNav() {
                 className={({ isActive }) =>
                   cn(
                     "text-sm font-medium transition-colors",
-                    transparent
-                      ? "text-white/85 hover:text-white"
-                      : "text-[hsl(var(--brand-ink)/0.75)] hover:text-[hsl(var(--brand-ink))]",
-                    isActive && (transparent ? "text-white" : "text-[hsl(var(--brand-ink))]"),
+                    "text-[hsl(var(--brand-ink)/0.75)] hover:text-[hsl(var(--brand-ink))]",
+                    isActive ? "text-[hsl(var(--brand-ink))]" : "",
                   )
                 }
               >
@@ -91,12 +70,11 @@ export default function HeaderNav() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <LanguageToggle value={locale} onChange={setLocale} transparent={transparent} />
+            <LanguageToggle value={locale} onChange={setLocale} transparent={false} />
             <WhatsAppCTA
               context={{ intent: "Konsultasi" }}
               label={t("cta.consult")}
-              variant={transparent ? "soft" : "primary"}
-              className={cn(transparent ? "bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90" : "")}
+              variant="primary"
             />
           </div>
 
@@ -105,12 +83,7 @@ export default function HeaderNav() {
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
-                  className={cn(
-                    "rounded-2xl",
-                    transparent
-                      ? "text-white hover:bg-white/10"
-                      : "text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink)/0.06)]",
-                  )}
+                  className="rounded-2xl text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink)/0.06)]"
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
