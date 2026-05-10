@@ -58,8 +58,11 @@ export default function Footer() {
           <div className="text-sm">
             <div className="font-semibold text-[hsl(var(--brand-ink))]">{t("footer.contact")}</div>
             <div className="mt-3 grid gap-2 text-[hsl(var(--brand-ink)/0.75)]">
-              <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="mailto:hello@artaniar.com">
-                <Mail className="h-4 w-4" /> hello@artaniar.com
+              <a
+                className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]"
+                href="mailto:hello@artaniarpoperty.com"
+              >
+                <Mail className="h-4 w-4" /> hello@artaniarpoperty.com
               </a>
               <a
                 className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]"
@@ -78,7 +81,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between text-xs text-[hsl(var(--brand-ink)/0.60)]">
           <div>© {new Date().getFullYear()} Artaniar. All rights reserved.</div>
-          <div className="leading-relaxed">hello@artaniar.com • {t("footer.instagramHandle")}</div>
+          <div className="leading-relaxed">hello@artaniarpoperty.com • {t("footer.instagramHandle")}</div>
         </div>
       </div>
     </footer>
