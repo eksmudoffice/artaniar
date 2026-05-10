@@ -9,6 +9,7 @@ export type TranslationKey =
   | "cta.consult"
   | "cta.whatsapp"
   | "cta.call"
+  | "cta.callNow"
   | "cta.reset"
   | "cta.apply"
   | "cta.viewListings"
@@ -16,19 +17,21 @@ export type TranslationKey =
   | "cta.discussInvestment"
   | "cta.prev"
   | "cta.next"
-  | "cta.detail"
+  | "cta.back"
+  | "cta.virtualTour"
   | "cta.askWhatsapp"
+  | "cta.detail"
+  | "cta.similarUnit"
+  | "cta.checkAvailability"
+  | "cta.requestVideo"
+  | "cta.ready"
+  | "cta.deal"
+  | "label.listingCode"
+  | "label.price"
+  | "label.roi"
+  | "label.location"
   | "home.topListings.title"
   | "home.topListings.subtitle"
-  | "filters.advanced.chip"
-  | "label.listingCode"
-  | "property.purpose.investment"
-  | "property.purpose.residential"
-  | "property.status.ready"
-  | "property.status.offplan"
-  | "property.status.sold"
-  | "property.ownership.freehold"
-  | "property.ownership.leasehold"
   | "home.listings.badge"
   | "home.listings.title"
   | "home.listings.desc"
@@ -39,12 +42,7 @@ export type TranslationKey =
   | "home.listings.ctaCardDesc"
   | "home.listings.resultsTitle"
   | "home.listings.resultsDesc"
-  | "properties.title"
-  | "properties.subtitle"
-  | "properties.filterTitle"
-  | "properties.empty.title"
-  | "properties.empty.desc"
-  | "properties.pagination"
+  | "filters.advanced.chip"
   | "filters.title"
   | "filters.subtitle"
   | "filters.search.label"
@@ -71,6 +69,21 @@ export type TranslationKey =
   | "filters.option.sort.price_asc"
   | "filters.option.sort.price_desc"
   | "filters.option.sort.roi_desc"
+  | "properties.title"
+  | "properties.subtitle"
+  | "properties.filterTitle"
+  | "properties.empty.title"
+  | "properties.empty.desc"
+  | "properties.pagination"
+  | "property.purpose.investment"
+  | "property.purpose.residential"
+  | "property.status.ready"
+  | "property.status.offplan"
+  | "property.status.sold"
+  | "property.ownership.freehold"
+  | "property.ownership.leasehold"
+  | "property.detail.notFound.title"
+  | "property.detail.notFound.desc"
   | "investment.title"
   | "investment.subtitle"
   | "investment.card1.title"
@@ -136,6 +149,7 @@ export type TranslationKey =
   | "footer.agentGuide"
   | "footer.guide"
   | "footer.disclaimer"
+  | "footer.instagramLabel"
   | "notfound.title"
   | "notfound.subtitle"
   | "notfound.back";
@@ -152,6 +166,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.consult": "Consult",
     "cta.whatsapp": "WhatsApp",
     "cta.call": "Call",
+    "cta.callNow": "Call",
     "cta.reset": "Reset",
     "cta.apply": "Apply",
     "cta.viewListings": "Browse listings",
@@ -159,22 +174,23 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.discussInvestment": "Talk investment strategy",
     "cta.prev": "Prev",
     "cta.next": "Next",
-    "cta.detail": "View details",
+    "cta.back": "Back",
+    "cta.virtualTour": "Request virtual tour",
     "cta.askWhatsapp": "Ask on WhatsApp",
+    "cta.detail": "View details",
+    "cta.similarUnit": "Request similar unit",
+    "cta.checkAvailability": "Check availability",
+    "cta.requestVideo": "Request video",
+    "cta.ready": "Ready?",
+    "cta.deal": "Deal",
+
+    "label.listingCode": "Listing code",
+    "label.price": "Price",
+    "label.roi": "ROI",
+    "label.location": "Location",
 
     "home.topListings.title": "Top Listings",
     "home.topListings.subtitle": "Most interesting picks right now—open details or ask via WhatsApp.",
-
-    "filters.advanced.chip": "Advanced filters",
-    "label.listingCode": "Listing code",
-
-    "property.purpose.investment": "Investment",
-    "property.purpose.residential": "Living",
-    "property.status.ready": "Ready",
-    "property.status.offplan": "Off-plan",
-    "property.status.sold": "Sold",
-    "property.ownership.freehold": "Freehold",
-    "property.ownership.leasehold": "Leasehold",
 
     "home.listings.badge": "Fast filters • WhatsApp-ready • Buyer-first",
     "home.listings.title": "Find the right Bali property—without the hassle.",
@@ -189,14 +205,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.resultsTitle": "Listings",
     "home.listings.resultsDesc": "Browse results below, or refine using filters.",
 
-    "properties.title": "Find Property",
-    "properties.subtitle": "Filter fast, compare calmly—then WhatsApp to check availability.",
-    "properties.filterTitle": "Filters",
-    "properties.empty.title": "No matching results",
-    "properties.empty.desc":
-      "Try adjusting your filters (area/budget), or WhatsApp us your preferences—I'll help shortlist the closest matches.",
-    "properties.pagination": "Page {page} / {totalPages}",
-
+    "filters.advanced.chip": "Advanced filters",
     "filters.title": "Filters",
     "filters.subtitle": "Narrow down options and focus on what's relevant.",
     "filters.search.label": "Search",
@@ -223,6 +232,25 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "filters.option.sort.price_asc": "Lowest price",
     "filters.option.sort.price_desc": "Highest price",
     "filters.option.sort.roi_desc": "Highest ROI",
+
+    "properties.title": "Find Property",
+    "properties.subtitle": "Filter fast, compare calmly—then WhatsApp to check availability.",
+    "properties.filterTitle": "Filters",
+    "properties.empty.title": "No matching results",
+    "properties.empty.desc":
+      "Try adjusting your filters (area/budget), or WhatsApp us your preferences—we'll help shortlist the closest matches.",
+    "properties.pagination": "Page {page} / {totalPages}",
+
+    "property.purpose.investment": "Investment",
+    "property.purpose.residential": "Living",
+    "property.status.ready": "Ready",
+    "property.status.offplan": "Off-plan",
+    "property.status.sold": "Sold",
+    "property.ownership.freehold": "Freehold",
+    "property.ownership.leasehold": "Leasehold",
+
+    "property.detail.notFound.title": "Listing not found",
+    "property.detail.notFound.desc": "Try going back to listings, or WhatsApp us for recommendations.",
 
     "investment.title": "Investment Guide",
     "investment.subtitle":
@@ -299,6 +327,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "footer.agentGuide": "Sell Your Property",
     "footer.guide": "Investment Guide",
     "footer.disclaimer": "Disclaimer: Listing info is indicative. Availability and pricing may change.",
+    "footer.instagramLabel": "Instagram",
 
     "notfound.title": "404",
     "notfound.subtitle": "Page not found",
@@ -316,6 +345,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.consult": "Konsultasi",
     "cta.whatsapp": "WhatsApp",
     "cta.call": "Telepon",
+    "cta.callNow": "Telepon",
     "cta.reset": "Reset",
     "cta.apply": "Terapkan",
     "cta.viewListings": "Lihat listing",
@@ -323,22 +353,23 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "cta.discussInvestment": "Diskusi strategi investasi",
     "cta.prev": "Sebelumnya",
     "cta.next": "Berikutnya",
-    "cta.detail": "Lihat detail",
+    "cta.back": "Kembali",
+    "cta.virtualTour": "Minta virtual tour",
     "cta.askWhatsapp": "Tanya via WhatsApp",
+    "cta.detail": "Lihat detail",
+    "cta.similarUnit": "Minta unit serupa",
+    "cta.checkAvailability": "Cek availability",
+    "cta.requestVideo": "Minta video",
+    "cta.ready": "Ready?",
+    "cta.deal": "Deal",
+
+    "label.listingCode": "Kode listing",
+    "label.price": "Harga",
+    "label.roi": "ROI",
+    "label.location": "Lokasi",
 
     "home.topListings.title": "Top Listing",
     "home.topListings.subtitle": "Pilihan unit paling menarik saat ini—klik untuk detail atau tanya via WhatsApp.",
-
-    "filters.advanced.chip": "Filter lanjutan",
-    "label.listingCode": "Kode listing",
-
-    "property.purpose.investment": "Investasi",
-    "property.purpose.residential": "Tinggal",
-    "property.status.ready": "Ready",
-    "property.status.offplan": "Off-plan",
-    "property.status.sold": "Sold",
-    "property.ownership.freehold": "Freehold",
-    "property.ownership.leasehold": "Leasehold",
 
     "home.listings.badge": "Filter cepat • WhatsApp-ready • Buyer-first",
     "home.listings.title": "Cari properti Bali—tanpa ribet.",
@@ -352,13 +383,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.listings.resultsTitle": "Listing",
     "home.listings.resultsDesc": "Lihat hasil di bawah, atau refine pakai filter.",
 
-    "properties.title": "Cari Properti",
-    "properties.subtitle": "Filter cepat, bandingkan santai—lalu WhatsApp untuk cek availability.",
-    "properties.filterTitle": "Filter",
-    "properties.empty.title": "Belum ada yang cocok",
-    "properties.empty.desc": "Coba ubah filter (area/budget), atau WhatsApp preferensimu—kami bantu shortlist yang paling mendekati.",
-    "properties.pagination": "Halaman {page} / {totalPages}",
-
+    "filters.advanced.chip": "Filter lanjutan",
     "filters.title": "Filter",
     "filters.subtitle": "Persempit pilihan biar fokus ke yang relevan.",
     "filters.search.label": "Cari",
@@ -385,6 +410,25 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "filters.option.sort.price_asc": "Harga terendah",
     "filters.option.sort.price_desc": "Harga tertinggi",
     "filters.option.sort.roi_desc": "ROI tertinggi",
+
+    "properties.title": "Cari Properti",
+    "properties.subtitle": "Filter cepat, bandingkan santai—lalu WhatsApp untuk cek availability.",
+    "properties.filterTitle": "Filter",
+    "properties.empty.title": "Belum ada yang cocok",
+    "properties.empty.desc": "Coba ubah filter (area/budget), atau WhatsApp preferensimu—kami bantu shortlist yang paling mendekati.",
+    "properties.pagination": "Halaman {page} / {totalPages}",
+
+    "property.purpose.investment": "Investasi",
+    "property.purpose.residential": "Tinggal",
+    "property.status.ready": "Ready",
+    "property.status.offplan": "Off-plan",
+    "property.status.sold": "Sold",
+    "property.ownership.freehold": "Freehold",
+    "property.ownership.leasehold": "Leasehold",
+
+    "property.detail.notFound.title": "Listing tidak ditemukan",
+    "property.detail.notFound.desc":
+      "Coba kembali ke halaman listings atau WhatsApp kami untuk rekomendasi unit lain.",
 
     "investment.title": "Panduan Investasi",
     "investment.subtitle":
@@ -461,6 +505,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
     "footer.agentGuide": "Jual Properti",
     "footer.guide": "Panduan Investasi",
     "footer.disclaimer": "Disclaimer: Informasi listing bersifat indikatif. Availability dan harga bisa berubah.",
+    "footer.instagramLabel": "Instagram",
 
     "notfound.title": "404",
     "notfound.subtitle": "Halaman tidak ditemukan",

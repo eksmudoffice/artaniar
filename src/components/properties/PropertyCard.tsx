@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
+import { useLocale } from "@/i18n/use-locale";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -18,8 +19,19 @@ export default function PropertyCard({
   budget?: { min?: number; max?: number };
   className?: string;
 }) {
+  const { t } = useLocale();
   const cover = property.images[0];
   const sold = property.status === "Sold";
+
+  const purposeLabel =
+    property.purpose === "Investment" ? t("property.purpose.investment") : t("property.purpose.residential");
+
+  const statusLabel =
+    property.status === "Ready"
+      ? t("property.status.ready")
+      : property.status === "Off-plan"
+        ? t("property.status.offplan")
+        : t("property.status.sold");
 
   return (
     <Card
@@ -55,7 +67,7 @@ export default function PropertyCard({
           </Badge>
           {sold && (
             <Badge className="rounded-full px-3 py-1 text-[11px] bg-[hsl(var(--brand-accent))] text-[hsl(var(--brand-accent-foreground))]">
-              Sold
+              {t("property.status.sold")}
             </Badge>
           )}
         </div>
@@ -71,7 +83,9 @@ export default function PropertyCard({
         <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="flex items-center gap-2 text-white/90 text-xs">
             <MapPin className="h-4 w-4" />
-            <span>{property.location.area}, {property.location.city}</span>
+            <span>
+              {property.location.area}, {property.location.city}
+            </span>
           </div>
           <div className="mt-1 text-white">
             <div className="font-serif text-lg leading-snug line-clamp-2">{property.title}</div>
@@ -86,21 +100,21 @@ export default function PropertyCard({
             variant="secondary"
             className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
           >
-            {property.purpose}
+            {purposeLabel}
           </Badge>
           <Badge
             variant="secondary"
             className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
           >
-            {property.status}
+            {statusLabel}
           </Badge>
-          {property.tags?.slice(0, 1).map((t) => (
+          {property.tags?.slice(0, 1).map((tItem) => (
             <Badge
-              key={t}
+              key={tItem}
               variant="secondary"
               className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]"
             >
-              {t}
+              {tItem}
             </Badge>
           ))}
         </div>
@@ -123,13 +137,13 @@ export default function PropertyCard({
               location: property.location.area,
               budgetIdr: budget,
             }}
-            label={sold ? "Minta unit serupa" : "WhatsApp"}
+            label={sold ? t("cta.similarUnit") : t("cta.whatsapp")}
           />
           <Link
             to={`/properties/${property.slug}`}
             className="inline-flex items-center justify-center rounded-full border border-[hsl(var(--brand-ink)/0.16)] bg-white/70 px-4 text-sm font-medium text-[hsl(var(--brand-ink))] hover:bg-white transition-colors"
           >
-            Detail
+            {t("cta.detail")}
           </Link>
         </div>
       </div>

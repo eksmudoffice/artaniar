@@ -13,11 +13,13 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { CheckCircle2, ChevronLeft, Compass, MapPin, TrendingUp, Video } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
 
 export default function PropertyDetail() {
+  const { t } = useLocale();
   const { slug } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -59,7 +61,7 @@ export default function PropertyDetail() {
           onClick={() => navigate(-1)}
           className="mb-5 rounded-full text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink)/0.06)]"
         >
-          <ChevronLeft className="mr-1 h-4 w-4" /> Kembali
+          <ChevronLeft className="mr-1 h-4 w-4" /> {t("cta.back")}
         </Button>
 
         {loading ? (
@@ -74,16 +76,16 @@ export default function PropertyDetail() {
           </div>
         ) : !property ? (
           <div className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-8 text-center shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
-            <h1 className="font-serif text-2xl">Listing tidak ditemukan</h1>
-            <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">Coba kembali ke halaman listings atau konsultasi untuk rekomendasi unit lain.</p>
+            <h1 className="font-serif text-2xl">{t("property.detail.notFound.title")}</h1>
+            <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">{t("property.detail.notFound.desc")}</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button
                 onClick={() => navigate("/properties")}
                 className="rounded-full bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
               >
-                Lihat listings
+                {t("cta.viewListings")}
               </Button>
-              <WhatsAppCTA context={{ intent: "Konsultasi" }} />
+              <WhatsAppCTA context={{ intent: "Konsultasi" }} label={t("cta.consult")} />
             </div>
           </div>
         ) : (
@@ -108,8 +110,20 @@ export default function PropertyDetail() {
                   <h2 className="font-serif text-2xl">Spesifikasi</h2>
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     <Spec label="Tipe" value={property.type} />
-                    <Spec label="Status" value={property.status} />
-                    <Spec label="Ownership" value={property.ownership} />
+                    <Spec
+                      label="Status"
+                      value={
+                        property.status === "Ready"
+                          ? t("property.status.ready")
+                          : property.status === "Off-plan"
+                            ? t("property.status.offplan")
+                            : t("property.status.sold")
+                      }
+                    />
+                    <Spec
+                      label="Ownership"
+                      value={property.ownership === "Freehold" ? t("property.ownership.freehold") : t("property.ownership.leasehold")}
+                    />
                     {property.bedrooms != null && <Spec label="Bedrooms" value={`${property.bedrooms}`} />}
                     {property.bathrooms != null && <Spec label="Bathrooms" value={`${property.bathrooms}`} />}
                     {property.landSize != null && <Spec label="Land size" value={`${property.landSize} m²`} />}
@@ -159,11 +173,11 @@ export default function PropertyDetail() {
                       ))}
                     </div>
                     <div className="mt-4 text-xs text-[hsl(var(--brand-ink)/0.60)] leading-relaxed">
-                      {property.legal.notes ?? "Catatan: untuk verifikasi legal formal, silakan koordinasi dengan notaris/ahli Anda. Kami bantu rapikan informasi dan komunikasi ke pihak terkait."}
+                      {property.legal.notes ??
+                        "Catatan: untuk verifikasi legal formal, silakan koordinasi dengan notaris/ahli Anda. Kami bantu rapikan informasi dan komunikasi ke pihak terkait."}
                     </div>
                   </div>
                 </section>
-
               </div>
             </div>
 
@@ -174,13 +188,17 @@ export default function PropertyDetail() {
                     {property.type}
                   </Badge>
                   <Badge className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]">
-                    {property.purpose}
+                    {property.purpose === "Investment" ? t("property.purpose.investment") : t("property.purpose.residential")}
                   </Badge>
                   <Badge className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]">
-                    {property.status}
+                    {property.status === "Ready"
+                      ? t("property.status.ready")
+                      : property.status === "Off-plan"
+                        ? t("property.status.offplan")
+                        : t("property.status.sold")}
                   </Badge>
                   <Badge className="rounded-full bg-[hsl(var(--brand-surface-2))] text-[hsl(var(--brand-ink))] border border-[hsl(var(--brand-ink)/0.10)]">
-                    {property.ownership}
+                    {property.ownership === "Freehold" ? t("property.ownership.freehold") : t("property.ownership.leasehold")}
                   </Badge>
                 </div>
 
@@ -188,17 +206,17 @@ export default function PropertyDetail() {
 
                 <div className="mt-2 flex items-center gap-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">
                   <MapPin className="h-4 w-4" />
-                  {property.location.area}, {property.location.city} • Kode: {property.code}
+                  {property.location.area}, {property.location.city} • {t("label.listingCode")}: {property.code}
                 </div>
 
                 <div className="mt-5 flex items-baseline justify-between gap-3">
                   <div>
-                    <div className="text-xs text-[hsl(var(--brand-ink)/0.60)]">Harga</div>
+                    <div className="text-xs text-[hsl(var(--brand-ink)/0.60)]">{t("label.price")}</div>
                     <div className="text-2xl font-semibold">Rp {formatIdr(property.price)}</div>
                   </div>
                   {property.roi != null && (
                     <div className="rounded-2xl bg-[hsl(var(--brand-ink))] px-3 py-2 text-[hsl(var(--brand-ink-foreground))]">
-                      <div className="text-[11px] opacity-85">ROI</div>
+                      <div className="text-[11px] opacity-85">{t("label.roi")}</div>
                       <div className="text-sm font-semibold">{property.roi}%</div>
                     </div>
                   )}
@@ -213,7 +231,7 @@ export default function PropertyDetail() {
                       ...quickContext.base,
                       intent: sold ? "Konsultasi" : "Cek ketersediaan",
                     }}
-                    label={sold ? "Minta unit serupa" : "Cek availability via WhatsApp"}
+                    label={sold ? t("cta.similarUnit") : t("cta.checkAvailability")}
                   />
 
                   <div className="grid grid-cols-3 gap-2">
@@ -221,19 +239,19 @@ export default function PropertyDetail() {
                       variant="soft"
                       className="h-11 w-full justify-center rounded-2xl"
                       context={{ ...quickContext.base, intent: "Minta video" }}
-                      label="Video"
+                      label={t("cta.requestVideo")}
                     />
                     <WhatsAppCTA
                       variant="soft"
                       className="h-11 w-full justify-center rounded-2xl"
                       context={{ ...quickContext.base, intent: "Cek ketersediaan" }}
-                      label="Ready?"
+                      label={t("cta.ready")}
                     />
                     <WhatsAppCTA
                       variant="soft"
                       className="h-11 w-full justify-center rounded-2xl"
                       context={{ ...quickContext.base, intent: "Negosiasi" }}
-                      label="Deal"
+                      label={t("cta.deal")}
                     />
                   </div>
 
@@ -243,7 +261,7 @@ export default function PropertyDetail() {
                     className="h-11 rounded-2xl border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
                   >
                     <a href="#" onClick={(e) => e.preventDefault()}>
-                      <Video className="mr-2 h-4 w-4" /> Request virtual tour
+                      <Video className="mr-2 h-4 w-4" /> {t("cta.virtualTour")}
                     </a>
                   </Button>
                 </div>

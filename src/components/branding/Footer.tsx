@@ -46,7 +46,7 @@ export default function Footer() {
               <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="mailto:hello@artaniar.com">
                 <Mail className="h-4 w-4" /> hello@artaniar.com
               </a>
-              <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="#" aria-label="Instagram">
+              <a className="inline-flex items-center gap-2 hover:text-[hsl(var(--brand-ink))]" href="#" aria-label={t("footer.instagramLabel")}>
                 <Instagram className="h-4 w-4" /> @artaniar
               </a>
             </div>
