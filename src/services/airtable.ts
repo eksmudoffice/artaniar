@@ -131,6 +131,8 @@ type PropertyFields = {
   currency?: string;
   ownership?: Property["ownership"];
 
+  TOPLIST?: boolean;
+
   images?: AirtableAttachment[];
 
   highlights?: string | string[];
@@ -216,6 +218,8 @@ export async function listAirtableProperties(): Promise<Property[]> {
         landSize: toNumber(f.landSize),
         buildingSize: toNumber(f.buildingSize),
         pool: toBool(f.pool),
+
+        toplist: Boolean(toBool(f.TOPLIST)),
 
         carport: toNumber(f.carport),
         roadWidth: toNumber(f.roadWidth),

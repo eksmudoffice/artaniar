@@ -23,6 +23,9 @@ export type Property = {
   buildingSize?: number; // m2
   pool?: boolean;
 
+  // Airtable highlight
+  toplist?: boolean;
+
   // Added: key practical attributes for filtering
   carport?: number; // count
   roadWidth?: number; // meters

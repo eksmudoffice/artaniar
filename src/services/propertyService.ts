@@ -145,12 +145,6 @@ async function loadAllProperties(force = false): Promise<Property[]> {
   }
 }
 
-function pickTopListings(items: Property[]) {
-  const withRoi = items.filter((p) => (p.roi ?? 0) > 0);
-  const base = withRoi.length ? withRoi : items;
-  return [...base].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
-}
-
 export const PropertyService = {
   getDebugSnapshot() {
     const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
@@ -254,11 +248,7 @@ export const PropertyService = {
     }
 
     if (topOnly) {
-      // Define "Top listings" as the highest ROI picks.
-      const sorted = pickTopListings(data);
-      const topN = Math.min(8, sorted.length);
-      const allowed = new Set(sorted.slice(0, topN).map((p) => p.id));
-      data = data.filter((p) => allowed.has(p.id));
+      data = data.filter((p) => Boolean(p.toplist));
     }
 
     data.sort((a, b) => {
