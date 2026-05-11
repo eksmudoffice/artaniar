@@ -33,6 +33,9 @@ export default function Index() {
   const [filterOpen, setFilterOpen] = useState(false);
   const topRef = useRef<HTMLDivElement | null>(null);
 
+  const [airtableStatus, setAirtableStatus] = useState(() => PropertyService.getDebugSnapshot());
+  const [reloadingAirtable, setReloadingAirtable] = useState(false);
+
   const query = useMemo(() => ({ ...toQuery(filters), page, pageSize: 12 }), [filters, page]);
 
   useEffect(() => {
@@ -43,6 +46,7 @@ export default function Index() {
       setItems(res.items);
       setTotalPages(res.totalPages);
       setLoading(false);
+      setAirtableStatus(PropertyService.getDebugSnapshot());
     });
     return () => {
       cancelled = true;
@@ -85,7 +89,17 @@ export default function Index() {
     };
   }, []);
 
-  const airtableStatus = useMemo(() => PropertyService.getDebugSnapshot(), []);
+  const forceReload = async () => {
+    setReloadingAirtable(true);
+    const snap = await PropertyService.reload();
+    setAirtableStatus(snap);
+
+    // also refresh visible listings using current query
+    const res = await PropertyService.listProperties(query);
+    setItems(res.items);
+    setTotalPages(res.totalPages);
+    setReloadingAirtable(false);
+  };
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]" ref={topRef}>
@@ -96,8 +110,23 @@ export default function Index() {
         {/* TOP LISTINGS */}
         <TopListingsCarousel items={topListings} />
 
-        {/* LISTINGS SECTION (smaller sizing) - moved ABOVE hero */}
+        {/* LISTINGS SECTION */}
         <section className="mt-10">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-[hsl(var(--brand-ink)/0.62)]">
+              Debug: kalau tetap LOCAL, biasanya table/field mismatch atau akses Airtable (401/403).
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={forceReload}
+              disabled={reloadingAirtable}
+              className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
+            >
+              {reloadingAirtable ? "Reloading…" : "Force reload Airtable"}
+            </Button>
+          </div>
+
           <AirtableStatusCard className="mb-6" value={airtableStatus} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -206,7 +235,7 @@ export default function Index() {
           </div>
         </section>
 
-        {/* HERO (now below listings) */}
+        {/* HERO */}
         <section className="mt-10 rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="grid gap-6 p-6 md:p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div>

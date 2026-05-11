@@ -113,8 +113,8 @@ let lastSource: DataSource = "local";
 let lastAirtableError: string | null = null;
 let lastLoadedAt: number | null = null;
 
-async function getAllProperties(): Promise<Property[]> {
-  if (cached) return cached;
+async function loadAllProperties(force = false): Promise<Property[]> {
+  if (!force && cached) return cached;
 
   const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
   const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
@@ -165,6 +165,11 @@ export const PropertyService = {
     };
   },
 
+  async reload() {
+    await loadAllProperties(true);
+    return PropertyService.getDebugSnapshot();
+  },
+
   async listProperties(query: PropertyQuery) {
     const {
       search,
@@ -180,7 +185,7 @@ export const PropertyService = {
       pageSize = 9,
     } = query;
 
-    let data = [...(await getAllProperties())];
+    let data = [...(await loadAllProperties(false))];
 
     if (search && search.trim()) {
       data = data.filter(
@@ -263,7 +268,7 @@ export const PropertyService = {
   },
 
   async getPropertyBySlug(slug: string): Promise<Property | null> {
-    const all = await getAllProperties();
+    const all = await loadAllProperties(false);
     await new Promise((r) => setTimeout(r, 120));
     return all.find((p) => p.slug === slug) ?? null;
   },
