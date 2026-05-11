@@ -23,6 +23,11 @@ import MobileFilterFab from "@/components/cta/MobileFilterFab";
 import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
 import AirtableStatusCard from "@/components/debug/AirtableStatusCard";
 
+function isDebugEnabled() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("debug") === "1";
+}
+
 export default function Index() {
   const { t } = useLocale();
   const [filters, setFilters] = useState<PropertyFiltersValue>(DEFAULT_FILTERS);
@@ -38,6 +43,8 @@ export default function Index() {
 
   const query = useMemo(() => ({ ...toQuery(filters), page, pageSize: 12 }), [filters, page]);
 
+  const debugEnabled = useMemo(() => isDebugEnabled(), []);
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -46,12 +53,12 @@ export default function Index() {
       setItems(res.items);
       setTotalPages(res.totalPages);
       setLoading(false);
-      setAirtableStatus(PropertyService.getDebugSnapshot());
+      if (debugEnabled) setAirtableStatus(PropertyService.getDebugSnapshot());
     });
     return () => {
       cancelled = true;
     };
-  }, [query]);
+  }, [debugEnabled, query]);
 
   useEffect(() => {
     setPage(1);
@@ -112,22 +119,26 @@ export default function Index() {
 
         {/* LISTINGS SECTION */}
         <section className="mt-10">
-          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-[hsl(var(--brand-ink)/0.62)]">
-              Debug: kalau tetap LOCAL, biasanya table/field mismatch atau akses Airtable (401/403).
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={forceReload}
-              disabled={reloadingAirtable}
-              className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
-            >
-              {reloadingAirtable ? "Reloading…" : "Force reload Airtable"}
-            </Button>
-          </div>
+          {debugEnabled ? (
+            <>
+              <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-xs text-[hsl(var(--brand-ink)/0.62)]">
+                  Debug: kalau tetap LOCAL, biasanya table/field mismatch atau akses Airtable (401/403).
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={forceReload}
+                  disabled={reloadingAirtable}
+                  className="rounded-full border-[hsl(var(--brand-ink)/0.16)] bg-white/70 hover:bg-white"
+                >
+                  {reloadingAirtable ? "Reloading…" : "Force reload Airtable"}
+                </Button>
+              </div>
 
-          <AirtableStatusCard className="mb-6" value={airtableStatus} />
+              <AirtableStatusCard className="mb-6" value={airtableStatus} />
+            </>
+          ) : null}
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
