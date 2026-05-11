@@ -57,6 +57,42 @@ function toArrayString(v: unknown): string[] {
   return [];
 }
 
+function toText(v: unknown): string | undefined {
+  if (typeof v === "string") {
+    const s = v.trim();
+    return s ? s : undefined;
+  }
+  if (typeof v === "number") return String(v);
+  if (typeof v === "boolean") return v ? "true" : "false";
+
+  if (Array.isArray(v)) {
+    const s = v
+      .map((x) => {
+        if (typeof x === "string") return x;
+        if (x && typeof x === "object") {
+          const anyObj = x as Record<string, unknown>;
+          if (typeof anyObj.name === "string") return anyObj.name;
+          if (typeof anyObj.value === "string") return anyObj.value;
+          if (typeof anyObj.id === "string") return anyObj.id;
+        }
+        return String(x);
+      })
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .join(", ");
+    return s ? s : undefined;
+  }
+
+  if (v && typeof v === "object") {
+    const anyObj = v as Record<string, unknown>;
+    if (typeof anyObj.name === "string") return anyObj.name.trim() || undefined;
+    if (typeof anyObj.value === "string") return anyObj.value.trim() || undefined;
+    if (typeof anyObj.id === "string") return anyObj.id.trim() || undefined;
+  }
+
+  return undefined;
+}
+
 function toNumber(v: unknown): number | undefined {
   if (typeof v === "number") return Number.isFinite(v) ? v : undefined;
   if (typeof v === "string") {
@@ -89,8 +125,8 @@ type PropertyFields = {
   type?: PropertyType;
   purpose?: PropertyPurpose;
   status?: PropertyStatus;
-  city?: string;
-  area?: string;
+  city?: unknown;
+  area?: unknown;
   price?: number;
   currency?: string;
   ownership?: Property["ownership"];
@@ -138,8 +174,8 @@ export async function listAirtableProperties(): Promise<Property[]> {
   return records
     .map((r) => {
       const f = r.fields ?? {};
-      const slug = f.slug?.trim();
-      const title = f.title?.trim();
+      const slug = toText(f.slug);
+      const title = toText(f.title);
 
       if (!slug || !title) return null;
 
@@ -148,26 +184,26 @@ export async function listAirtableProperties(): Promise<Property[]> {
       const checklist = toArrayString(f.legalChecklist);
       const roiNightlyRateIdr = toNumber(f.roiNightlyRateIdr);
       const roiOccupancy = toNumber(f.roiOccupancy);
-      const roiDisclaimer = typeof f.roiDisclaimer === "string" ? f.roiDisclaimer.trim() : undefined;
+      const roiDisclaimer = toText(f.roiDisclaimer);
 
       const createdAt =
-        typeof f.createdAt === "string" && f.createdAt.trim()
-          ? new Date(f.createdAt).toISOString()
+        toText(f.createdAt) != null
+          ? new Date(toText(f.createdAt)!).toISOString()
           : r.createdTime
             ? new Date(r.createdTime).toISOString()
             : new Date().toISOString();
 
       const p: Property = {
         id: r.id,
-        code: f.code?.trim() ?? slug,
+        code: toText(f.code) ?? slug,
         slug,
         title,
 
         type: toOneOf<PropertyType>(f.type, ["Villa", "Rumah", "Tanah"] as const, "Villa"),
         purpose: toOneOf<PropertyPurpose>(f.purpose, ["Investment", "Residential"] as const, "Investment"),
         location: {
-          area: (f.area?.trim() || "Bali") as string,
-          city: (f.city?.trim() || "Bali") as "Bali",
+          area: (toText(f.area) || "Bali") as string,
+          city: (toText(f.city) || "Bali") as "Bali",
         },
 
         price: toNumber(f.price) ?? 0,
@@ -190,17 +226,14 @@ export async function listAirtableProperties(): Promise<Property[]> {
 
         ownership: toOneOf<Property["ownership"]>(f.ownership, ["Freehold", "Leasehold"] as const, "Leasehold"),
         yearBuilt: toNumber(f.yearBuilt),
-        zoning: typeof f.zoning === "string" ? f.zoning : undefined,
+        zoning: toText(f.zoning),
 
         images: images.length ? images : ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=80"],
         highlights: (() => {
           const h = toArrayString(f.highlights);
           return h.length ? h : ["Listing tersedia — minta detail via WhatsApp."];
         })(),
-        description:
-          typeof f.description === "string" && f.description.trim()
-            ? f.description.trim()
-            : "Klik WhatsApp untuk info lengkap (availability, detail legal, dan opsi unit serupa).",
+        description: toText(f.description) ?? "Klik WhatsApp untuk info lengkap (availability, detail legal, dan opsi unit serupa).",
 
         tags: (() => {
           const t = toArrayString(f.tags);
@@ -214,7 +247,7 @@ export async function listAirtableProperties(): Promise<Property[]> {
 
         legal: {
           checklist: checklist.length ? checklist : ["Minta dokumen pendukung & pengecekan notaris/ahli Anda."],
-          notes: typeof f.legalNotes === "string" && f.legalNotes.trim() ? f.legalNotes.trim() : undefined,
+          notes: toText(f.legalNotes),
         },
 
         roiProjection:
@@ -253,8 +286,8 @@ export async function listAirtableNews(): Promise<NewsPost[]> {
   return records
     .map((r) => {
       const f = r.fields ?? {};
-      const slug = f.slug?.trim();
-      const title = f.title?.trim();
+      const slug = toText(f.slug);
+      const title = toText(f.title);
       if (!slug || !title) return null;
 
       const cover =
@@ -265,27 +298,31 @@ export async function listAirtableNews(): Promise<NewsPost[]> {
             : undefined;
 
       const publishedAt =
-        typeof f.publishedAt === "string" && f.publishedAt.trim()
-          ? new Date(f.publishedAt).toISOString()
+        toText(f.publishedAt) != null
+          ? new Date(toText(f.publishedAt)!).toISOString()
           : r.createdTime
             ? new Date(r.createdTime).toISOString()
             : new Date().toISOString();
 
-      const text = typeof f.content === "string" ? f.content.trim() : "";
+      const text = toText(f.content) ?? "";
       const blocks = text
-        ? text.split(/\n{2,}/g).map((p) => p.trim()).filter(Boolean).map((p) => ({ type: "p" as const, text: p }))
-        : [{ type: "p" as const, text: f.excerpt?.trim() ?? "" }].filter((b) => b.text);
+        ? text
+            .split(/\n{2,}/g)
+            .map((p) => p.trim())
+            .filter(Boolean)
+            .map((p) => ({ type: "p" as const, text: p }))
+        : [{ type: "p" as const, text: toText(f.excerpt) ?? "" }].filter((b) => b.text);
 
       const post: NewsPost = {
         id: r.id,
         slug,
         title,
-        excerpt: f.excerpt?.trim() ?? "",
+        excerpt: toText(f.excerpt) ?? "",
         content: blocks.length ? blocks : [{ type: "p", text: "" }],
         coverImage:
           cover ??
           "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
-        authorName: f.authorName?.trim() ?? "Artaniar Property",
+        authorName: toText(f.authorName) ?? "Artaniar Property",
         publishedAt,
         tags: (() => {
           const t = toArrayString(f.tags);
