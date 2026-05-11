@@ -1,4 +1,5 @@
-import { properties, type Property, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { properties as localProperties, type Property, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { listAirtableProperties } from "@/services/airtable";
 
 export type PropertyQuery = {
   search?: string;
@@ -105,6 +106,28 @@ const compareOp = (left: number, op: Op, right: number) => {
   return left === right;
 };
 
+let cached: Property[] | null = null;
+async function getAllProperties(): Promise<Property[]> {
+  if (cached) return cached;
+
+  const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
+  const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+
+  if (!tokenPresent || !basePresent) {
+    cached = localProperties;
+    return cached;
+  }
+
+  try {
+    const items = await listAirtableProperties();
+    cached = items.length ? items : localProperties;
+    return cached;
+  } catch {
+    cached = localProperties;
+    return cached;
+  }
+}
+
 export const PropertyService = {
   async listProperties(query: PropertyQuery) {
     const {
@@ -121,7 +144,7 @@ export const PropertyService = {
       pageSize = 9,
     } = query;
 
-    let data = [...properties];
+    let data = [...(await getAllProperties())];
 
     if (search && search.trim()) {
       data = data.filter(
@@ -192,7 +215,7 @@ export const PropertyService = {
     const start = (page - 1) * pageSize;
     const items = data.slice(start, start + pageSize);
 
-    await new Promise((r) => setTimeout(r, 250));
+    await new Promise((r) => setTimeout(r, 150));
 
     return {
       items,
@@ -204,7 +227,8 @@ export const PropertyService = {
   },
 
   async getPropertyBySlug(slug: string): Promise<Property | null> {
-    await new Promise((r) => setTimeout(r, 200));
-    return properties.find((p) => p.slug === slug) ?? null;
+    const all = await getAllProperties();
+    await new Promise((r) => setTimeout(r, 120));
+    return all.find((p) => p.slug === slug) ?? null;
   },
 };
