@@ -10,6 +10,7 @@ import SortSelect from "@/components/properties/filters/SortSelect";
 import AdvancedFilters, { type AdvancedFiltersValue } from "@/components/properties/filters/AdvancedFilters";
 import ActiveChips, { type FilterChip } from "@/components/properties/filters/ActiveChips";
 import FilterActions from "@/components/properties/filters/FilterActions";
+import { Button } from "@/components/ui/button";
 
 const PRICE_MAX = PRICE_RANGE_MAX;
 
@@ -60,6 +61,7 @@ export type PropertyFiltersValue = BasicFiltersValue &
   AdvancedFiltersValue & {
     priceRange: [number, number];
     sort: NonNullable<PropertyQuery["sort"]>;
+    topOnly: boolean;
   };
 
 type Props = {
@@ -70,12 +72,20 @@ type Props = {
 };
 
 export default function PropertyFiltersFreeText({ value, onChange, onReset, compact = false }: Props) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
 
   const advancedTokens = useMemo(() => buildAdvancedTokens(value), [value]);
 
   const chips = useMemo(() => {
     const out: FilterChip[] = [];
+
+    if (value.topOnly) {
+      out.push({
+        key: "top",
+        label: locale === "id" ? "Top listing" : "Top listing",
+        onClear: () => onChange({ ...value, topOnly: false }),
+      });
+    }
 
     if (value.type !== "All") out.push({ key: "type", label: value.type, onClear: () => onChange({ ...value, type: "All" }) });
     if (value.purpose !== "All")
@@ -115,11 +125,37 @@ export default function PropertyFiltersFreeText({ value, onChange, onReset, comp
     }
 
     return out;
-  }, [advancedTokens, onChange, t, value]);
+  }, [advancedTokens, locale, onChange, t, value]);
+
+  const toggleLabel = locale === "id" ? "Top listing saja" : "Top listing only";
 
   return (
     <div className="grid gap-5">
       <FilterHeader compact={compact} />
+
+      <div className="grid gap-2">
+        <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">{locale === "id" ? "Highlight" : "Highlight"}</div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onChange({ ...value, topOnly: !value.topOnly })}
+            className={
+              "rounded-full border-[hsl(var(--brand-ink)/0.16)] px-4 " +
+              (value.topOnly
+                ? "bg-[hsl(var(--brand-ink))] text-[hsl(var(--brand-ink-foreground))] hover:bg-[hsl(var(--brand-ink)/0.92)]"
+                : "bg-white/70 text-[hsl(var(--brand-ink))] hover:bg-white")
+            }
+          >
+            {toggleLabel}
+          </Button>
+        </div>
+        <div className="text-[11px] text-[hsl(var(--brand-ink)/0.62)]">
+          {locale === "id"
+            ? "Menampilkan listing dengan ROI tertinggi (top picks)."
+            : "Shows only top picks based on highest ROI."}
+        </div>
+      </div>
 
       <BasicFilters
         value={{
@@ -184,6 +220,7 @@ export const DEFAULT_FILTERS: PropertyFiltersValue = {
   view: "Any",
 
   sort: "newest",
+  topOnly: false,
 };
 
 export const toQuery = (v: PropertyFiltersValue): PropertyQuery => ({
@@ -196,4 +233,5 @@ export const toQuery = (v: PropertyFiltersValue): PropertyQuery => ({
   priceMax: v.priceRange[1] === PRICE_MAX ? undefined : v.priceRange[1],
   advanced: buildAdvancedTokens(v).trim() ? buildAdvancedTokens(v).trim() : undefined,
   sort: v.sort,
+  topOnly: v.topOnly || undefined,
 });

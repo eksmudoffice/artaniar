@@ -11,6 +11,7 @@ export type PropertyQuery = {
   priceMax?: number;
   advanced?: string; // free text tokens
   sort?: "newest" | "price_asc" | "price_desc" | "roi_desc";
+  topOnly?: boolean;
   page?: number;
   pageSize?: number;
 };
@@ -144,6 +145,12 @@ async function loadAllProperties(force = false): Promise<Property[]> {
   }
 }
 
+function pickTopListings(items: Property[]) {
+  const withRoi = items.filter((p) => (p.roi ?? 0) > 0);
+  const base = withRoi.length ? withRoi : items;
+  return [...base].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
+}
+
 export const PropertyService = {
   getDebugSnapshot() {
     const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
@@ -181,6 +188,7 @@ export const PropertyService = {
       priceMax,
       advanced,
       sort = "newest",
+      topOnly = false,
       page = 1,
       pageSize = 9,
     } = query;
@@ -243,6 +251,14 @@ export const PropertyService = {
           return true;
         });
       }
+    }
+
+    if (topOnly) {
+      // Define "Top listings" as the highest ROI picks.
+      const sorted = pickTopListings(data);
+      const topN = Math.min(8, sorted.length);
+      const allowed = new Set(sorted.slice(0, topN).map((p) => p.id));
+      data = data.filter((p) => allowed.has(p.id));
     }
 
     data.sort((a, b) => {
