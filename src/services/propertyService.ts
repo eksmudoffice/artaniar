@@ -106,7 +106,13 @@ const compareOp = (left: number, op: Op, right: number) => {
   return left === right;
 };
 
+type DataSource = "airtable" | "local";
+
 let cached: Property[] | null = null;
+let lastSource: DataSource = "local";
+let lastAirtableError: string | null = null;
+let lastLoadedAt: number | null = null;
+
 async function getAllProperties(): Promise<Property[]> {
   if (cached) return cached;
 
@@ -115,20 +121,50 @@ async function getAllProperties(): Promise<Property[]> {
 
   if (!tokenPresent || !basePresent) {
     cached = localProperties;
+    lastSource = "local";
+    lastAirtableError = null;
+    lastLoadedAt = Date.now();
     return cached;
   }
 
   try {
     const items = await listAirtableProperties();
     cached = items.length ? items : localProperties;
+    lastSource = items.length ? "airtable" : "local";
+    lastAirtableError = items.length ? null : "Airtable returned 0 valid records (check required fields: slug, title).";
+    lastLoadedAt = Date.now();
     return cached;
-  } catch {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    lastAirtableError = msg;
     cached = localProperties;
+    lastSource = "local";
+    lastLoadedAt = Date.now();
     return cached;
   }
 }
 
 export const PropertyService = {
+  getDebugSnapshot() {
+    const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
+    const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+
+    return {
+      airtable: {
+        baseIdPresent: basePresent,
+        tokenPresent,
+        enabled: tokenPresent && basePresent,
+        lastError: lastAirtableError,
+      },
+      cache: {
+        loaded: Boolean(cached),
+        count: cached?.length ?? 0,
+        source: lastSource,
+        loadedAt: lastLoadedAt,
+      },
+    };
+  },
+
   async listProperties(query: PropertyQuery) {
     const {
       search,

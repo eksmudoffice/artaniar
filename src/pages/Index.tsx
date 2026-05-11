@@ -21,6 +21,7 @@ import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
 import { properties } from "@/data/properties";
 import MobileFilterFab from "@/components/cta/MobileFilterFab";
 import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
+import AirtableStatusCard from "@/components/debug/AirtableStatusCard";
 
 export default function Index() {
   const { t } = useLocale();
@@ -84,6 +85,8 @@ export default function Index() {
     };
   }, []);
 
+  const airtableStatus = useMemo(() => PropertyService.getDebugSnapshot(), []);
+
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-surface))] text-[hsl(var(--brand-ink))]" ref={topRef}>
       <Seo title={seoTitle} description={seoDesc} canonicalPath="/" image={seoImage} jsonLd={jsonLd} />
@@ -95,6 +98,8 @@ export default function Index() {
 
         {/* LISTINGS SECTION (smaller sizing) - moved ABOVE hero */}
         <section className="mt-10">
+          <AirtableStatusCard className="mb-6" value={airtableStatus} />
+
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h3 className="font-serif text-3xl">{t("home.listings.resultsTitle")}</h3>
