@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { buildWhatsAppMessage, buildWhatsAppUrl, type WhatsAppMessageContext } from "@/utils/whatsapp";
 import { MessageCircle, PhoneCall } from "lucide-react";
 
-const DEFAULT_PHONE = "6281234567890";
+const DEFAULT_PHONE = "6282237067649";
 
 export function WhatsAppCTA({
   className,

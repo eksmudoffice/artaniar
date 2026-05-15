@@ -14,7 +14,7 @@ import { buildAgentSubmitMessage, buildWhatsAppUrl } from "@/utils/whatsapp";
 import { Send } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
 
-const DEFAULT_PHONE = "6281234567890";
+const DEFAULT_PHONE = "6282237067649";
 
 const normalizeDigits = (raw: string) => raw.replace(/[^\d+]/g, "").trim();
 
