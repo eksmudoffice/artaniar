@@ -1,4 +1,9 @@
-import type { Property, PropertyPurpose, PropertyStatus, PropertyType } from "@/data/properties";
+import type {
+  Property,
+  PropertyPurpose,
+  PropertyStatus,
+  PropertyType,
+} from "@/data/properties";
 import type { NewsPost } from "@/data/news";
 
 const AIRTABLE_BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID as string | undefined;
@@ -39,7 +44,10 @@ async function fetchAllRecords<TFields>(table: string) {
       throw new Error(`Airtable error (${table}): ${res.status} ${text}`);
     }
 
-    const json = (await res.json()) as { records: Array<AirtableRecord<TFields>>; offset?: string };
+    const json = (await res.json()) as {
+      records: Array<AirtableRecord<TFields>>;
+      offset?: string;
+    };
     records.push(...(json.records ?? []));
     offset = json.offset;
     if (!offset) break;
@@ -115,61 +123,133 @@ function toBool(v: unknown): boolean | undefined {
   return undefined;
 }
 
-function toOneOf<T extends string>(v: unknown, allowed: readonly T[], fallback: T): T {
-  const s = typeof v === "string" ? (v.trim() as T) : undefined;
-  return s && (allowed as readonly string[]).includes(s) ? s : fallback;
+function toIsoDate(v: unknown): string | undefined {
+  const s = toText(v);
+  if (!s) return undefined;
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
+function normalizeKey(s: string) {
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[_/]/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/[–—-]/g, "-");
+}
+
+function normalizeType(v: unknown): PropertyType {
+  const s = toText(v);
+  if (!s) return "Villa";
+  const k = normalizeKey(s);
+  if (["villa"].includes(k)) return "Villa";
+  if (["rumah", "house", "home"].includes(k)) return "Rumah";
+  if (["tanah", "land", "plot"].includes(k)) return "Tanah";
+  return "Villa";
+}
+
+function normalizePurpose(v: unknown): PropertyPurpose {
+  const s = toText(v);
+  if (!s) return "Investment";
+  const k = normalizeKey(s);
+  if (["investment", "invest", "inv"].includes(k)) return "Investment";
+  if (["residential", "residence", "living", "home"].includes(k)) return "Residential";
+  return "Investment";
+}
+
+function normalizeStatus(v: unknown): PropertyStatus {
+  const s = toText(v);
+  if (!s) return "Ready";
+  const k = normalizeKey(s);
+  if (["ready", "available"].includes(k)) return "Ready";
+  if (["off-plan", "offplan", "off plan", "pre-sale", "presale"].includes(k)) return "Off-plan";
+  if (["sold", "closed"].includes(k)) return "Sold";
+  return "Ready";
+}
+
+function normalizeOwnership(v: unknown): Property["ownership"] {
+  const s = toText(v);
+  if (!s) return "Leasehold";
+  const k = normalizeKey(s);
+  if (["freehold", "shm", "hak milik"].includes(k)) return "Freehold";
+  if (["leasehold", "lease", "hgb", "hak guna"].includes(k)) return "Leasehold";
+  return "Leasehold";
+}
+
+function normalizeWater(v: unknown): NonNullable<Property["water"]> {
+  const s = toText(v);
+  if (!s) return "Other";
+  const k = normalizeKey(s);
+  if (["pdam"].includes(k)) return "PDAM";
+  if (["well", "sumur", "borewell", "bore well"].includes(k)) return "Well";
+  return "Other";
+}
+
+function normalizeView(v: unknown): NonNullable<Property["view"]> {
+  const s = toText(v);
+  if (!s) return "Garden";
+  const k = normalizeKey(s);
+  if (["ocean", "sea", "ocean view", "sea view"].includes(k)) return "Ocean";
+  if (["ricefield", "rice field", "sawah"].includes(k)) return "Ricefield";
+  if (["jungle", "forest"].includes(k)) return "Jungle";
+  if (["garden", "pool", "green"].includes(k)) return "Garden";
+  if (["city", "urban"].includes(k)) return "City";
+  return "Garden";
 }
 
 type PropertyFields = {
   slug?: string;
   code?: string;
   title?: string;
-  type?: PropertyType;
-  purpose?: PropertyPurpose;
-  status?: PropertyStatus;
-  city?: unknown;
-  area?: unknown;
-  price?: number;
-  currency?: string;
-  ownership?: Property["ownership"];
 
-  TOPLIST?: boolean;
+  // Location
+  area?: unknown;
+  areaName?: unknown;
+  city?: unknown;
+
+  price?: unknown;
+  currency?: unknown;
 
   images?: AirtableAttachment[];
 
-  highlights?: string | string[];
-  description?: string;
+  TOPLIST?: unknown;
 
-  roi?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  landSize?: number;
-  buildingSize?: number;
-  pool?: boolean;
+  status?: unknown;
+  type?: unknown;
+  purpose?: unknown;
 
-  carport?: number;
-  roadWidth?: number;
-  powerVa?: number;
-  water?: Property["water"];
-  furnished?: boolean;
-  view?: Property["view"];
+  roi?: unknown;
+  bedrooms?: unknown;
+  bathrooms?: unknown;
+  landSize?: unknown;
+  buildingSize?: unknown;
+  pool?: unknown;
+  carport?: unknown;
+  roadWidth?: unknown;
+  powerVa?: unknown;
+  water?: unknown;
+  furnished?: unknown;
+  view?: unknown;
+  yearBuilt?: unknown;
+  ownership?: unknown;
 
-  yearBuilt?: number;
-  zoning?: string;
+  tags?: unknown;
+  highlights?: unknown;
+  description?: unknown;
 
-  tags?: string | string[];
+  lat?: unknown;
+  lng?: unknown;
+  Ing?: unknown; // seen as a possible typo
 
-  lat?: number;
-  lng?: number;
+  legalChecklist?: unknown;
+  legalNotes?: unknown;
 
-  legalChecklist?: string | string[];
-  legalNotes?: string;
+  roiNightlyRateIdr?: unknown;
+  roiOccupancy?: unknown;
+  roiDisclaimer?: unknown;
 
-  roiNightlyRateIdr?: number;
-  roiOccupancy?: number;
-  roiDisclaimer?: string;
-
-  createdAt?: string;
+  createdAt?: unknown;
 };
 
 export async function listAirtableProperties(): Promise<Property[]> {
@@ -192,11 +272,11 @@ export async function listAirtableProperties(): Promise<Property[]> {
       const roiDisclaimer = toText(f.roiDisclaimer);
 
       const createdAt =
-        toText(f.createdAt) != null
-          ? new Date(toText(f.createdAt)!).toISOString()
-          : r.createdTime
-            ? new Date(r.createdTime).toISOString()
-            : new Date().toISOString();
+        toIsoDate(f.createdAt) ??
+        (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
+
+      const lat = toNumber(f.lat);
+      const lng = toNumber(f.lng ?? f.Ing);
 
       const p: Property = {
         id: r.id,
@@ -204,17 +284,17 @@ export async function listAirtableProperties(): Promise<Property[]> {
         slug,
         title,
 
-        type: toOneOf<PropertyType>(f.type, ["Villa", "Rumah", "Tanah"] as const, "Villa"),
-        purpose: toOneOf<PropertyPurpose>(f.purpose, ["Investment", "Residential"] as const, "Investment"),
+        type: normalizeType(f.type),
+        purpose: normalizePurpose(f.purpose),
         location: {
-          area: (toText(f.area) || "Bali") as string,
+          area: (toText(f.areaName) || toText(f.area) || "Bali") as string,
           city: (toText(f.city) || "Bali") as "Bali",
         },
 
         price: toNumber(f.price) ?? 0,
         currency: "IDR",
         roi: toNumber(f.roi),
-        status: toOneOf<PropertyStatus>(f.status, ["Ready", "Off-plan", "Sold"] as const, "Ready"),
+        status: normalizeStatus(f.status),
 
         bedrooms: toNumber(f.bedrooms),
         bathrooms: toNumber(f.bathrooms),
@@ -225,18 +305,14 @@ export async function listAirtableProperties(): Promise<Property[]> {
         carport: toNumber(f.carport),
         roadWidth: toNumber(f.roadWidth),
         powerVa: toNumber(f.powerVa),
-        water: toOneOf<NonNullable<Property["water"]>>(f.water, ["PDAM", "Well", "Other"] as const, "Other"),
+        water: normalizeWater(f.water),
         furnished: toBool(f.furnished),
-        view: toOneOf<NonNullable<Property["view"]>>(
-          f.view,
-          ["Ocean", "Ricefield", "Jungle", "Garden", "City"] as const,
-          "Garden",
-        ),
+        view: normalizeView(f.view),
 
         yearBuilt: toNumber(f.yearBuilt),
-        zoning: toText(f.zoning) ?? "",
+        zoning: "",
 
-        ownership: toOneOf<NonNullable<Property["ownership"]>>(f.ownership, ["Freehold", "Leasehold"] as const, "Leasehold"),
+        ownership: normalizeOwnership(f.ownership),
 
         tags: toArrayString(f.tags),
 
@@ -247,14 +323,7 @@ export async function listAirtableProperties(): Promise<Property[]> {
 
         toplist: toBool(f.TOPLIST) ?? false,
 
-        coordinates:
-
-          toNumber(f.lat) != null && toNumber(f.lng) != null
-            ? {
-                lat: toNumber(f.lat)!,
-                lng: toNumber(f.lng)!,
-              }
-            : undefined,
+        coordinates: lat != null && lng != null ? { lat, lng } : undefined,
 
         legal: {
           checklist,

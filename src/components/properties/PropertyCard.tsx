@@ -20,7 +20,7 @@ export default function PropertyCard({
   className?: string;
 }) {
   const { t } = useLocale();
-  const cover = property.images[0];
+  const cover = property.images[0] || "/placeholder.svg";
   const sold = property.status === "Sold";
 
   const purposeLabel =
