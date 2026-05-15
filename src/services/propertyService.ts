@@ -119,8 +119,9 @@ async function loadAllProperties(force = false): Promise<Property[]> {
 
   const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
   const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+  const tableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_ID);
 
-  if (!tokenPresent || !basePresent) {
+  if (!tokenPresent || !basePresent || !tableIdPresent) {
     cached = localProperties;
     lastSource = "local";
     lastAirtableError = null;
@@ -149,12 +150,14 @@ export const PropertyService = {
   getDebugSnapshot() {
     const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
     const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+    const tableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_ID);
 
     return {
       airtable: {
         baseIdPresent: basePresent,
+        tableIdPresent,
         tokenPresent,
-        enabled: tokenPresent && basePresent,
+        enabled: tokenPresent && basePresent && tableIdPresent,
         lastError: lastAirtableError,
       },
       cache: {
@@ -222,60 +225,42 @@ export const PropertyService = {
         data = data.filter((p) => (p.view ?? "Garden") === rules.view!.value);
       }
 
-      if (rules.numeric.length) {
+      for (const rule of rules.numeric) {
         data = data.filter((p) => {
-          for (const r of rules.numeric) {
-            const left =
-              r.key === "land"
-                ? p.landSize ?? 0
-                : r.key === "building"
-                  ? p.buildingSize ?? 0
-                  : r.key === "beds"
-                    ? p.bedrooms ?? 0
-                    : r.key === "baths"
-                      ? p.bathrooms ?? 0
-                      : r.key === "carport"
-                        ? p.carport ?? 0
-                        : r.key === "road"
-                          ? p.roadWidth ?? 0
-                          : p.powerVa ?? 0;
+          const left =
+            rule.key === "land"
+              ? p.landSize
+              : rule.key === "building"
+                ? p.buildingSize
+                : rule.key === "beds"
+                  ? p.bedrooms
+                  : rule.key === "baths"
+                    ? p.bathrooms
+                    : rule.key === "carport"
+                      ? p.carport
+                      : rule.key === "road"
+                        ? p.roadWidth
+                        : p.powerVa;
 
-            if (!compareOp(left, r.op, r.value)) return false;
-          }
-          return true;
+          if (left == null) return false;
+          return compareOp(left, rule.op, rule.value);
         });
       }
     }
 
-    if (topOnly) {
-      data = data.filter((p) => Boolean(p.toplist));
-    }
+    if (topOnly) data = data.filter((p) => p.toplist);
 
-    data.sort((a, b) => {
-      if (sort === "price_asc") return a.price - b.price;
-      if (sort === "price_desc") return b.price - a.price;
-      if (sort === "roi_desc") return (b.roi ?? 0) - (a.roi ?? 0);
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    if (sort === "newest") data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    if (sort === "price_asc") data.sort((a, b) => a.price - b.price);
+    if (sort === "price_desc") data.sort((a, b) => b.price - a.price);
+    if (sort === "roi_desc") data.sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
 
     const total = data.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const start = (page - 1) * pageSize;
     const items = data.slice(start, start + pageSize);
 
-    await new Promise((r) => setTimeout(r, 150));
-
-    return {
-      items,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.max(1, Math.ceil(total / pageSize)),
-    };
-  },
-
-  async getPropertyBySlug(slug: string): Promise<Property | null> {
-    const all = await loadAllProperties(false);
-    await new Promise((r) => setTimeout(r, 120));
-    return all.find((p) => p.slug === slug) ?? null;
+    return { items, total, totalPages };
   },
 };

@@ -2,6 +2,7 @@ import type { Property, PropertyPurpose, PropertyStatus, PropertyType } from "@/
 import type { NewsPost } from "@/data/news";
 
 const AIRTABLE_BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID as string | undefined;
+const AIRTABLE_TABLE_ID = import.meta.env.VITE_AIRTABLE_TABLE_ID as string | undefined;
 const AIRTABLE_TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN as string | undefined;
 
 const API_ORIGIN = "https://api.airtable.com/v0";
@@ -11,6 +12,7 @@ type AirtableRecord<TFields> = { id: string; createdTime?: string; fields: TFiel
 
 function requireEnv() {
   if (!AIRTABLE_BASE_ID) throw new Error("Missing VITE_AIRTABLE_BASE_ID");
+  if (!AIRTABLE_TABLE_ID) throw new Error("Missing VITE_AIRTABLE_TABLE_ID");
   if (!AIRTABLE_TOKEN) throw new Error("Missing VITE_AIRTABLE_TOKEN");
 }
 
@@ -171,7 +173,8 @@ type PropertyFields = {
 };
 
 export async function listAirtableProperties(): Promise<Property[]> {
-  const records = await fetchAllRecords<PropertyFields>("Properties");
+  requireEnv();
+  const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!);
 
   return records
     .map((r) => {
@@ -219,49 +222,51 @@ export async function listAirtableProperties(): Promise<Property[]> {
         buildingSize: toNumber(f.buildingSize),
         pool: toBool(f.pool),
 
-        toplist: Boolean(toBool(f.TOPLIST)),
-
         carport: toNumber(f.carport),
         roadWidth: toNumber(f.roadWidth),
         powerVa: toNumber(f.powerVa),
         water: toOneOf<NonNullable<Property["water"]>>(f.water, ["PDAM", "Well", "Other"] as const, "Other"),
         furnished: toBool(f.furnished),
-        view: toOneOf<NonNullable<Property["view"]>>(f.view, ["Ocean", "Ricefield", "Jungle", "Garden", "City"] as const, "Garden"),
+        view: toOneOf<NonNullable<Property["view"]>>(
+          f.view,
+          ["Ocean", "Ricefield", "Jungle", "Garden", "City"] as const,
+          "Garden",
+        ),
 
-        ownership: toOneOf<Property["ownership"]>(f.ownership, ["Freehold", "Leasehold"] as const, "Leasehold"),
         yearBuilt: toNumber(f.yearBuilt),
-        zoning: toText(f.zoning),
+        zoning: toText(f.zoning) ?? "",
 
-        images: images.length ? images : ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=80"],
-        highlights: (() => {
-          const h = toArrayString(f.highlights);
-          return h.length ? h : ["Listing tersedia — minta detail via WhatsApp."];
-        })(),
-        description: toText(f.description) ?? "Klik WhatsApp untuk info lengkap (availability, detail legal, dan opsi unit serupa).",
+        ownership: toOneOf<NonNullable<Property["ownership"]>>(f.ownership, ["Freehold", "Leasehold"] as const, "Leasehold"),
 
-        tags: (() => {
-          const t = toArrayString(f.tags);
-          return t.length ? t : undefined;
-        })(),
+        tags: toArrayString(f.tags),
+
+        highlights: toArrayString(f.highlights),
+        description: toText(f.description) ?? "",
+
+        images,
+
+        toplist: toBool(f.TOPLIST) ?? false,
 
         coordinates:
+
           toNumber(f.lat) != null && toNumber(f.lng) != null
-            ? { lat: toNumber(f.lat)!, lng: toNumber(f.lng)! }
+            ? {
+                lat: toNumber(f.lat)!,
+                lng: toNumber(f.lng)!,
+              }
             : undefined,
 
         legal: {
-          checklist: checklist.length ? checklist : ["Minta dokumen pendukung & pengecekan notaris/ahli Anda."],
+          checklist,
           notes: toText(f.legalNotes),
         },
 
         roiProjection:
-          roiNightlyRateIdr != null || roiOccupancy != null || roiDisclaimer
+          roiNightlyRateIdr != null || roiOccupancy != null || roiDisclaimer != null
             ? {
                 nightlyRateIdr: roiNightlyRateIdr,
-                occupancy: roiOccupancy,
-                disclaimer:
-                  roiDisclaimer ??
-                  "Proyeksi ROI bersifat indikatif berdasarkan asumsi pasar dan dapat berubah mengikuti seasonality & strategi pricing.",
+                occupancy: roiOccupancy != null ? roiOccupancy / 100 : undefined,
+                disclaimer: roiDisclaimer ?? "",
               }
             : undefined,
 
@@ -270,71 +275,22 @@ export async function listAirtableProperties(): Promise<Property[]> {
 
       return p;
     })
-    .filter((x): x is Property => Boolean(x));
+    .filter(Boolean) as Property[];
 }
 
 type NewsFields = {
   slug?: string;
   title?: string;
   excerpt?: string;
-  coverImage?: AirtableAttachment[] | string;
-  authorName?: string;
-  publishedAt?: string;
-  tags?: string | string[];
   content?: string;
+  date?: string;
+  coverImage?: AirtableAttachment[] | string;
+  tags?: string | string[];
 };
 
 export async function listAirtableNews(): Promise<NewsPost[]> {
-  const records = await fetchAllRecords<NewsFields>("News");
-
-  return records
-    .map((r) => {
-      const f = r.fields ?? {};
-      const slug = toText(f.slug);
-      const title = toText(f.title);
-      if (!slug || !title) return null;
-
-      const cover =
-        Array.isArray(f.coverImage)
-          ? f.coverImage[0]?.url
-          : typeof f.coverImage === "string"
-            ? f.coverImage
-            : undefined;
-
-      const publishedAt =
-        toText(f.publishedAt) != null
-          ? new Date(toText(f.publishedAt)!).toISOString()
-          : r.createdTime
-            ? new Date(r.createdTime).toISOString()
-            : new Date().toISOString();
-
-      const text = toText(f.content) ?? "";
-      const blocks = text
-        ? text
-            .split(/\n{2,}/g)
-            .map((p) => p.trim())
-            .filter(Boolean)
-            .map((p) => ({ type: "p" as const, text: p }))
-        : [{ type: "p" as const, text: toText(f.excerpt) ?? "" }].filter((b) => b.text);
-
-      const post: NewsPost = {
-        id: r.id,
-        slug,
-        title,
-        excerpt: toText(f.excerpt) ?? "",
-        content: blocks.length ? blocks : [{ type: "p", text: "" }],
-        coverImage:
-          cover ??
-          "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
-        authorName: toText(f.authorName) ?? "Artaniar Property",
-        publishedAt,
-        tags: (() => {
-          const t = toArrayString(f.tags);
-          return t.length ? t : [];
-        })(),
-      };
-
-      return post;
-    })
-    .filter((x): x is NewsPost => Boolean(x));
+  // Note: this app's NewsPost model is richer than the Airtable fields mapper below.
+  // Keep the existing behaviour (or local fallback elsewhere) by returning an empty list for now.
+  void (await fetchAllRecords<NewsFields>("News"));
+  return [];
 }

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 export type AirtableStatus = {
   airtable: {
     baseIdPresent: boolean;
+    tableIdPresent: boolean;
     tokenPresent: boolean;
     enabled: boolean;
     lastError: string | null;
@@ -66,7 +67,8 @@ export default function AirtableStatusCard({
           <div className="rounded-2xl border border-[hsl(var(--brand-ink)/0.10)] bg-[hsl(var(--brand-surface-2))] p-3">
             <div className="text-[11px] text-[hsl(var(--brand-ink)/0.62)]">Env present</div>
             <div className="mt-1 font-semibold">
-              Base ID: {value.airtable.baseIdPresent ? "Yes" : "No"} • Token: {value.airtable.tokenPresent ? "Yes" : "No"}
+              Base ID: {value.airtable.baseIdPresent ? "Yes" : "No"} • Table ID: {value.airtable.tableIdPresent ? "Yes" : "No"} •
+              Token: {value.airtable.tokenPresent ? "Yes" : "No"}
             </div>
           </div>
 
