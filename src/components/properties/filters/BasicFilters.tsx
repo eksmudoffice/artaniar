@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocale } from "@/i18n/use-locale";
-import { AREAS, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { useAvailableAreas } from "@/hooks/useAvailableAreas";
 
 export type BasicFiltersValue = {
   search: string;
@@ -21,6 +22,19 @@ export default function BasicFilters({
   onChange: (next: BasicFiltersValue) => void;
 }) {
   const { t } = useLocale();
+  const { areas, loading: areasLoading } = useAvailableAreas();
+
+  // Validate that the current selected area still exists in the loaded areas.
+  // If not and areas are loaded, reset it to "All".
+  const safeArea =
+    value.area !== "All" && areas.length > 0 && !areas.includes(value.area) ? "All" : value.area;
+
+  React.useEffect(() => {
+    if (safeArea !== value.area) {
+      onChange({ ...value, area: safeArea });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeArea]);
 
   return (
     <>
@@ -87,17 +101,23 @@ export default function BasicFilters({
 
           <div className="grid gap-2">
             <Label className="text-sm text-[hsl(var(--brand-ink))]">{t("filters.area.label")}</Label>
-            <Select value={value.area} onValueChange={(v) => onChange({ ...value, area: v })}>
+            <Select value={safeArea} onValueChange={(v) => onChange({ ...value, area: v })}>
               <SelectTrigger className="rounded-2xl bg-white/70">
                 <SelectValue placeholder={t("filters.option.all")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">{t("filters.option.all")}</SelectItem>
-                {AREAS.map((a) => (
-                  <SelectItem key={a} value={a}>
-                    {a}
+                {areasLoading ? (
+                  <SelectItem value="__loading__" disabled>
+                    Loading…
                   </SelectItem>
-                ))}
+                ) : (
+                  areas.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {a}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>

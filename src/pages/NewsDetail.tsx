@@ -1,15 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import HeaderNav from "@/components/branding/HeaderNav";
 import Footer from "@/components/branding/Footer";
 import WhatsAppFloatingCTA from "@/components/cta/WhatsAppFloatingCTA";
 import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
-import { newsPosts } from "@/data/news";
+import { NewsService } from "@/services/newsService";
+import type { NewsPost } from "@/data/news";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import NewsContent from "@/components/news/NewsContent";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft } from "lucide-react";
 
 function formatDate(value: string) {
@@ -19,7 +21,34 @@ function formatDate(value: string) {
 
 export default function NewsDetail() {
   const { slug } = useParams();
-  const post = newsPosts.find((p) => p.slug === slug);
+  const [post, setPost] = useState<NewsPost | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    if (!slug) {
+      setLoading(false);
+      return;
+    }
+
+    NewsService.getNewsBySlug(slug)
+      .then((p) => {
+        if (cancelled) return;
+        setPost(p);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("[NewsDetail] load error:", err);
+        if (cancelled) return;
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   const canonicalPath = post ? `/news/${post.slug}` : `/news/${slug ?? ""}`;
   const title = post ? `${post.title} | Artaniar Property` : "Artikel | Artaniar Property";
@@ -50,7 +79,24 @@ export default function NewsDetail() {
       <HeaderNav />
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6 pt-24 pb-16">
-        {!post ? (
+        {loading ? (
+          <div className="overflow-hidden rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
+            <Skeleton className="aspect-[16/9] w-full" />
+            <div className="p-6 md:p-10 grid gap-4">
+              <Skeleton className="h-8 w-1/3" />
+              <Skeleton className="h-5 w-2/3" />
+              <div className="flex gap-2 mt-2">
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <div className="mt-4 grid gap-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            </div>
+          </div>
+        ) : !post ? (
           <section className="rounded-[2rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 p-8 text-center shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
             <h1 className="font-serif text-3xl">Artikel tidak ditemukan</h1>
             <p className="mt-2 text-sm text-[hsl(var(--brand-ink)/0.70)]">Coba kembali ke halaman News.</p>

@@ -1,5 +1,5 @@
-import { properties as localProperties, type Property, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
-import { listAirtableProperties } from "@/services/airtable";
+import { properties as localProperties, AREAS as FALLBACK_AREAS, type Property, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import { listAirtableProperties, listAirtableAreas, type AreaRecord } from "@/services/airtable";
 
 export type PropertyQuery = {
   search?: string;
@@ -110,9 +110,22 @@ const compareOp = (left: number, op: Op, right: number) => {
 type DataSource = "airtable" | "local";
 
 let cached: Property[] | null = null;
+let cachedAreas: AreaRecord[] | null = null;
 let lastSource: DataSource = "local";
 let lastAirtableError: string | null = null;
 let lastLoadedAt: number | null = null;
+
+async function loadAreasFromAirtable(): Promise<AreaRecord[]> {
+  try {
+    const items = await listAirtableAreas();
+    cachedAreas = items.length ? items : [];
+    return cachedAreas;
+  } catch (e) {
+    console.warn("[PropertyService] loadAreas error:", e instanceof Error ? e.message : String(e));
+    cachedAreas = [];
+    return cachedAreas;
+  }
+}
 
 async function loadAllProperties(force = false): Promise<Property[]> {
   if (!force && cached) return cached;
@@ -129,8 +142,11 @@ async function loadAllProperties(force = false): Promise<Property[]> {
     return cached;
   }
 
+  // Load areas first so linked references can be resolved
   try {
-    const items = await listAirtableProperties();
+    const areas = await loadAreasFromAirtable();
+    const areaNameById = new Map(areas.map((a) => [a.id, a.name]));
+    const items = await listAirtableProperties(areaNameById);
     cached = items.length ? items : localProperties;
     lastSource = items.length ? "airtable" : "local";
     lastAirtableError = items.length ? null : "Airtable returned 0 valid records (check required fields: slug, title).";
@@ -170,8 +186,28 @@ export const PropertyService = {
   },
 
   async reload() {
+    cachedAreas = null; // bust area cache too
     await loadAllProperties(true);
     return PropertyService.getDebugSnapshot();
+  },
+
+  async getAvailableAreas(): Promise<string[]> {
+    // Try to return areas from Airtable first
+    if (cachedAreas == null) {
+      const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
+      const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+      const areaTableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_AREA_ID);
+      if (tokenPresent && basePresent && areaTableIdPresent) {
+        await loadAreasFromAirtable();
+      }
+    }
+    if (cachedAreas && cachedAreas.length > 0) {
+      return cachedAreas.map((a) => a.name);
+    }
+    // Fallback: areas that actually exist in loaded properties
+    const data = await loadAllProperties(false);
+    const fromData = Array.from(new Set(data.map((p) => p.location.area).filter(Boolean)));
+    return fromData.length ? fromData : Array.from(FALLBACK_AREAS);
   },
 
   async getPropertyBySlug(slug: string): Promise<Property | null> {

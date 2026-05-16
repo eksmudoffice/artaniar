@@ -8,6 +8,8 @@ import type { NewsPost } from "@/data/news";
 
 const AIRTABLE_BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID as string | undefined;
 const AIRTABLE_TABLE_ID = import.meta.env.VITE_AIRTABLE_TABLE_ID as string | undefined;
+const AIRTABLE_TABLE_AREA_ID = import.meta.env.VITE_AIRTABLE_TABLE_AREA_ID as string | undefined;
+const AIRTABLE_TABLE_NEWS_ID = import.meta.env.VITE_AIRTABLE_TABLE_NEWS_ID as string | undefined;
 const AIRTABLE_TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN as string | undefined;
 
 const API_ORIGIN = "https://api.airtable.com/v0";
@@ -220,6 +222,18 @@ function normalizeView(v: unknown): NonNullable<Property["view"]> {
   return "Garden";
 }
 
+export type AreaRecord = {
+  id: string;
+  name: string;
+};
+
+type AreaFields = {
+  Name?: string;
+  name?: string;
+  Nama?: string;
+  nama?: string;
+};
+
 type PropertyFields = {
   slug?: string;
   code?: string;
@@ -229,6 +243,7 @@ type PropertyFields = {
   area?: unknown;
   areaName?: unknown;
   city?: unknown;
+  Area?: unknown; // linked record to Area table
 
   price?: unknown;
   currency?: unknown;
@@ -274,9 +289,59 @@ type PropertyFields = {
   createdAt?: unknown;
 };
 
-export async function listAirtableProperties(): Promise<Property[]> {
+function resolveLinkedAreaName(
+  rawField: unknown,
+  nameById: Map<string, string>,
+): string | undefined {
+  // Airtable linked record: array of objects with .id, or array of plain record ids
+  if (Array.isArray(rawField)) {
+    for (const item of rawField) {
+      if (item && typeof item === "object") {
+        const anyItem = item as Record<string, unknown>;
+        // case 1: array of { id: "recXXX", ... } (expanded linked records from lookup)
+        if (typeof anyItem.id === "string") {
+          const resolved = nameById.get(anyItem.id);
+          if (resolved) return resolved;
+        }
+        // case 2: array of { name: "..." }
+        if (typeof anyItem.name === "string") return anyItem.name;
+      }
+      // case 3: array of plain strings (record ids)
+      if (typeof item === "string") {
+        const resolved = nameById.get(item);
+        if (resolved) return resolved;
+      }
+    }
+  }
+  return undefined;
+}
+
+export async function listAirtableAreas(): Promise<AreaRecord[]> {
+  const baseId = AIRTABLE_BASE_ID;
+  const tableId = AIRTABLE_TABLE_AREA_ID;
+  const token = AIRTABLE_TOKEN;
+  if (!baseId || !tableId || !token) return [];
+
+  try {
+    const records = await fetchAllRecords<AreaFields>(tableId);
+    return records
+      .map((r) => {
+        const f = getAllFields(r.fields ?? {});
+        const name = toText(f.Name) || toText(f.name) || toText(f.Nama) || toText(f.nama);
+        if (!name) return null;
+        return { id: r.id, name };
+      })
+      .filter(Boolean) as AreaRecord[];
+  } catch (e) {
+    console.warn("[Airtable] failed to load areas:", e instanceof Error ? e.message : String(e));
+    return [];
+  }
+}
+
+export async function listAirtableProperties(nameByAreaId?: Map<string, string>): Promise<Property[]> {
   requireEnv();
   const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!);
+  const areaMap = nameByAreaId && nameByAreaId.size > 0 ? nameByAreaId : null;
 
   let missingCount = 0;
   const result = records
@@ -315,6 +380,16 @@ export async function listAirtableProperties(): Promise<Property[]> {
       const lat = toNumber(f.lat);
       const lng = toNumber(f.lng ?? f.Ing);
 
+      // Resolve area: try linked table first (case-sensitive "Area" for linked field,
+      // case-insensitive "area" for any text/lookup field), then inline fields
+      let area: string | undefined;
+      if (areaMap) {
+        area = resolveLinkedAreaName(getField(f, "Area"), areaMap) ||
+               toText(getField(f, "areaName")) ||
+               toText(getField(f, "area"));
+      }
+      area = area ?? (toText(getField(f, "areaName")) || toText(getField(f, "area")) || "Bali");
+
       const p: Property = {
         id: r.id,
         code: toText(f.code) ?? slug,
@@ -324,7 +399,7 @@ export async function listAirtableProperties(): Promise<Property[]> {
         type: normalizeType(f.type),
         purpose: normalizePurpose(f.purpose),
         location: {
-          area: (toText(f.areaName) || toText(f.area) || "Bali") as string,
+          area,
           city: (toText(f.city) || "Bali") as "Bali",
         },
 
@@ -398,11 +473,130 @@ type NewsFields = {
   date?: string;
   coverImage?: AirtableAttachment[] | string;
   tags?: string | string[];
+  authorName?: string;
 };
 
+type ContentBlock = NewsPost["content"][number];
+
+function parseContentFromText(raw?: string): ContentBlock[] {
+  if (!raw) return [{ type: "p", text: "" }];
+
+  const blocks: ContentBlock[] = [];
+  const lines = raw.split(/\r?\n/);
+  let currentList: string[] | null = null;
+
+  const flushList = () => {
+    if (currentList && currentList.length > 0) {
+      blocks.push({ type: "ul", items: currentList });
+      currentList = null;
+    }
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      flushList();
+      continue;
+    }
+
+    // h2: "## Heading" or "-- Heading" or lines that look like headings
+    if (/^#{2,}\s*/.test(trimmed)) {
+      flushList();
+      blocks.push({ type: "h2", text: trimmed.replace(/^#{2,}\s*/, "") });
+      continue;
+    }
+
+    if (/^-\s+/.test(trimmed)) {
+      if (!currentList) currentList = [];
+      currentList.push(trimmed.replace(/^-\s+/, ""));
+      continue;
+    }
+
+    if (/^\*\s+/.test(trimmed)) {
+      if (!currentList) currentList = [];
+      currentList.push(trimmed.replace(/^\*\s+/, ""));
+      continue;
+    }
+
+    // numbered list
+    if (/^\d+\.\s+/.test(trimmed)) {
+      if (!currentList) currentList = [];
+      currentList.push(trimmed.replace(/^\d+\.\s+/, ""));
+      continue;
+    }
+
+    flushList();
+    blocks.push({ type: "p", text: trimmed });
+  }
+
+  flushList();
+
+  // If no blocks were produced, return a single paragraph with the raw text
+  if (blocks.length === 0) {
+    return [{ type: "p", text: raw }];
+  }
+
+  return blocks;
+}
+
 export async function listAirtableNews(): Promise<NewsPost[]> {
-  // Note: this app's NewsPost model is richer than the Airtable fields mapper below.
-  // Keep the existing behaviour (or local fallback elsewhere) by returning an empty list for now.
-  void (await fetchAllRecords<NewsFields>("News"));
-  return [];
+  const baseId = AIRTABLE_BASE_ID;
+  const tableId = AIRTABLE_TABLE_NEWS_ID;
+  const token = AIRTABLE_TOKEN;
+  if (!baseId || !tableId || !token) return [];
+
+  try {
+    const records = await fetchAllRecords<NewsFields>(tableId);
+    let skipped = 0;
+
+    const result = records
+      .map((r): NewsPost | null => {
+        const f = getAllFields(r.fields ?? {});
+        const slug = toText(f.slug);
+        const title = toText(f.title);
+
+        if (!slug || !title) {
+          skipped++;
+          return null;
+        }
+
+        // Parse cover image: Airtable attachment or URL string
+        let coverImage = "";
+        const ci = f.coverImage;
+        if (Array.isArray(ci)) {
+          coverImage = ci[0]?.url ?? "";
+        } else {
+          coverImage = toText(ci) ?? "";
+        }
+
+        const tags = toArrayString(f.tags);
+        const contentText = toText(f.content) ?? "";
+        const publishedAt = toIsoDate(f.date) ?? (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
+
+        return {
+          id: r.id,
+          slug,
+          title,
+          excerpt: toText(f.excerpt) ?? "",
+          content: parseContentFromText(contentText),
+          coverImage,
+          authorName: toText(f.authorName) ?? "Artaniar Property",
+          publishedAt,
+          tags,
+        };
+      })
+      .filter(Boolean) as NewsPost[];
+
+    if (skipped > 0) {
+      console.log(`[Airtable News] ${skipped} records skipped (missing slug/title)`);
+    }
+    console.log(`[Airtable News] Returning ${result.length} valid posts`);
+
+    // Sort newest first
+    result.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    return result;
+  } catch (e) {
+    console.warn("[Airtable News] failed to load:", e instanceof Error ? e.message : String(e));
+    return [];
+  }
 }
