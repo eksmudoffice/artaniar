@@ -18,7 +18,9 @@ const formatIdrCompact = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
 
 const toNum = (raw: string) => {
-  const n = Number(raw);
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  const n = Number(trimmed);
   return Number.isFinite(n) ? n : undefined;
 };
 

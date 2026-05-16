@@ -30,12 +30,18 @@ export default function Properties() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    PropertyService.listProperties(query).then((res) => {
-      if (cancelled) return;
-      setItems(res.items);
-      setTotalPages(res.totalPages);
-      setLoading(false);
-    });
+    PropertyService.listProperties(query)
+      .then((res) => {
+        if (cancelled) return;
+        setItems(res.items);
+        setTotalPages(res.totalPages);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("[Properties] listProperties error:", err);
+        if (cancelled) return;
+        setLoading(false);
+      });
     return () => {
       cancelled = true;
     };

@@ -18,7 +18,7 @@ import { SearchX } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
 import { Input } from "@/components/ui/input";
 import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
-import { properties } from "@/data/properties";
+import { Property } from "@/data/properties";
 import MobileFilterFab from "@/components/cta/MobileFilterFab";
 import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
 import AirtableStatusCard from "@/components/debug/AirtableStatusCard";
@@ -48,13 +48,19 @@ export default function Index() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    PropertyService.listProperties(query).then((res) => {
-      if (cancelled) return;
-      setItems(res.items);
-      setTotalPages(res.totalPages);
-      setLoading(false);
-      if (debugEnabled) setAirtableStatus(PropertyService.getDebugSnapshot());
-    });
+    PropertyService.listProperties(query)
+      .then((res) => {
+        if (cancelled) return;
+        setItems(res.items);
+        setTotalPages(res.totalPages);
+        setLoading(false);
+        if (debugEnabled) setAirtableStatus(PropertyService.getDebugSnapshot());
+      })
+      .catch((err) => {
+        console.error("[Index] listProperties error:", err);
+        if (cancelled) return;
+        setLoading(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -64,6 +70,17 @@ export default function Index() {
     setPage(1);
   }, [filters]);
 
+  useEffect(() => {
+    let cancelled = false;
+    PropertyService.listProperties({ sort: "roi_desc", pageSize: 8 }).then((res) => {
+      if (cancelled) return;
+      setTopListings(res.items);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const budget = useMemo(() => {
     const min = filters.priceRange[0] ? filters.priceRange[0] : undefined;
     const max = filters.priceRange[1] ? filters.priceRange[1] : undefined;
@@ -72,10 +89,7 @@ export default function Index() {
 
   const quickKeyword = filters.search.trim();
 
-  const topListings = useMemo(() => {
-    const byRoi = [...properties].sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
-    return byRoi.slice(0, Math.min(8, byRoi.length));
-  }, []);
+  const [topListings, setTopListings] = useState<Property[]>([]);
 
   const seoTitle = "Artaniar Property — Bali Property Listings";
   const seoDesc =

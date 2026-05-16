@@ -174,6 +174,11 @@ export const PropertyService = {
     return PropertyService.getDebugSnapshot();
   },
 
+  async getPropertyBySlug(slug: string): Promise<Property | null> {
+    const data = await loadAllProperties(false);
+    return data.find((p) => p.slug === slug || p.code === slug) ?? null;
+  },
+
   async listProperties(query: PropertyQuery) {
     const {
       search,
@@ -191,40 +196,46 @@ export const PropertyService = {
     } = query;
 
     let data = [...(await loadAllProperties(false))];
+    console.log("[listProperties] loaded", data.length, "items from", lastSource);
+
+    try {
+      data[0] && console.log("[listProperties] sample item:", {
+        id: data[0].id,
+        slug: data[0].slug,
+        title: data[0].title,
+        price: data[0].price,
+        type: data[0].type,
+        area: data[0].location.area,
+        images: data[0].images?.length,
+      });
+    } catch (_) { /* no-op */ }
+
+    const step = (label: string) => () => console.log(`[listProperties] after ${label}: ${data.length}`);
 
     if (search && search.trim()) {
       data = data.filter(
         (p) => includesLoose(p.title, search) || includesLoose(p.location.area, search) || includesLoose(p.code, search),
       );
     }
-
+    step("search")();
     if (type && type !== "All") data = data.filter((p) => p.type === type);
+    step("type")();
     if (purpose && purpose !== "All") data = data.filter((p) => p.purpose === purpose);
+    step("purpose")();
     if (status && status !== "All") data = data.filter((p) => p.status === status);
+    step("status")();
     if (area && area !== "All") data = data.filter((p) => p.location.area === area);
-
+    step("area")();
     if (priceMin != null) data = data.filter((p) => p.price >= priceMin);
     if (priceMax != null) data = data.filter((p) => p.price <= priceMax);
+    step("price")();
 
     if (advanced && advanced.trim()) {
       const rules = parseAdvanced(advanced);
-
-      if (rules.pool) {
-        data = data.filter((p) => (p.pool ?? false) === rules.pool!.value);
-      }
-
-      if (rules.furnished) {
-        data = data.filter((p) => (p.furnished ?? false) === rules.furnished!.value);
-      }
-
-      if (rules.water) {
-        data = data.filter((p) => (p.water ?? "Other") === rules.water!.value);
-      }
-
-      if (rules.view) {
-        data = data.filter((p) => (p.view ?? "Garden") === rules.view!.value);
-      }
-
+      if (rules.pool) data = data.filter((p) => (p.pool ?? false) === rules.pool!.value);
+      if (rules.furnished) data = data.filter((p) => (p.furnished ?? false) === rules.furnished!.value);
+      if (rules.water) data = data.filter((p) => (p.water ?? "Other") === rules.water!.value);
+      if (rules.view) data = data.filter((p) => (p.view ?? "Garden") === rules.view!.value);
       for (const rule of rules.numeric) {
         data = data.filter((p) => {
           const left =
@@ -241,25 +252,29 @@ export const PropertyService = {
                       : rule.key === "road"
                         ? p.roadWidth
                         : p.powerVa;
-
           if (left == null) return false;
           return compareOp(left, rule.op, rule.value);
         });
       }
     }
+    step("advanced")();
 
     if (topOnly) data = data.filter((p) => p.toplist);
+    step("topOnly")();
 
-    if (sort === "newest") data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
+    if (sort === "newest") {
+      data.sort((a, b) => (new Date(a.createdAt).getTime()) - (new Date(b.createdAt).getTime()));
+    }
     if (sort === "price_asc") data.sort((a, b) => a.price - b.price);
     if (sort === "price_desc") data.sort((a, b) => b.price - a.price);
     if (sort === "roi_desc") data.sort((a, b) => (b.roi ?? 0) - (a.roi ?? 0));
+    step("sort")();
 
     const total = data.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const start = (page - 1) * pageSize;
     const items = data.slice(start, start + pageSize);
+    console.log("[listProperties] returning", items.length, "items, total:", total, "pages:", totalPages);
 
     return { items, total, totalPages };
   },

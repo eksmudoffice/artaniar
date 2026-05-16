@@ -41,10 +41,11 @@ export default function TopListingsCarousel({
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
 
   const slides = useMemo(() => {
+    if (!items.length) return [];
     if (items.length >= 8) return items;
     const target = 10;
     const out: Property[] = [];
-    for (let i = 0; i < target; i++) out.push(items[i % Math.max(1, items.length)]!);
+    for (let i = 0; i < target; i++) out.push(items[i % items.length]!);
     return out;
   }, [items]);
 

@@ -130,6 +130,28 @@ function toIsoDate(v: unknown): string | undefined {
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
+function getField(f: Record<string, unknown>, ...keys: string[]): unknown {
+  for (const key of keys) {
+    // exact
+    if (key in f) return f[key];
+    // case-insensitive
+    const ciKey = Object.keys(f).find((k) => k.toLowerCase() === key.toLowerCase());
+    if (ciKey != null) return f[ciKey];
+  }
+  return undefined;
+}
+
+function getAllFields(raw: Record<string, unknown>): Record<string, unknown> {
+  // Build a case-insensitive flat map
+  const flat: Record<string, unknown> = { ...raw };
+  for (const [k, v] of Object.entries(raw)) {
+    // hyphenated / slugified variants
+    const slug = k.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!(slug in flat)) flat[slug] = v;
+  }
+  return flat;
+}
+
 function normalizeKey(s: string) {
   return s
     .trim()
@@ -256,13 +278,28 @@ export async function listAirtableProperties(): Promise<Property[]> {
   requireEnv();
   const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!);
 
-  return records
+  let missingCount = 0;
+  const result = records
     .map((r) => {
-      const f = r.fields ?? {};
-      const slug = toText(f.slug);
-      const title = toText(f.title);
+      const f = getAllFields(r.fields ?? {});
+      const slug =
+        toText(f.slug) ??
+        toText(f.name) ??
+        toText(f.title) ??
+        toText(f.projectname) ??
+        toText(f.projecttitle) ??
+        toText(f.id);
+      const title =
+        toText(f.title) ??
+        toText(f.name) ??
+        toText(f.projecttitle) ??
+        toText(f.projectname) ??
+        toText(f.id);
 
-      if (!slug || !title) return null;
+      if (!slug || !title) {
+        missingCount++;
+        return null;
+      }
 
       const images = Array.isArray(f.images) ? f.images.map((a) => a?.url).filter(Boolean) : [];
 
@@ -321,7 +358,7 @@ export async function listAirtableProperties(): Promise<Property[]> {
 
         images,
 
-        toplist: toBool(f.TOPLIST) ?? false,
+        toplist: toBool(f.toplist ?? f.TOPLIST) ?? false,
 
         coordinates: lat != null && lng != null ? { lat, lng } : undefined,
 
@@ -345,6 +382,12 @@ export async function listAirtableProperties(): Promise<Property[]> {
       return p;
     })
     .filter(Boolean) as Property[];
+
+  if (missingCount > 0) {
+    console.log(`[Airtable] ${missingCount} records skipped (missing slug/title)`);
+  }
+  console.log(`[Airtable] Returning ${result.length} valid properties`);
+  return result;
 }
 
 type NewsFields = {
