@@ -124,7 +124,13 @@ export default function NewsDetail() {
             <article className="overflow-hidden rounded-[2.25rem] border border-[hsl(var(--brand-ink)/0.10)] bg-white/70 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.55)]">
               <div className="relative">
                 <div className="aspect-[16/9] overflow-hidden bg-black/5">
-                  <img src={post.coverImage} alt={post.title} className="h-full w-full object-cover" loading="eager" />
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                    loading="eager"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
+                  />
                 </div>
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
 

@@ -10,7 +10,13 @@ export default function PropertyGallery({ images, className }: { images: string[
             <CarouselItem key={src} className="basis-full">
               <div className="overflow-hidden rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-black/5">
                 <div className="aspect-[16/11] md:aspect-[16/10]">
-                  <img src={src} alt="Property photo" className="h-full w-full object-cover" loading="lazy" />
+                  <img
+                    src={src}
+                    alt="Property photo"
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
+                  />
                 </div>
               </div>
             </CarouselItem>

@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dyad-generated-app</title>
+    <!-- Preconnect API tujuan supaya DNS+TCP warmup sebelum JS mengeluarkan fetch -->
+    <link rel="preconnect" href="https://api.airtable.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.airtable.com" />
   </head>
 
   <body>

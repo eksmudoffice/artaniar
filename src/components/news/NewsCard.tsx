@@ -23,6 +23,7 @@ export default function NewsCard({ post, className }: { post: NewsPost; classNam
             src={post.coverImage}
             alt={post.title}
             loading="lazy"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         </div>

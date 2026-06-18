@@ -1,26 +1,36 @@
 import { newsPosts as localNews, type NewsPost } from "@/data/news";
 import { listAirtableNews } from "@/services/airtable";
+import { getCachedNews, setCachedNews, invalidateCache } from "@/services/cache";
 
 type DataSource = "airtable" | "local";
+
+const CACHE_TTL_MS = 10 * 60 * 1000;
 
 let cached: NewsPost[] | null = null;
 let lastSource: DataSource = "local";
 let lastAirtableError: string | null = null;
 let lastLoadedAt: number | null = null;
 
-async function loadAllNews(force = false): Promise<NewsPost[]> {
-  if (!force && cached) return cached;
+/** Deduplicate concurrent fetch */
+let newsPreloadPromise: Promise<NewsPost[]> | null = null;
 
+function useLocalFallback(): NewsPost[] {
+  cached = localNews;
+  lastSource = "local";
+  lastAirtableError = null;
+  lastLoadedAt = Date.now();
+  setCachedNews(cached, "local");
+  newsPreloadPromise = null;
+  return cached;
+}
+
+async function loadFreshNews(): Promise<NewsPost[]> {
   const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
   const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
   const newsTableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_NEWS_ID);
 
   if (!tokenPresent || !basePresent || !newsTableIdPresent) {
-    cached = localNews;
-    lastSource = "local";
-    lastAirtableError = null;
-    lastLoadedAt = Date.now();
-    return cached;
+    return useLocalFallback();
   }
 
   try {
@@ -31,15 +41,44 @@ async function loadAllNews(force = false): Promise<NewsPost[]> {
       ? null
       : "Airtable News returned 0 valid records (check required fields: slug, title).";
     lastLoadedAt = Date.now();
-    return cached;
+    setCachedNews(cached, lastSource);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     lastAirtableError = msg;
     cached = localNews;
     lastSource = "local";
     lastLoadedAt = Date.now();
-    return cached;
+    setCachedNews(cached, "local");
   }
+
+  newsPreloadPromise = null;
+  return cached;
+}
+
+async function loadAllNews(force = false): Promise<NewsPost[]> {
+  if (!force && cached) return cached;
+
+  // Cek persistent cache (localStorage) — instant render
+  if (!force) {
+    const persistent = getCachedNews<NewsPost>();
+    if (persistent) {
+      cached = persistent.data;
+      lastSource = persistent.source;
+      lastLoadedAt = persistent.loadedAt;
+
+      const age = Date.now() - persistent.loadedAt;
+      if (age > CACHE_TTL_MS / 2 && !newsPreloadPromise) {
+        newsPreloadPromise = loadFreshNews();
+        newsPreloadPromise.catch(() => {});
+      }
+      return cached;
+    }
+  }
+
+  if (newsPreloadPromise) return newsPreloadPromise;
+
+  newsPreloadPromise = loadFreshNews();
+  return newsPreloadPromise;
 }
 
 export type NewsQuery = {
@@ -71,7 +110,19 @@ export const NewsService = {
     };
   },
 
+  /** Preload data di awal app. */
+  preload(): Promise<NewsPost[]> {
+    if (cached) return Promise.resolve(cached);
+    if (newsPreloadPromise) return newsPreloadPromise;
+
+    newsPreloadPromise = loadAllNews(false);
+    return newsPreloadPromise;
+  },
+
   async reload() {
+    invalidateCache();
+    cached = null;
+    newsPreloadPromise = null;
     await loadAllNews(true);
     return NewsService.getDebugSnapshot();
   },
@@ -80,7 +131,6 @@ export const NewsService = {
     const { tag, page = 1, pageSize = 9 } = query ?? {};
 
     let data = [...(await loadAllNews(false))];
-    console.log("[NewsService] loaded", data.length, "posts from", lastSource);
 
     if (tag && tag.trim()) {
       const t = tag.trim().toLowerCase();

@@ -1,5 +1,19 @@
-import { properties as localProperties, AREAS as FALLBACK_AREAS, type Property, type PropertyPurpose, type PropertyStatus, type PropertyType } from "@/data/properties";
+import {
+  properties as localProperties,
+  AREAS as FALLBACK_AREAS,
+  type Property,
+  type PropertyPurpose,
+  type PropertyStatus,
+  type PropertyType,
+} from "@/data/properties";
 import { listAirtableProperties, listAirtableAreas, type AreaRecord } from "@/services/airtable";
+import {
+  getCachedProperties,
+  setCachedProperties,
+  getCachedAreas,
+  setCachedAreas,
+  invalidateCache,
+} from "@/services/cache";
 
 export type PropertyQuery = {
   search?: string;
@@ -26,11 +40,18 @@ type FurnishedRule = { key: "furnished"; value: boolean };
 type WaterRule = { key: "water"; value: NonNullable<Property["water"]> };
 type ViewRule = { key: "view"; value: NonNullable<Property["view"]> };
 
-const includesLoose = (value: string, query: string) => value.toLowerCase().includes(query.trim().toLowerCase());
+const includesLoose = (value: string, query: string) =>
+  value.toLowerCase().includes(query.trim().toLowerCase());
 
 const parseAdvanced = (
   raw?: string,
-): { numeric: NumericRule[]; pool?: PoolRule; furnished?: FurnishedRule; water?: WaterRule; view?: ViewRule } => {
+): {
+  numeric: NumericRule[];
+  pool?: PoolRule;
+  furnished?: FurnishedRule;
+  water?: WaterRule;
+  view?: ViewRule;
+} => {
   if (!raw) return { numeric: [] };
   const tokens = raw
     .split(/[\s,;]+/g)
@@ -67,7 +88,10 @@ const parseAdvanced = (
     const waterMatch = lower.match(/^water\s*=\s*(pdam|well|other)$/);
     if (waterMatch) {
       const v = waterMatch[1];
-      water = { key: "water", value: v === "pdam" ? "PDAM" : v === "well" ? "Well" : "Other" };
+      water = {
+        key: "water",
+        value: v === "pdam" ? "PDAM" : v === "well" ? "Well" : "Other",
+      };
       continue;
     }
 
@@ -85,7 +109,9 @@ const parseAdvanced = (
       continue;
     }
 
-    const m = lower.match(/^(land|building|beds|baths|carport|road|power)\s*(>=|<=|=|>|<)\s*(\d+)$/);
+    const m = lower.match(
+      /^(land|building|beds|baths|carport|road|power)\s*(>=|<=|=|>|<)\s*(\d+)$/,
+    );
     if (!m) continue;
 
     const key = m[1] as NumericRule["key"];
@@ -109,57 +135,123 @@ const compareOp = (left: number, op: Op, right: number) => {
 
 type DataSource = "airtable" | "local";
 
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
 let cached: Property[] | null = null;
 let cachedAreas: AreaRecord[] | null = null;
 let lastSource: DataSource = "local";
 let lastAirtableError: string | null = null;
 let lastLoadedAt: number | null = null;
 
+/**
+ * Preload promise — pending fetch di-deduplicate supaya
+ * dua komponen mount sekaligus tidak trigger double fetch.
+ */
+let propertiesPreloadPromise: Promise<Property[]> | null = null;
+
 async function loadAreasFromAirtable(): Promise<AreaRecord[]> {
   try {
     const items = await listAirtableAreas();
     cachedAreas = items.length ? items : [];
+    setCachedAreas(cachedAreas, "airtable");
     return cachedAreas;
   } catch (e) {
-    console.warn("[PropertyService] loadAreas error:", e instanceof Error ? e.message : String(e));
+    console.warn(
+      "[PropertyService] loadAreas error:",
+      e instanceof Error ? e.message : String(e),
+    );
     cachedAreas = [];
     return cachedAreas;
   }
 }
 
-async function loadAllProperties(force = false): Promise<Property[]> {
-  if (!force && cached) return cached;
-
+function isMissingEnv(): boolean {
   const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
   const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
   const tableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_ID);
+  return !tokenPresent || !basePresent || !tableIdPresent;
+}
 
-  if (!tokenPresent || !basePresent || !tableIdPresent) {
-    cached = localProperties;
-    lastSource = "local";
-    lastAirtableError = null;
-    lastLoadedAt = Date.now();
-    return cached;
+function useLocalFallback(): Property[] {
+  cached = localProperties;
+  lastSource = "local";
+  lastAirtableError = null;
+  lastLoadedAt = Date.now();
+  setCachedProperties(cached, "local");
+  propertiesPreloadPromise = null;
+  return cached;
+}
+
+async function loadFreshProperties(): Promise<Property[]> {
+  if (isMissingEnv()) {
+    return useLocalFallback();
   }
 
-  // Load areas first so linked references can be resolved
+  // Pastikan areas sudah loaded — areas table kecil, callnya cepat
+  let areas: AreaRecord[];
+  if (cachedAreas != null) {
+    areas = cachedAreas;
+  } else {
+    try {
+      areas = await loadAreasFromAirtable();
+    } catch {
+      areas = [];
+    }
+  }
+  const areaNameById = new Map(areas.map((a) => [a.id, a.name]));
+
   try {
-    const areas = await loadAreasFromAirtable();
-    const areaNameById = new Map(areas.map((a) => [a.id, a.name]));
     const items = await listAirtableProperties(areaNameById);
+
     cached = items.length ? items : localProperties;
     lastSource = items.length ? "airtable" : "local";
-    lastAirtableError = items.length ? null : "Airtable returned 0 valid records (check required fields: slug, title).";
+    lastAirtableError = items.length
+      ? null
+      : "Airtable returned 0 valid records (check required fields: slug, title).";
     lastLoadedAt = Date.now();
-    return cached;
+    setCachedProperties(cached, lastSource);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     lastAirtableError = msg;
     cached = localProperties;
     lastSource = "local";
     lastLoadedAt = Date.now();
-    return cached;
+    setCachedProperties(cached, "local");
   }
+
+  propertiesPreloadPromise = null;
+  return cached;
+}
+
+async function loadAllProperties(force = false): Promise<Property[]> {
+  if (!force && cached) return cached;
+
+  // Cek persistent cache (localStorage) — immediate render tanpa wait
+  if (!force) {
+    const persistent = getCachedProperties<Property>();
+    if (persistent) {
+      cached = persistent.data;
+      lastSource = persistent.source;
+      lastLoadedAt = persistent.loadedAt;
+
+      // Stale half-life check: cache > 5 min tapi masih valid (< 10 min)
+      // → render cache sekarang, revalidate di background
+      const age = Date.now() - persistent.loadedAt;
+      if (age > CACHE_TTL_MS / 2 && !propertiesPreloadPromise) {
+        propertiesPreloadPromise = loadFreshProperties();
+        propertiesPreloadPromise.catch(() => {});
+      }
+      return cached;
+    }
+  }
+
+  // Deduplicate: kalau sudah ada promise yang berjalan, piggy-back
+  if (propertiesPreloadPromise) {
+    return propertiesPreloadPromise;
+  }
+
+  propertiesPreloadPromise = loadFreshProperties();
+  return propertiesPreloadPromise;
 }
 
 export const PropertyService = {
@@ -185,28 +277,48 @@ export const PropertyService = {
     };
   },
 
+  /** Preload data di awal app — call dari module-level atau App.tsx. */
+  preload(): Promise<Property[]> {
+    if (cached) return Promise.resolve(cached);
+    if (propertiesPreloadPromise) return propertiesPreloadPromise;
+
+    propertiesPreloadPromise = loadAllProperties(false);
+    return propertiesPreloadPromise;
+  },
+
   async reload() {
-    cachedAreas = null; // bust area cache too
+    invalidateCache();
+    cachedAreas = null;
+    cached = null;
+    propertiesPreloadPromise = null;
     await loadAllProperties(true);
     return PropertyService.getDebugSnapshot();
   },
 
   async getAvailableAreas(): Promise<string[]> {
-    // Try to return areas from Airtable first
+    // Try cached Airtable areas
     if (cachedAreas == null) {
-      const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
-      const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
-      const areaTableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_AREA_ID);
-      if (tokenPresent && basePresent && areaTableIdPresent) {
-        await loadAreasFromAirtable();
+      // Coba dari persistent cache dulu
+      const cachedPersist = getCachedAreas();
+      if (cachedPersist) {
+        cachedAreas = cachedPersist.data;
+      } else {
+        const tokenPresent = Boolean(import.meta.env.VITE_AIRTABLE_TOKEN);
+        const basePresent = Boolean(import.meta.env.VITE_AIRTABLE_BASE_ID);
+        const areaTableIdPresent = Boolean(import.meta.env.VITE_AIRTABLE_TABLE_AREA_ID);
+        if (tokenPresent && basePresent && areaTableIdPresent) {
+          await loadAreasFromAirtable();
+        }
       }
     }
     if (cachedAreas && cachedAreas.length > 0) {
       return cachedAreas.map((a) => a.name);
     }
-    // Fallback: areas that actually exist in loaded properties
+    // Fallback: areas dari data properties yang sudah loaded
     const data = await loadAllProperties(false);
-    const fromData = Array.from(new Set(data.map((p) => p.location.area).filter(Boolean)));
+    const fromData = Array.from(
+      new Set(data.map((p) => p.location.area).filter(Boolean)),
+    );
     return fromData.length ? fromData : Array.from(FALLBACK_AREAS);
   },
 
@@ -232,25 +344,17 @@ export const PropertyService = {
     } = query;
 
     let data = [...(await loadAllProperties(false))];
-    console.log("[listProperties] loaded", data.length, "items from", lastSource);
 
-    try {
-      data[0] && console.log("[listProperties] sample item:", {
-        id: data[0].id,
-        slug: data[0].slug,
-        title: data[0].title,
-        price: data[0].price,
-        type: data[0].type,
-        area: data[0].location.area,
-        images: data[0].images?.length,
-      });
-    } catch (_) { /* no-op */ }
-
-    const step = (label: string) => () => console.log(`[listProperties] after ${label}: ${data.length}`);
+    const step = (_label: string) => () => {
+      /* filter steps — debugging suppressed */
+    };
 
     if (search && search.trim()) {
       data = data.filter(
-        (p) => includesLoose(p.title, search) || includesLoose(p.location.area, search) || includesLoose(p.code, search),
+        (p) =>
+          includesLoose(p.title, search) ||
+          includesLoose(p.location.area, search) ||
+          includesLoose(p.code, search),
       );
     }
     step("search")();
@@ -269,7 +373,8 @@ export const PropertyService = {
     if (advanced && advanced.trim()) {
       const rules = parseAdvanced(advanced);
       if (rules.pool) data = data.filter((p) => (p.pool ?? false) === rules.pool!.value);
-      if (rules.furnished) data = data.filter((p) => (p.furnished ?? false) === rules.furnished!.value);
+      if (rules.furnished)
+        data = data.filter((p) => (p.furnished ?? false) === rules.furnished!.value);
       if (rules.water) data = data.filter((p) => (p.water ?? "Other") === rules.water!.value);
       if (rules.view) data = data.filter((p) => (p.view ?? "Garden") === rules.view!.value);
       for (const rule of rules.numeric) {
@@ -299,7 +404,9 @@ export const PropertyService = {
     step("topOnly")();
 
     if (sort === "newest") {
-      data.sort((a, b) => (new Date(a.createdAt).getTime()) - (new Date(b.createdAt).getTime()));
+      data.sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
     }
     if (sort === "price_asc") data.sort((a, b) => a.price - b.price);
     if (sort === "price_desc") data.sort((a, b) => b.price - a.price);
@@ -310,7 +417,6 @@ export const PropertyService = {
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const start = (page - 1) * pageSize;
     const items = data.slice(start, start + pageSize);
-    console.log("[listProperties] returning", items.length, "items, total:", total, "pages:", totalPages);
 
     return { items, total, totalPages };
   },

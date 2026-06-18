@@ -33,6 +33,10 @@ export default function PropertyCard({
         ? t("property.status.offplan")
         : t("property.status.sold");
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = "/placeholder.svg";
+  };
+
   return (
     <Card
       className={cn(
@@ -47,6 +51,7 @@ export default function PropertyCard({
               src={cover}
               alt={property.title}
               loading="lazy"
+              onError={handleImageError}
               className={cn(
                 "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",
                 sold ? "grayscale" : "",
@@ -127,9 +132,10 @@ export default function PropertyCard({
           ))}
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col gap-2">
           <WhatsAppCTA
-            className={cn("flex-1 justify-center", sold ? "opacity-95" : "")}
+            variant="primary"
+            className={cn("w-full justify-center h-9", sold ? "opacity-95" : "")}
             context={{
               intent: sold ? "Konsultasi" : "Cek ketersediaan",
               propertyTitle: property.title,
@@ -141,7 +147,7 @@ export default function PropertyCard({
           />
           <Link
             to={`/properties/${property.slug}`}
-            className="inline-flex items-center justify-center rounded-full border border-[hsl(var(--brand-ink)/0.16)] bg-white/70 px-4 text-sm font-medium text-[hsl(var(--brand-ink))] hover:bg-white transition-colors"
+            className="inline-flex items-center justify-center rounded-full border border-[hsl(var(--brand-ink)/0.16)] bg-white/70 px-4 h-9 text-sm font-medium text-[hsl(var(--brand-ink))] hover:bg-white transition-colors"
           >
             {t("cta.detail")}
           </Link>

@@ -89,6 +89,10 @@ export default function TopListingsCarousel({
                 const sold = p.status === "Sold";
                 const key = `${p.id}_${idx}`;
 
+                const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+                  e.currentTarget.src = "/placeholder.svg";
+                };
+
                 return (
                   <CarouselItem key={key} className="basis-[92%] sm:basis-[72%] lg:basis-[58%]">
                     <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr] md:items-stretch">
@@ -100,7 +104,9 @@ export default function TopListingsCarousel({
                           <img
                             src={cover}
                             alt={p.title}
-                            loading="lazy"
+                            loading={idx === 0 ? "eager" : "lazy"}
+                            decoding={idx === 0 ? "sync" : "async"}
+                            onError={handleImgError}
                             className={cn(
                               "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",
                               sold ? "grayscale" : "",

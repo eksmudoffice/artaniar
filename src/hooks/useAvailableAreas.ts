@@ -11,7 +11,9 @@ export function useAvailableAreas() {
     PropertyService.getAvailableAreas()
       .then((res) => {
         if (cancelled) return;
-        setAreas(res);
+        // Deduplicate — Airtable Areas table bisa punya duplicate names
+        const unique = [...new Set(res)].sort((a, b) => a.localeCompare(b));
+        setAreas(unique);
         setLoading(false);
       })
       .catch(() => {

@@ -28,6 +28,23 @@ export default function PropertyDetail() {
 
   useEffect(() => {
     let cancelled = false;
+
+    // Fast-path: kalau data sudah di-cache (dari home/properties page),
+    // langsung find tanpa show loading skeleton. Ini membuat internal navigation
+    // (klik property card dari listing) render INSTANT — tanpa flicker skeleton→content.
+    const snap = PropertyService.getDebugSnapshot();
+    if (snap.cache.loaded && snap.cache.count > 0) {
+      PropertyService.getPropertyBySlug(slug || "").then((p) => {
+        if (cancelled) return;
+        setProperty(p);
+        setLoading(false);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    // Slow path: data belum di-cache (direct link / hard refresh ke detail page)
     setLoading(true);
     PropertyService.getPropertyBySlug(slug || "").then((p) => {
       if (cancelled) return;

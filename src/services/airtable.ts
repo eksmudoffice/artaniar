@@ -459,9 +459,8 @@ export async function listAirtableProperties(nameByAreaId?: Map<string, string>)
     .filter(Boolean) as Property[];
 
   if (missingCount > 0) {
-    console.log(`[Airtable] ${missingCount} records skipped (missing slug/title)`);
+    // debugging suppressed
   }
-  console.log(`[Airtable] Returning ${result.length} valid properties`);
   return result;
 }
 
@@ -587,10 +586,6 @@ export async function listAirtableNews(): Promise<NewsPost[]> {
       })
       .filter(Boolean) as NewsPost[];
 
-    if (skipped > 0) {
-      console.log(`[Airtable News] ${skipped} records skipped (missing slug/title)`);
-    }
-    console.log(`[Airtable News] Returning ${result.length} valid posts`);
 
     // Sort newest first
     result.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
