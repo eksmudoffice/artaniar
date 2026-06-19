@@ -13,6 +13,7 @@ const AIRTABLE_TABLE_NEWS_ID = import.meta.env.VITE_AIRTABLE_TABLE_NEWS_ID as st
 const AIRTABLE_TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN as string | undefined;
 
 const API_ORIGIN = "https://api.airtable.com/v0";
+const MAX_AIRTABLE_PAGES = 20;
 
 type AirtableAttachment = {
   url: string;
@@ -42,8 +43,12 @@ function authHeaders() {
 async function fetchAllRecords<TFields>(table: string) {
   const records: Array<AirtableRecord<TFields>> = [];
   let offset: string | undefined;
+  let page = 0;
 
   while (true) {
+    page += 1;
+    if (page > MAX_AIRTABLE_PAGES) break;
+
     const url = new URL(`${API_ORIGIN}/${AIRTABLE_BASE_ID}/${encodeURIComponent(table)}`);
     url.searchParams.set("pageSize", "100");
     if (offset) url.searchParams.set("offset", offset);
@@ -297,10 +302,7 @@ type PropertyFields = {
   createdAt?: unknown;
 };
 
-function resolveLinkedAreaName(
-  rawField: unknown,
-  nameById: Map<string, string>,
-): string | undefined {
+function resolveLinkedAreaName(rawField: unknown, nameById: Map<string, string>): string | undefined {
   // Airtable linked record: array of objects with .id, or array of plain record ids
   if (Array.isArray(rawField)) {
     for (const item of rawField) {
@@ -387,9 +389,7 @@ export async function listAirtableProperties(nameByAreaId?: Map<string, string>)
       const roiOccupancy = toNumber(f.roiOccupancy);
       const roiDisclaimer = toText(f.roiDisclaimer);
 
-      const createdAt =
-        toIsoDate(f.createdAt) ??
-        (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
+      const createdAt = toIsoDate(f.createdAt) ?? (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
 
       const lat = toNumber(f.lat);
       const lng = toNumber(f.lng ?? f.Ing);
@@ -586,7 +586,8 @@ export async function listAirtableNews(): Promise<NewsPost[]> {
 
         const tags = toArrayString(f.tags);
         const contentText = toText(f.content) ?? "";
-        const publishedAt = toIsoDate(f.date) ?? (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
+        const publishedAt =
+          toIsoDate(f.date) ?? (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
 
         return {
           id: r.id,
