@@ -6,6 +6,7 @@ import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
+import { optimizeCardImage } from "@/utils/imageOptimizer";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -20,7 +21,8 @@ export default function PropertyCard({
   className?: string;
 }) {
   const { t } = useLocale();
-  const cover = property.images[0] || "/placeholder.svg";
+  const coverRaw = property.images[0] || "/placeholder.svg";
+  const cover = optimizeCardImage(coverRaw);
   const sold = property.status === "Sold";
 
   const purposeLabel =

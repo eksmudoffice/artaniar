@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import HeaderNav from "@/components/branding/HeaderNav";
 import Footer from "@/components/branding/Footer";
 import WhatsAppFloatingCTA from "@/components/cta/WhatsAppFloatingCTA";
@@ -21,7 +21,10 @@ import TopListingsCarousel from "@/components/properties/TopListingsCarousel";
 import { Property } from "@/data/properties";
 import MobileFilterFab from "@/components/cta/MobileFilterFab";
 import Seo, { SITE_ORIGIN } from "@/components/seo/Seo";
-import AirtableStatusCard from "@/components/debug/AirtableStatusCard";
+import { useIdleMount, useIntersectMount } from "@/hooks/use-deferred-mount";
+
+// 🔧 Lazy-load debug component — hanya dipakai saat ?debug=1, jadi tak perlu di main bundle
+const AirtableStatusCard = lazy(() => import("@/components/debug/AirtableStatusCard"));
 
 function isDebugEnabled() {
   const params = new URLSearchParams(window.location.search);
@@ -30,6 +33,9 @@ function isDebugEnabled() {
 
 export default function Index() {
   const { t } = useLocale();
+  // Defer non-critical components — jangan blok main thread saat initial paint
+  const footerReady = useIntersectMount(0);
+  const ctaReady = useIdleMount(500);
   const [filters, setFilters] = useState<PropertyFiltersValue>(DEFAULT_FILTERS);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -150,7 +156,9 @@ export default function Index() {
                 </Button>
               </div>
 
-              <AirtableStatusCard className="mb-6" value={airtableStatus} />
+              <Suspense fallback={<Skeleton className="mb-6 h-40 w-full rounded-2xl" />}>
+                <AirtableStatusCard className="mb-6" value={airtableStatus} />
+              </Suspense>
             </>
           ) : null}
 
@@ -330,8 +338,10 @@ export default function Index() {
         </section>
       </main>
 
-      <Footer />
-      <WhatsAppFloatingCTA />
+      <div ref={(el) => footerReady.setRef(el)}>
+        {footerReady.ready ? <Footer /> : <div style={{ height: 80 }} />}
+      </div>
+      {ctaReady ? <WhatsAppFloatingCTA /> : null}
 
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
         <SheetContent side="bottom" className="rounded-t-[2rem] bg-[hsl(var(--brand-surface))]">

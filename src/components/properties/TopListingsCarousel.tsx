@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
+import { optimizeHeroImage } from "@/utils/imageOptimizer";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -85,7 +86,7 @@ export default function TopListingsCarousel({
 
             <CarouselContent>
               {slides.map((p, idx) => {
-                const cover = p.images[0];
+                const cover = optimizeHeroImage(p.images[0] || "/placeholder.svg");
                 const sold = p.status === "Sold";
                 const key = `${p.id}_${idx}`;
 

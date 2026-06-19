@@ -3,14 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dyad-generated-app</title>
-    <!-- Preconnect API tujuan supaya DNS+TCP warmup sebelum JS mengeluarkan fetch -->
+    <title>Artaniar Property — Bali Property Listings</title>
+    <meta name="description" content="Cari properti Bali dengan filter cepat dan detail lengkap. Artaniar Property menawarkan listing eksklusif dan konsultasi via WhatsApp." />
+
+    <!-- Preconnect ke semua domain third-party -->
     <link rel="preconnect" href="https://api.airtable.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.airtable.com" />
+    <link rel="preconnect" href="https://v5.airtableusercontent.com" crossorigin />
+    <link rel="dns-prefetch" href="https://v5.airtableusercontent.com" />
+
+    <!-- Inline critical CSS untuk first paint (FOUC prevention) -->
+    <style>
+      /* Critical CSS: brand theme variables & skeleton loading untuk first paint */
+      :root {
+        --brand-surface: 0 0% 97%;
+        --brand-surface-2: 0 0% 92.5%;
+        --brand-ink: 0 0% 13%;
+        --brand-ink-foreground: 0 0% 97%;
+      }
+      html { background: hsl(var(--brand-surface)); }
+      body { margin: 0; font-family: system-ui, -apple-system, sans-serif; color: hsl(var(--brand-ink)); }
+      #root { min-height: 100vh; }
+      /* Skeleton shimmer untuk menghindari layout shift */
+      .skeleton-hero { height: 100vh; display: flex; align-items: center; justify-content: center; }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Skeleton placeholder sampai JS bundle mount -->
+      <div class="skeleton-hero">
+        <div style="text-align: center;">
+          <div style="height: 24px; width: 160px; background: hsl(0 0% 0% / 0.06); border-radius: 999px; margin: 0 auto;"></div>
+          <div style="height: 12px; width: 240px; background: hsl(0 0% 0% / 0.04); border-radius: 999px; margin: 16px auto 0;"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
