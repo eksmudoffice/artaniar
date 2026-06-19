@@ -11,10 +11,78 @@
     <!-- Preconnect API tujuan supaya DNS+TCP warmup sebelum JS mengeluarkan fetch -->
     <link rel="preconnect" href="https://api.airtable.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.airtable.com" />
+
+    <!-- Instant app-shell loader (renders before React/JS loads) -->
+    <style>
+      :root {
+        --brand-surface: 34 33% 97%;
+        --brand-ink: 155 18% 22%;
+      }
+
+      body {
+        margin: 0;
+        background: hsl(var(--brand-surface));
+        color: hsl(var(--brand-ink));
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+      }
+
+      #app-shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .shell-card {
+        width: min(520px, 92vw);
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(32, 74, 59, 0.12);
+        border-radius: 28px;
+        padding: 22px 18px;
+        box-shadow: 0 22px 70px -55px rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        border: 2px solid rgba(32, 74, 59, 0.2);
+        border-top-color: rgba(32, 74, 59, 1);
+        animation: spin 0.9s linear infinite;
+        flex: 0 0 auto;
+      }
+
+      .shell-text {
+        font-size: 13px;
+        opacity: 0.75;
+        line-height: 1.35;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
 
   <body>
+    <div id="app-shell">
+      <div class="shell-card" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="shell-text">
+          Memuat Artaniar Property…
+          <div style="font-size: 11px; opacity: 0.8; margin-top: 2px">Menyiapkan listing & data terbaru.</div>
+        </div>
+      </div>
+    </div>
+
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
