@@ -37,7 +37,13 @@ export type Property = {
   ownership: "Freehold" | "Leasehold";
   yearBuilt?: number;
   zoning?: string;
+
+  /** Full-size images for detail pages */
   images: string[];
+
+  /** Thumbnail images for cards/carousel (faster load) */
+  imagesThumb?: string[];
+
   highlights: string[];
   description: string;
   tags?: string[];

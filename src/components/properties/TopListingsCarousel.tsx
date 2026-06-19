@@ -85,13 +85,15 @@ export default function TopListingsCarousel({
 
             <CarouselContent>
               {slides.map((p, idx) => {
-                const cover = p.images[0];
+                const cover = p.imagesThumb?.[0] || p.images[0] || "/placeholder.svg";
                 const sold = p.status === "Sold";
                 const key = `${p.id}_${idx}`;
 
                 const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
                   e.currentTarget.src = "/placeholder.svg";
                 };
+
+                const isFirstSlide = idx === 0;
 
                 return (
                   <CarouselItem key={key} className="basis-[92%] sm:basis-[72%] lg:basis-[58%]">
@@ -104,8 +106,9 @@ export default function TopListingsCarousel({
                           <img
                             src={cover}
                             alt={p.title}
-                            loading={idx === 0 ? "eager" : "lazy"}
-                            decoding={idx === 0 ? "sync" : "async"}
+                            loading={isFirstSlide ? "eager" : "lazy"}
+                            decoding="async"
+                            fetchPriority={isFirstSlide ? "high" : "low"}
                             onError={handleImgError}
                             className={cn(
                               "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",

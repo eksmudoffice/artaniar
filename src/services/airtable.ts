@@ -14,7 +14,15 @@ const AIRTABLE_TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN as string | undefined
 
 const API_ORIGIN = "https://api.airtable.com/v0";
 
-type AirtableAttachment = { url: string; filename?: string };
+type AirtableAttachment = {
+  url: string;
+  filename?: string;
+  thumbnails?: {
+    small?: { url: string };
+    large?: { url: string };
+    full?: { url: string };
+  };
+};
 type AirtableRecord<TFields> = { id: string; createdTime?: string; fields: TFields };
 
 function requireEnv() {
@@ -316,6 +324,11 @@ function resolveLinkedAreaName(
   return undefined;
 }
 
+function pickThumbUrl(a: AirtableAttachment | undefined): string | undefined {
+  if (!a) return undefined;
+  return a.thumbnails?.large?.url || a.thumbnails?.full?.url || a.url;
+}
+
 export async function listAirtableAreas(): Promise<AreaRecord[]> {
   const baseId = AIRTABLE_BASE_ID;
   const tableId = AIRTABLE_TABLE_AREA_ID;
@@ -366,7 +379,8 @@ export async function listAirtableProperties(nameByAreaId?: Map<string, string>)
         return null;
       }
 
-      const images = Array.isArray(f.images) ? f.images.map((a) => a?.url).filter(Boolean) : [];
+      const imagesFull = Array.isArray(f.images) ? f.images.map((a) => a?.url).filter(Boolean) : [];
+      const imagesThumb = Array.isArray(f.images) ? f.images.map((a) => pickThumbUrl(a)).filter(Boolean) : [];
 
       const checklist = toArrayString(f.legalChecklist);
       const roiNightlyRateIdr = toNumber(f.roiNightlyRateIdr);
@@ -384,9 +398,10 @@ export async function listAirtableProperties(nameByAreaId?: Map<string, string>)
       // case-insensitive "area" for any text/lookup field), then inline fields
       let area: string | undefined;
       if (areaMap) {
-        area = resolveLinkedAreaName(getField(f, "Area"), areaMap) ||
-               toText(getField(f, "areaName")) ||
-               toText(getField(f, "area"));
+        area =
+          resolveLinkedAreaName(getField(f, "Area"), areaMap) ||
+          toText(getField(f, "areaName")) ||
+          toText(getField(f, "area"));
       }
       area = area ?? (toText(getField(f, "areaName")) || toText(getField(f, "area")) || "Bali");
 
@@ -431,7 +446,8 @@ export async function listAirtableProperties(nameByAreaId?: Map<string, string>)
         highlights: toArrayString(f.highlights),
         description: toText(f.description) ?? "",
 
-        images,
+        images: imagesFull,
+        imagesThumb: imagesThumb.length ? imagesThumb : imagesFull,
 
         toplist: toBool(f.toplist ?? f.TOPLIST) ?? false,
 
@@ -585,7 +601,6 @@ export async function listAirtableNews(): Promise<NewsPost[]> {
         };
       })
       .filter(Boolean) as NewsPost[];
-
 
     // Sort newest first
     result.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());

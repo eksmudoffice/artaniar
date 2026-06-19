@@ -20,7 +20,7 @@ export default function PropertyCard({
   className?: string;
 }) {
   const { t } = useLocale();
-  const cover = property.images[0] || "/placeholder.svg";
+  const cover = property.imagesThumb?.[0] || property.images[0] || "/placeholder.svg";
   const sold = property.status === "Sold";
 
   const purposeLabel =
@@ -46,11 +46,13 @@ export default function PropertyCard({
     >
       <div className="relative">
         <Link to={`/properties/${property.slug}`} className="block">
-          <div className="aspect-[16/11] overflow-hidden">
+          <div className="aspect-[16/11] overflow-hidden bg-black/5">
             <img
               src={cover}
               alt={property.title}
               loading="lazy"
+              decoding="async"
+              fetchPriority="low"
               onError={handleImageError}
               className={cn(
                 "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",
