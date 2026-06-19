@@ -8,6 +8,7 @@ import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
+import DeferredImage from "@/components/media/DeferredImage";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -89,10 +90,6 @@ export default function TopListingsCarousel({
                 const sold = p.status === "Sold";
                 const key = `${p.id}_${idx}`;
 
-                const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-                  e.currentTarget.src = "/placeholder.svg";
-                };
-
                 const isFirstSlide = idx === 0;
 
                 return (
@@ -103,15 +100,14 @@ export default function TopListingsCarousel({
                         className="group relative overflow-hidden rounded-3xl border border-[hsl(var(--brand-ink)/0.10)] bg-black/5"
                       >
                         <div className="aspect-[16/11] md:aspect-[16/10] overflow-hidden">
-                          <img
+                          <DeferredImage
                             src={cover}
                             alt={p.title}
-                            loading={isFirstSlide ? "eager" : "lazy"}
-                            decoding="async"
-                            fetchPriority={isFirstSlide ? "high" : "low"}
-                            onError={handleImgError}
-                            className={cn(
-                              "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",
+                            priority={isFirstSlide}
+                            delayMs={isFirstSlide ? 0 : 450}
+                            className="h-full w-full"
+                            imgClassName={cn(
+                              "transition-transform duration-500 group-hover:scale-[1.04]",
                               sold ? "grayscale" : "",
                             )}
                           />

@@ -6,6 +6,7 @@ import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
+import DeferredImage from "@/components/media/DeferredImage";
 
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
@@ -33,10 +34,6 @@ export default function PropertyCard({
         ? t("property.status.offplan")
         : t("property.status.sold");
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = "/placeholder.svg";
-  };
-
   return (
     <Card
       className={cn(
@@ -47,17 +44,12 @@ export default function PropertyCard({
       <div className="relative">
         <Link to={`/properties/${property.slug}`} className="block">
           <div className="aspect-[16/11] overflow-hidden bg-black/5">
-            <img
+            <DeferredImage
               src={cover}
               alt={property.title}
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-              onError={handleImageError}
-              className={cn(
-                "h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",
-                sold ? "grayscale" : "",
-              )}
+              delayMs={350}
+              className="h-full w-full"
+              imgClassName={cn("transition-transform duration-500 group-hover:scale-[1.04]", sold ? "grayscale" : "")}
             />
           </div>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
