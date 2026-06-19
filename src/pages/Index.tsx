@@ -28,6 +28,18 @@ function isDebugEnabled() {
   return params.get("debug") === "1";
 }
 
+function preloadImage(href: string) {
+  if (!href) return;
+  const existing = document.head.querySelector<HTMLLinkElement>(`link[rel="preload"][as="image"][href="${href}"]`);
+  if (existing) return;
+
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = href;
+  document.head.appendChild(link);
+}
+
 export default function Index() {
   const { t } = useLocale();
   const [filters, setFilters] = useState<PropertyFiltersValue>(DEFAULT_FILTERS);
@@ -90,6 +102,14 @@ export default function Index() {
   const quickKeyword = filters.search.trim();
 
   const [topListings, setTopListings] = useState<Property[]>([]);
+
+  // Preload FIRST featured image (thumb preferred) to make the hero feel instant.
+  useEffect(() => {
+    const first = topListings[0];
+    if (!first) return;
+    const heroSrc = first.imagesThumb?.[0] || first.images?.[0];
+    if (heroSrc) preloadImage(heroSrc);
+  }, [topListings]);
 
   const seoTitle = "Artaniar Property — Bali Property Listings";
   const seoDesc =
