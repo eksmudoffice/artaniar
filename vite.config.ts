@@ -18,60 +18,39 @@ export default defineConfig(() => ({
       registerType: "autoUpdate",
       injectRegister: "auto",
       workbox: {
-        // Cache semua static assets (JS, CSS, images) permanently
-        globPatterns: [
-          "**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff2}",
-        ],
-        // Runtime caching: Airtable API responses
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff2}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.airtable\.com\/v0\/.*/i,
             handler: "NetworkFirst",
             options: {
               cacheName: "artaniar-api-cache",
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24, // 24 hours
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-              networkTimeoutSeconds: 5, // kalau API > 5 detik, pakai cache
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
+              cacheableResponse: { statuses: [0, 200] },
+              networkTimeoutSeconds: 5,
             },
           },
           {
-            // Airtable attachment CDN
             urlPattern: /^https:\/\/v5\.airtableusercontent\.com\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "artaniar-images-cache",
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 hari
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
-            // Google Fonts
             urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "artaniar-fonts-cache",
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 tahun
-              },
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
         ],
-        // Skip waiting supaya SW update aktif secepatnya
         skipWaiting: true,
         clientsClaim: true,
       },
-      // PWA manifest (untuk installable app - opsional)
       manifest: {
         name: "Artaniar Property",
         short_name: "Artaniar",
@@ -80,12 +59,7 @@ export default defineConfig(() => ({
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
-        icons: [
-          {
-            src: "/favicon.ico",
-            sizes: "48x48",
-          },
-        ],
+        icons: [{ src: "/favicon.ico", sizes: "48x48" }],
       },
     }),
   ],
