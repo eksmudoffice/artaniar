@@ -84,7 +84,8 @@ export default function Index() {
 
   useEffect(() => {
     let cancelled = false;
-    PropertyService.listProperties({ sort: "roi_desc", pageSize: 8 }).then((res) => {
+    // Prioritaskan featured/toplist untuk hero/top section
+    PropertyService.listProperties({ topOnly: true, sort: "newest", pageSize: 8 }).then((res) => {
       if (cancelled) return;
       setTopListings(res.items);
     });
