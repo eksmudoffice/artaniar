@@ -152,6 +152,11 @@ export default function Index() {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-24 pb-16">
         {/* TOP LISTINGS */}
         <TopListingsCarousel items={topListings} />
+        {debugEnabled ? (
+          <div className="mt-3 text-xs text-[hsl(var(--brand-ink)/0.62)]">
+            TopListings debug: {topListings.length} item(s)
+          </div>
+        ) : null}
 
         {/* LISTINGS SECTION */}
         <section className="mt-10">
