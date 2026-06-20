@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Property } from "@/data/properties";
 import { MapPin, TrendingUp } from "lucide-react";
+import { optimizeHeroImage } from "@/utils/imageOptimizer";
 import { WhatsAppCTA } from "@/components/cta/WhatsAppCTA";
 import { useLocale } from "@/i18n/use-locale";
 import DeferredImage from "@/components/media/DeferredImage";
@@ -86,10 +87,10 @@ export default function TopListingsCarousel({
 
             <CarouselContent>
               {slides.map((p, idx) => {
-                const cover = p.imagesThumb?.[0] || p.images[0] || "/placeholder.svg";
+                const coverRaw = p.imagesThumb?.[0] || p.images?.[0] || "/placeholder.svg";
+                const cover = optimizeHeroImage(coverRaw);
                 const sold = p.status === "Sold";
                 const key = `${p.id}_${idx}`;
-
                 const isFirstSlide = idx === 0;
 
                 return (
@@ -106,10 +107,7 @@ export default function TopListingsCarousel({
                             priority={isFirstSlide}
                             delayMs={isFirstSlide ? 0 : 450}
                             className="h-full w-full"
-                            imgClassName={cn(
-                              "transition-transform duration-500 group-hover:scale-[1.04]",
-                              sold ? "grayscale" : "",
-                            )}
+                            imgClassName={cn("transition-transform duration-500 group-hover:scale-[1.04]", sold ? "grayscale" : "")}
                           />
                         </div>
                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />

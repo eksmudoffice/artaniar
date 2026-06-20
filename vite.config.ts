@@ -9,6 +9,23 @@ export default defineConfig(() => ({
     host: "::",
     port: 8080,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor libraries — heavy deps yang jarang berubah
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-select", "@radix-ui/react-tabs", "@radix-ui/react-accordion", "@radix-ui/react-slider", "@radix-ui/react-popover", "@radix-ui/react-tooltip", "@radix-ui/react-scroll-area", "@radix-ui/react-separator", "@radix-ui/react-checkbox", "@radix-ui/react-slot", "@radix-ui/react-label", "@radix-ui/react-radio-group"],
+          "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-charts": ["recharts"],
+          "vendor-utils": ["cmdk", "vaul", "sonner"],
+        },
+      },
+    },
+    // Split chunks lebih kecil untuk better caching
+    chunkSizeWarningLimit: 500,
+  },
   plugins: [
     dyadComponentTagger(),
     react({
