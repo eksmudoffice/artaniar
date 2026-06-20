@@ -40,7 +40,14 @@ function authHeaders() {
   };
 }
 
-async function fetchAllRecords<TFields>(table: string) {
+async function fetchAllRecords<TFields>(
+  table: string,
+  opts?: {
+    maxRecords?: number;
+    filterByFormula?: string;
+    sort?: Array<{ field: string; direction?: "asc" | "desc" }>;
+  },
+) {
   const records: Array<AirtableRecord<TFields>> = [];
   let offset: string | undefined;
   let page = 0;
@@ -53,6 +60,15 @@ async function fetchAllRecords<TFields>(table: string) {
     url.searchParams.set("pageSize", "100");
     if (offset) url.searchParams.set("offset", offset);
 
+    if (opts?.maxRecords != null) url.searchParams.set("maxRecords", String(opts.maxRecords));
+    if (opts?.filterByFormula) url.searchParams.set("filterByFormula", opts.filterByFormula);
+    if (opts?.sort?.length) {
+      for (const [i, s] of opts.sort.entries()) {
+        url.searchParams.set(`sort[${i}][field]`, s.field);
+        if (s.direction) url.searchParams.set(`sort[${i}][direction]`, s.direction);
+      }
+    }
+
     const res = await fetch(url.toString(), { headers: authHeaders() });
     if (!res.ok) {
       const text = await res.text();
@@ -64,6 +80,12 @@ async function fetchAllRecords<TFields>(table: string) {
       offset?: string;
     };
     records.push(...(json.records ?? []));
+
+    // Stop conditions
+    if (opts?.maxRecords != null && records.length >= opts.maxRecords) {
+      return records.slice(0, opts.maxRecords);
+    }
+
     offset = json.offset;
     if (!offset) break;
   }
@@ -356,6 +378,142 @@ export async function listAirtableAreas(): Promise<AreaRecord[]> {
 export async function listAirtableProperties(nameByAreaId?: Map<string, string>): Promise<Property[]> {
   requireEnv();
   const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!);
+  const areaMap = nameByAreaId && nameByAreaId.size > 0 ? nameByAreaId : null;
+
+  let missingCount = 0;
+  const result = records
+    .map((r) => {
+      const f = getAllFields(r.fields ?? {});
+      const slug =
+        toText(f.slug) ??
+        toText(f.name) ??
+        toText(f.title) ??
+        toText(f.projectname) ??
+        toText(f.projecttitle) ??
+        toText(f.id);
+      const title =
+        toText(f.title) ??
+        toText(f.name) ??
+        toText(f.projecttitle) ??
+        toText(f.projectname) ??
+        toText(f.id);
+
+      if (!slug || !title) {
+        missingCount++;
+        return null;
+      }
+
+      const imagesFull = Array.isArray(f.images) ? f.images.map((a) => a?.url).filter(Boolean) : [];
+      const imagesThumb = Array.isArray(f.images) ? f.images.map((a) => pickThumbUrl(a)).filter(Boolean) : [];
+
+      const checklist = toArrayString(f.legalChecklist);
+      const roiNightlyRateIdr = toNumber(f.roiNightlyRateIdr);
+      const roiOccupancy = toNumber(f.roiOccupancy);
+      const roiDisclaimer = toText(f.roiDisclaimer);
+
+      const createdAt =
+        toIsoDate(f.createdAt) ??
+        (r.createdTime ? new Date(r.createdTime).toISOString() : new Date().toISOString());
+
+      const lat = toNumber(f.lat);
+      const lng = toNumber(f.lng ?? f.Ing);
+
+      let area: string | undefined;
+      if (areaMap) {
+        area =
+          resolveLinkedAreaName(getField(f, "Area"), areaMap) ||
+          toText(getField(f, "areaName")) ||
+          toText(getField(f, "area"));
+      }
+      area = area ?? (toText(getField(f, "areaName")) || toText(getField(f, "area")) || "Bali");
+
+      const p: Property = {
+        id: r.id,
+        code: toText(f.code) ?? slug,
+        slug,
+        title,
+
+        type: normalizeType(f.type),
+        purpose: normalizePurpose(f.purpose),
+        location: {
+          area,
+          city: (toText(f.city) || "Bali") as "Bali",
+        },
+
+        price: toNumber(f.price) ?? 0,
+        currency: "IDR",
+        roi: toNumber(f.roi),
+        status: normalizeStatus(f.status),
+
+        bedrooms: toNumber(f.bedrooms),
+        bathrooms: toNumber(f.bathrooms),
+        landSize: toNumber(f.landSize),
+        buildingSize: toNumber(f.buildingSize),
+        pool: toBool(f.pool),
+
+        carport: toNumber(f.carport),
+        roadWidth: toNumber(f.roadWidth),
+        powerVa: toNumber(f.powerVa),
+        water: normalizeWater(f.water),
+        furnished: toBool(f.furnished),
+        view: normalizeView(f.view),
+
+        yearBuilt: toNumber(f.yearBuilt),
+        zoning: "",
+
+        ownership: normalizeOwnership(f.ownership),
+
+        tags: toArrayString(f.tags),
+
+        highlights: toArrayString(f.highlights),
+        description: toText(f.description) ?? "",
+
+        images: imagesFull,
+        imagesThumb: imagesThumb.length ? imagesThumb : imagesFull,
+
+        toplist: toBool(f.toplist ?? f.TOPLIST) ?? false,
+
+        coordinates: lat != null && lng != null ? { lat, lng } : undefined,
+
+        legal: {
+          checklist,
+          notes: toText(f.legalNotes),
+        },
+
+        roiProjection:
+          roiNightlyRateIdr != null || roiOccupancy != null || roiDisclaimer != null
+            ? {
+                nightlyRateIdr: roiNightlyRateIdr,
+                occupancy: roiOccupancy != null ? roiOccupancy / 100 : undefined,
+                disclaimer: roiDisclaimer ?? "",
+              }
+            : undefined,
+
+        createdAt,
+      };
+
+      return p;
+    })
+    .filter(Boolean) as Property[];
+
+  if (missingCount > 0) {
+    // debugging suppressed
+  }
+  return result;
+}
+
+export async function listAirtableFeaturedProperties(
+  nameByAreaId?: Map<string, string>,
+  limit = 8,
+): Promise<Property[]> {
+
+  requireEnv();
+  const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!, {
+    maxRecords: limit,
+    // TOPLIST adalah nama field yang kita mapping ke p.toplist
+    filterByFormula: "OR({TOPLIST}=TRUE(), {toplist}=TRUE())",
+    sort: [{ field: "createdAt", direction: "desc" }],
+  });
   const areaMap = nameByAreaId && nameByAreaId.size > 0 ? nameByAreaId : null;
 
   let missingCount = 0;

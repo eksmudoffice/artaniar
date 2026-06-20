@@ -84,11 +84,12 @@ export default function Index() {
 
   useEffect(() => {
     let cancelled = false;
-    // Prioritaskan featured/toplist untuk hero/top section
-    PropertyService.listProperties({ topOnly: true, sort: "newest", pageSize: 8 }).then((res) => {
+    // Prioritaskan featured/toplist untuk hero/top section (fetch kecil, cepat)
+    PropertyService.listFeatured(8).then((items) => {
       if (cancelled) return;
-      setTopListings(res.items);
+      setTopListings(items);
     });
+
     return () => {
       cancelled = true;
     };

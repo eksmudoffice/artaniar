@@ -6,7 +6,13 @@ import {
   type PropertyStatus,
   type PropertyType,
 } from "@/data/properties";
-import { listAirtableProperties, listAirtableAreas, type AreaRecord } from "@/services/airtable";
+import {
+  listAirtableProperties,
+  listAirtableFeaturedProperties,
+  listAirtableAreas,
+  type AreaRecord,
+} from "@/services/airtable";
+
 import {
   getCachedProperties,
   setCachedProperties,
@@ -327,7 +333,38 @@ export const PropertyService = {
     return data.find((p) => p.slug === slug || p.code === slug) ?? null;
   },
 
+  async listFeatured(limit = 8) {
+    // Fetch featured from Airtable langsung (kecil, cepat) tanpa menunggu full preload.
+    if (isMissingEnv()) {
+      return localProperties.filter((p) => p.toplist).slice(0, limit);
+    }
+
+    // Areas optional: kalau belum ada, coba ambil cepat.
+    let areas: AreaRecord[] = cachedAreas ?? [];
+    if (!areas.length) {
+      const cachedPersist = getCachedAreas();
+      if (cachedPersist) areas = cachedPersist.data;
+      else {
+        try {
+          areas = await loadAreasFromAirtable();
+        } catch {
+          areas = [];
+        }
+      }
+    }
+
+    const areaNameById = new Map(areas.map((a) => [a.id, a.name]));
+
+    try {
+      const items = await listAirtableFeaturedProperties(areaNameById, limit);
+      return items;
+    } catch {
+      return localProperties.filter((p) => p.toplist).slice(0, limit);
+    }
+  },
+
   async listProperties(query: PropertyQuery) {
+
     const {
       search,
       type,
