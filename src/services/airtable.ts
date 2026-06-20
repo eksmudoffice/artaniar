@@ -511,8 +511,8 @@ export async function listAirtableFeaturedProperties(
   const records = await fetchAllRecords<PropertyFields>(AIRTABLE_TABLE_ID!, {
     maxRecords: limit,
     // TOPLIST adalah nama field yang kita mapping ke p.toplist
+    // Jangan set sort: nama field di Airtable sering beda (bisa bikin 422 dan hasil kosong)
     filterByFormula: "OR({TOPLIST}=TRUE(), {toplist}=TRUE())",
-    sort: [{ field: "createdAt", direction: "desc" }],
   });
   const areaMap = nameByAreaId && nameByAreaId.size > 0 ? nameByAreaId : null;
 
