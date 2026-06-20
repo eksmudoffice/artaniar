@@ -231,7 +231,7 @@ export default function PropertyFilters({ value, onChange, onReset, compact = fa
             <div className="text-left">
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Advanced (free text)</div>
               <div className="text-[11px] text-[hsl(var(--brand-ink)/0.65)]">
-                Contoh: land>300 building<250 beds>2 baths>2 pool
+                Contoh: land{" > "}300 building{" < "}250 beds{" > "}2 baths{" > "}2 pool
               </div>
             </div>
           </div>
