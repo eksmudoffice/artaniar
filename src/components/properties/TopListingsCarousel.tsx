@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import type { EmblaCarouselType } from "embla-carousel-react";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ import DeferredImage from "@/components/media/DeferredImage";
 const formatIdr = (value: number) =>
   new Intl.NumberFormat("id-ID", { notation: "compact", compactDisplay: "short" }).format(value);
 
-function AutoSlide({ api, intervalMs = 3000 }: { api: EmblaCarouselType | undefined; intervalMs?: number }) {
+function AutoSlide({ api, intervalMs = 3000 }: { api: UseEmblaCarouselType[1] | undefined; intervalMs?: number }) {
   useEffect(() => {
     if (!api) return;
 
@@ -40,7 +40,7 @@ export default function TopListingsCarousel({
   subtitle?: string;
 }) {
   const { t } = useLocale();
-  const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
+  const [api, setApi] = useState<UseEmblaCarouselType[1] | undefined>(undefined);
 
   const slides = useMemo(() => {
     if (!items.length) return [];
