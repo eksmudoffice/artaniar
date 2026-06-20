@@ -339,6 +339,10 @@ export const PropertyService = {
       return localProperties.filter((p) => p.toplist).slice(0, limit);
     }
 
+    if (import.meta.env.DEV) {
+      console.log("[PropertyService] listFeatured: fetching from Airtable…");
+    }
+
     // Areas optional: kalau belum ada, coba ambil cepat.
     let areas: AreaRecord[] = cachedAreas ?? [];
     if (!areas.length) {
@@ -357,10 +361,21 @@ export const PropertyService = {
 
     try {
       const items = await listAirtableFeaturedProperties(areaNameById, limit);
+      if (import.meta.env.DEV) {
+        console.log("[PropertyService] listFeatured: Airtable returned", items.length, "items");
+        console.log("[PropertyService] listFeatured sample:", items.slice(0, 2));
+      }
       return items;
-    } catch {
+    } catch (e) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          "[PropertyService] listFeatured: Airtable failed, using local fallback:",
+          e instanceof Error ? e.message : String(e),
+        );
+      }
       return localProperties.filter((p) => p.toplist).slice(0, limit);
     }
+
   },
 
   async listProperties(query: PropertyQuery) {

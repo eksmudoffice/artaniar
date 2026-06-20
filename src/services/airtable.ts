@@ -512,10 +512,10 @@ export async function listAirtableFeaturedProperties(
     maxRecords: limit,
     // TOPLIST adalah nama field yang kita mapping ke p.toplist
     // Jangan set sort: nama field di Airtable sering beda (bisa bikin 422 dan hasil kosong)
-    // Airtable checkbox: checked biasanya bernilai 1 (bukan TRUE())
-    filterByFormula: "OR({TOPLIST}=1, {toplist}=1)",
-
+    // Pakai IF() agar lebih kompatibel lintas tipe field checkbox/lookup.
+    filterByFormula: "OR(IF({TOPLIST},1,0)=1, IF({toplist},1,0)=1)",
   });
+
   const areaMap = nameByAreaId && nameByAreaId.size > 0 ? nameByAreaId : null;
 
   let missingCount = 0;
