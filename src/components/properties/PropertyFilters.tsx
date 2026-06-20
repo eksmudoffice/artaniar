@@ -183,7 +183,13 @@ export default function PropertyFilters({ value, onChange, onReset, compact = fa
                 <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.min")}</div>
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMin)}</div>
               </div>
-              <Slider className="mt-3" value={[priceMin]} max={PRICE_MAX} step={5_000_000} onValueChange={(v) => setPriceMin(v[0] ?? 0)} />
+              <Slider
+                className="mt-3"
+                value={[priceMin]}
+                max={PRICE_MAX}
+                step={5_000_000}
+                onValueChange={(v) => setPriceMin(v[0] ?? 0)}
+              />
             </div>
 
             <div>
@@ -191,7 +197,13 @@ export default function PropertyFilters({ value, onChange, onReset, compact = fa
                 <div className="text-xs text-[hsl(var(--brand-ink)/0.70)]">{t("filters.price.max")}</div>
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Rp {formatIdrCompact(priceMax)}</div>
               </div>
-              <Slider className="mt-3" value={[priceMax]} max={PRICE_MAX} step={5_000_000} onValueChange={(v) => setPriceMax(v[0] ?? PRICE_MAX)} />
+              <Slider
+                className="mt-3"
+                value={[priceMax]}
+                max={PRICE_MAX}
+                step={5_000_000}
+                onValueChange={(v) => setPriceMax(v[0] ?? PRICE_MAX)}
+              />
             </div>
           </div>
 
@@ -235,7 +247,11 @@ export default function PropertyFilters({ value, onChange, onReset, compact = fa
               </div>
             </div>
           </div>
-          <div className={"text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform " + (advancedOpen ? "rotate-180" : "")}>
+          <div
+            className={
+              "text-xs font-semibold text-[hsl(var(--brand-ink)/0.70)] transition-transform " + (advancedOpen ? "rotate-180" : "")
+            }
+          >
             ▾
           </div>
         </button>
